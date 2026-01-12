@@ -7,6 +7,8 @@ export { BzmNotificationBellComponent } from './lib/atoms/notification-bell/noti
 export { BzmSliderComponent } from './lib/atoms/slider/slider.component';
 export { BzmCardComponent } from './lib/atoms/card/card.component';
 export type { CardVariant } from './lib/atoms/card/card.component';
+export { BzmInputComponent } from './lib/atoms/input/input.component';
+export type { InputSize } from './lib/atoms/input/input.component';
 
 // Molecules
 export { BzmAnswerOptionComponent } from './lib/molecules/answer-option/answer-option.component';
