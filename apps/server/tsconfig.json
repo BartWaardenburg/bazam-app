@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ES2024",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "outDir": "./dist",
+    "rootDir": "../..",
+    "types": ["bun"]
+  },
+  "include": ["src/**/*", "../../libs/shared-types/src/**/*"]
+}

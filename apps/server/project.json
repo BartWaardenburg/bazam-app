@@ -1,0 +1,20 @@
+{
+  "name": "server",
+  "projectType": "application",
+  "sourceRoot": "apps/server/src",
+  "tags": ["type:app", "scope:server"],
+  "targets": {
+    "dev": {
+      "command": "bun --watch src/index.ts",
+      "options": {
+        "cwd": "apps/server"
+      }
+    },
+    "build": {
+      "command": "bun build src/index.ts --outdir dist --target bun",
+      "options": {
+        "cwd": "apps/server"
+      }
+    }
+  }
+}

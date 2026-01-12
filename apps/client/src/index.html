@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <title>Bazam - Quiz Battle</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Bazam Quiz Battle — daag je vrienden uit met een real-time multiplayer quiz!">
+  <meta name="theme-color" content="#FF3B30">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+  <!-- SVG filter for hand-drawn/sketchy border effect -->
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <filter id="sketchy" x="-2%" y="-2%" width="104%" height="104%">
+        <feTurbulence type="turbulence" baseFrequency="0.008 0.01" numOctaves="2" seed="2" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.8" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+  <app-root></app-root>
+</body>
+</html>

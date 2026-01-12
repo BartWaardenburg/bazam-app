@@ -1,0 +1,23 @@
+{
+  "name": "@bazam/root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "nx run-many -t dev",
+    "dev:client": "nx dev client",
+    "dev:server": "nx dev server",
+    "build": "nx run-many -t build",
+    "build:client": "nx build client",
+    "build:server": "nx build server"
+  },
+  "devDependencies": {
+    "@compodoc/compodoc": "^1.2.1",
+    "nx": "^22.3.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "webpack": "5.105.4",
+      "esbuild": "0.25.9"
+    }
+  }
+}

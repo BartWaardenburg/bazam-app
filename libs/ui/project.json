@@ -1,0 +1,27 @@
+{
+  "name": "ui",
+  "projectType": "library",
+  "sourceRoot": "libs/ui/src",
+  "tags": ["type:ui"],
+  "targets": {
+    "storybook": {
+      "executor": "@storybook/angular:start-storybook",
+      "options": {
+        "configDir": "libs/ui/.storybook",
+        "browserTarget": "client:build:development",
+        "compodoc": false,
+        "port": 6006,
+        "tsConfig": "libs/ui/tsconfig.storybook.json"
+      }
+    },
+    "build-storybook": {
+      "executor": "@storybook/angular:build-storybook",
+      "options": {
+        "configDir": "libs/ui/.storybook",
+        "browserTarget": "client:build:production",
+        "compodoc": false,
+        "tsConfig": "libs/ui/tsconfig.storybook.json"
+      }
+    }
+  }
+}
