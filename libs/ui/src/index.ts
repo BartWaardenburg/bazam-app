@@ -9,6 +9,7 @@ export { BzmCardComponent } from './lib/atoms/card/card.component';
 export type { CardVariant } from './lib/atoms/card/card.component';
 export { BzmInputComponent } from './lib/atoms/input/input.component';
 export type { InputSize } from './lib/atoms/input/input.component';
+export { BzmPinInputComponent } from './lib/atoms/pin-input/pin-input.component';
 
 // Molecules
 export { BzmAnswerOptionComponent } from './lib/molecules/answer-option/answer-option.component';
