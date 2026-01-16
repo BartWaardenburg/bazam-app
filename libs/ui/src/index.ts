@@ -15,6 +15,8 @@ export type { SpinnerSize } from './lib/atoms/spinner/spinner.component';
 export { BzmErrorMessageComponent } from './lib/atoms/error-message/error-message.component';
 export { BzmPageTitleComponent } from './lib/atoms/page-title/page-title.component';
 export type { PageTitleSize } from './lib/atoms/page-title/page-title.component';
+export { BzmSplatComponent } from './lib/atoms/splat/splat.component';
+export type { SplatShape } from './lib/atoms/splat/splat.component';
 
 // Molecules
 export { BzmAnswerOptionComponent } from './lib/molecules/answer-option/answer-option.component';

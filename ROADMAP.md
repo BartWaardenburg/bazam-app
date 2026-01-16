@@ -18,7 +18,7 @@ New atoms in `libs/ui/src/lib/atoms/` — each with Storybook stories.
 - [x] **BzmSpinner** — Loading spinner with size variants. Extracts from player-lobby and player-game (`.spinner`).
 - [x] **BzmErrorMessage** — Comic-styled error alert with `role="alert"`. Extracts from create-quiz and join-game (`.error`).
 - [x] **BzmPageTitle** — Heading with comic text-shadow, configurable color. Extracts from every page (`h2` with `text-shadow`).
-- [ ] **BzmSplat** — Decorative comic splat shape, configurable color/size/clip-path. Extracts from home (`.splat-1`, `.splat-2`).
+- [x] **BzmSplat** — Decorative comic splat shape, configurable color/size/clip-path. Extracts from home (`.splat-1`, `.splat-2`).
 
 ## Phase 2: Game Molecules
 
