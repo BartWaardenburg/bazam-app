@@ -12,6 +12,7 @@ export type { InputSize } from './lib/atoms/input/input.component';
 export { BzmPinInputComponent } from './lib/atoms/pin-input/pin-input.component';
 export { BzmSpinnerComponent } from './lib/atoms/spinner/spinner.component';
 export type { SpinnerSize } from './lib/atoms/spinner/spinner.component';
+export { BzmErrorMessageComponent } from './lib/atoms/error-message/error-message.component';
 
 // Molecules
 export { BzmAnswerOptionComponent } from './lib/molecules/answer-option/answer-option.component';
