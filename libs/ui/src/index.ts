@@ -26,6 +26,7 @@ export { BzmLeaderboardItemComponent } from './lib/molecules/leaderboard-item/le
 export { BzmLevelProgressComponent } from './lib/molecules/level-progress/level-progress.component';
 export { BzmProgressBarComponent } from './lib/molecules/progress-bar/progress-bar.component';
 export { BzmTimerComponent } from './lib/molecules/timer/timer.component';
+export { BzmRoomCodeComponent } from './lib/molecules/room-code/room-code.component';
 
 // Organisms
 export { BzmProfileHeaderComponent } from './lib/organisms/profile-header/profile-header.component';
