@@ -25,7 +25,7 @@ New atoms in `libs/ui/src/lib/atoms/` — each with Storybook stories.
 Move existing app components + extract inline patterns into `libs/ui/src/lib/molecules/`.
 
 - [x] **BzmRoomCode** — 6-digit room code display with animated digits. Migrates from `apps/client/src/app/components/room-code/`.
-- [ ] **BzmPlayerList** — Player grid with avatars, optional scores, empty state. Migrates from `apps/client/src/app/components/player-list/`.
+- [x] **BzmPlayerList** — Player grid with avatars, optional scores, empty state. Migrates from `apps/client/src/app/components/player-list/`.
 - [ ] **BzmAnswerGrid** — 2x2 responsive grid of BzmAnswerOptions. Extracts from host-game, player-game, create-quiz (`.answers-grid`).
 - [ ] **BzmQuestionHeader** — Question text + timer in flex layout. Extracts from host-game and player-game (`.question-header`).
 - [ ] **BzmAnswerFeedback** — Correct/incorrect result card with score. Extracts from player-game (`.result-feedback`).
