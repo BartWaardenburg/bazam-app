@@ -29,6 +29,8 @@ export { BzmTimerComponent } from './lib/molecules/timer/timer.component';
 export { BzmRoomCodeComponent } from './lib/molecules/room-code/room-code.component';
 export { BzmPlayerListComponent } from './lib/molecules/player-list/player-list.component';
 export type { PlayerListItem } from './lib/molecules/player-list/player-list.component';
+export { BzmAnswerGridComponent } from './lib/molecules/answer-grid/answer-grid.component';
+export type { AnswerGridItem } from './lib/molecules/answer-grid/answer-grid.component';
 
 // Organisms
 export { BzmProfileHeaderComponent } from './lib/organisms/profile-header/profile-header.component';
