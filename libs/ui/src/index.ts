@@ -32,6 +32,7 @@ export type { PlayerListItem } from './lib/molecules/player-list/player-list.com
 export { BzmAnswerGridComponent } from './lib/molecules/answer-grid/answer-grid.component';
 export type { AnswerGridItem } from './lib/molecules/answer-grid/answer-grid.component';
 export { BzmQuestionHeaderComponent } from './lib/molecules/question-header/question-header.component';
+export { BzmAnswerFeedbackComponent } from './lib/molecules/answer-feedback/answer-feedback.component';
 
 // Organisms
 export { BzmProfileHeaderComponent } from './lib/organisms/profile-header/profile-header.component';
