@@ -35,6 +35,7 @@ export { BzmQuestionHeaderComponent } from './lib/molecules/question-header/ques
 export { BzmAnswerFeedbackComponent } from './lib/molecules/answer-feedback/answer-feedback.component';
 export { BzmScoreDisplayComponent } from './lib/molecules/score-display/score-display.component';
 export type { ScoreDisplaySize } from './lib/molecules/score-display/score-display.component';
+export { BzmWaitingStateComponent } from './lib/molecules/waiting-state/waiting-state.component';
 
 // Organisms
 export { BzmProfileHeaderComponent } from './lib/organisms/profile-header/profile-header.component';
