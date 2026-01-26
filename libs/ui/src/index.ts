@@ -33,6 +33,8 @@ export { BzmAnswerGridComponent } from './lib/molecules/answer-grid/answer-grid.
 export type { AnswerGridItem } from './lib/molecules/answer-grid/answer-grid.component';
 export { BzmQuestionHeaderComponent } from './lib/molecules/question-header/question-header.component';
 export { BzmAnswerFeedbackComponent } from './lib/molecules/answer-feedback/answer-feedback.component';
+export { BzmScoreDisplayComponent } from './lib/molecules/score-display/score-display.component';
+export type { ScoreDisplaySize } from './lib/molecules/score-display/score-display.component';
 
 // Organisms
 export { BzmProfileHeaderComponent } from './lib/organisms/profile-header/profile-header.component';
