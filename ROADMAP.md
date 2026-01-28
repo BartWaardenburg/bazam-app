@@ -31,7 +31,7 @@ Move existing app components + extract inline patterns into `libs/ui/src/lib/mol
 - [x] **BzmAnswerFeedback** — Correct/incorrect result card with score. Extracts from player-game (`.result-feedback`).
 - [x] **BzmScoreDisplay** — Large score/rank with label text. Extracts from player-game (`.total-score`) and player-results (`.rank`).
 - [x] **BzmWaitingState** — Spinner + message text combo. Extracts from player-lobby and player-game (`.waiting-spinner`).
-- [ ] **BzmActionBar** — Flex row of buttons, centered, wrapping. Extracts from home, host-results, create-quiz (`.actions`).
+- [x] **BzmActionBar** — Flex row of buttons, centered, wrapping. Extracts from home, host-results, create-quiz (`.actions`).
 
 ## Phase 3: Game Organisms
 
