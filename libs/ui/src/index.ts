@@ -48,3 +48,5 @@ export { BzmRankingListComponent } from './lib/organisms/ranking-list/ranking-li
 export { BzmCategoryFilterComponent } from './lib/organisms/category-filter/category-filter.component';
 export { BzmFriendRowComponent } from './lib/organisms/friend-row/friend-row.component';
 export { BzmQuizListComponent } from './lib/organisms/quiz-list/quiz-list.component';
+export { BzmLeaderboardComponent } from './lib/organisms/leaderboard/leaderboard.component';
+export type { LeaderboardPlayer } from './lib/organisms/leaderboard/leaderboard.component';

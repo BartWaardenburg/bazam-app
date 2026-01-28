@@ -1,0 +1,163 @@
+import { Component, ChangeDetectionStrategy, input, computed } from '@angular/core';
+import { BzmAvatarComponent } from '../../atoms/avatar/avatar.component';
+import { BzmLeaderboardItemComponent } from '../../molecules/leaderboard-item/leaderboard-item.component';
+
+export interface LeaderboardPlayer {
+  readonly id: string;
+  readonly nickname: string;
+  readonly score: number;
+  readonly rank: number;
+  readonly streak?: number;
+}
+
+const MEDAL_LABELS = ['1ST', '2ND', '3RD'] as const;
+
+@Component({
+  selector: 'bzm-leaderboard',
+  standalone: true,
+  imports: [BzmAvatarComponent, BzmLeaderboardItemComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    <div class="bzm-leaderboard" aria-label="Ranglijst">
+      @if (showPodium() && topThree().length > 0) {
+        <div class="bzm-leaderboard__podium">
+          @for (entry of topThree(); track entry.id; let i = $index) {
+            <div
+              class="bzm-leaderboard__podium-spot"
+              [class]="'place-' + (i + 1)"
+              [style.animation-delay]="(i * 0.2) + 's'"
+            >
+              <div class="bzm-leaderboard__medal">{{ medalLabel(i) }}</div>
+              <bzm-avatar [nickname]="entry.nickname" size="xl" [rankBadge]="i + 1" />
+              <span class="bzm-leaderboard__name">{{ entry.nickname }}</span>
+              <span class="bzm-leaderboard__score">{{ entry.score }} pts</span>
+            </div>
+          }
+        </div>
+      }
+
+      <div class="bzm-leaderboard__list" role="list" aria-label="Volledige ranglijst">
+        @for (entry of entries(); track entry.id; let i = $index) {
+          <bzm-leaderboard-item
+            role="listitem"
+            [style.animation-delay]="(i * 0.06) + 's'"
+            [rank]="entry.rank"
+            [nickname]="entry.nickname"
+            [streak]="entry.streak ?? 0"
+            [points]="entry.score"
+          />
+        }
+      </div>
+    </div>
+  `,
+  styles: `
+    :host {
+      display: block;
+      font-family: var(--bzm-font-family);
+    }
+
+    .bzm-leaderboard {
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .bzm-leaderboard__podium {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: var(--bzm-space-3);
+      margin-bottom: var(--bzm-space-8);
+      min-height: 200px;
+    }
+
+    .bzm-leaderboard__podium-spot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--bzm-space-1);
+      background: var(--bzm-color-surface);
+      padding: var(--bzm-space-5) var(--bzm-space-4);
+      border-radius: var(--bzm-radius-md);
+      border: 4px solid var(--bzm-color-border);
+      border-width: 3px 4px 5px 3px;
+      box-shadow: var(--bzm-shadow-card);
+      animation: bzm-podium-pop 0.5s var(--bzm-transition-playful) backwards;
+    }
+
+    .place-1 {
+      order: 2;
+      transform: scale(1.1);
+      border-color: var(--bzm-color-accent);
+    }
+
+    .place-2 { order: 1; }
+    .place-3 { order: 3; }
+
+    .bzm-leaderboard__medal {
+      font-size: var(--bzm-font-size-4xl);
+      filter: drop-shadow(2px 2px 0 var(--bzm-black));
+    }
+
+    .bzm-leaderboard__name {
+      font-weight: var(--bzm-font-weight-bold);
+      font-size: var(--bzm-font-size-sm);
+      color: var(--bzm-color-text);
+    }
+
+    .bzm-leaderboard__score {
+      font-family: var(--bzm-font-family);
+      font-size: var(--bzm-font-size-lg);
+      font-weight: var(--bzm-font-weight-extrabold);
+      color: var(--bzm-color-accent-dark);
+      text-shadow: 1px 1px 0 var(--bzm-black);
+      letter-spacing: 0.04em;
+    }
+
+    .bzm-leaderboard__list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--bzm-space-2);
+    }
+
+    @keyframes bzm-podium-pop {
+      from {
+        transform: scale(0) translateY(20px);
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .place-1 {
+      animation-name: bzm-podium-pop-first;
+    }
+
+    @keyframes bzm-podium-pop-first {
+      from {
+        transform: scale(0) translateY(20px);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1.1);
+        opacity: 1;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bzm-leaderboard__podium-spot {
+        animation: none;
+      }
+    }
+  `,
+})
+export class BzmLeaderboardComponent {
+  readonly entries = input.required<LeaderboardPlayer[]>();
+  readonly showPodium = input<boolean>(false);
+
+  protected readonly topThree = computed(() => this.entries().slice(0, 3));
+
+  protected medalLabel(index: number): string {
+    return MEDAL_LABELS[index] ?? '';
+  }
+}
