@@ -38,7 +38,7 @@ Move existing app components + extract inline patterns into `libs/ui/src/lib/mol
 Compose molecules into larger game-specific components in `libs/ui/src/lib/organisms/`.
 
 - [x] **BzmLeaderboard** — Podium top-3 + full ranking list with BzmLeaderboardItem. Migrates from `apps/client/src/app/components/leaderboard/`.
-- [ ] **BzmWinnerCard** — Winner display: label, name, score. Extracts from host-results (`.winner-card`).
+- [x] **BzmWinnerCard** — Winner display: label, name, score. Extracts from host-results (`.winner-card`).
 - [ ] **BzmCountdownView** — Full-width "Maak je klaar!" countdown state. Extracts from host-game and player-game (`.countdown`).
 - [ ] **BzmQuestionEditor** — Question text + answer inputs with radio + time slider. Extracts from create-quiz (`.question-card`).
 - [ ] **BzmHero** — Title with comic text-shadow + splat decorations + subtitle. Extracts from home (`.hero`, `.title-wrapper`).

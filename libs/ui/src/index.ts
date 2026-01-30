@@ -50,3 +50,4 @@ export { BzmFriendRowComponent } from './lib/organisms/friend-row/friend-row.com
 export { BzmQuizListComponent } from './lib/organisms/quiz-list/quiz-list.component';
 export { BzmLeaderboardComponent } from './lib/organisms/leaderboard/leaderboard.component';
 export type { LeaderboardPlayer } from './lib/organisms/leaderboard/leaderboard.component';
+export { BzmWinnerCardComponent } from './lib/organisms/winner-card/winner-card.component';
