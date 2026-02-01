@@ -52,3 +52,5 @@ export { BzmLeaderboardComponent } from './lib/organisms/leaderboard/leaderboard
 export type { LeaderboardPlayer } from './lib/organisms/leaderboard/leaderboard.component';
 export { BzmWinnerCardComponent } from './lib/organisms/winner-card/winner-card.component';
 export { BzmCountdownViewComponent } from './lib/organisms/countdown-view/countdown-view.component';
+export { BzmQuestionEditorComponent } from './lib/organisms/question-editor/question-editor.component';
+export type { QuestionEditorData } from './lib/organisms/question-editor/question-editor.component';
