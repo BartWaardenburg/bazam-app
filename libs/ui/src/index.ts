@@ -55,3 +55,4 @@ export { BzmCountdownViewComponent } from './lib/organisms/countdown-view/countd
 export { BzmQuestionEditorComponent } from './lib/organisms/question-editor/question-editor.component';
 export type { QuestionEditorData } from './lib/organisms/question-editor/question-editor.component';
 export { BzmHeroComponent } from './lib/organisms/hero/hero.component';
+export { BzmComicBackgroundComponent } from './lib/organisms/comic-background/comic-background.component';
