@@ -41,7 +41,7 @@ Compose molecules into larger game-specific components in `libs/ui/src/lib/organ
 - [x] **BzmWinnerCard** — Winner display: label, name, score. Extracts from host-results (`.winner-card`).
 - [x] **BzmCountdownView** — Full-width "Maak je klaar!" countdown state. Extracts from host-game and player-game (`.countdown`).
 - [x] **BzmQuestionEditor** — Question text + answer inputs with radio + time slider. Extracts from create-quiz (`.question-card`).
-- [ ] **BzmHero** — Title with comic text-shadow + splat decorations + subtitle. Extracts from home (`.hero`, `.title-wrapper`).
+- [x] **BzmHero** — Title with comic text-shadow + splat decorations + subtitle. Extracts from home (`.hero`, `.title-wrapper`).
 - [ ] **BzmComicBackground** — Animated halftone/starburst/speed-line background decorations. Extracts from app.ts (`.bg-comic`).
 
 ## Phase 4: Page Refactoring

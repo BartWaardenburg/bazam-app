@@ -54,3 +54,4 @@ export { BzmWinnerCardComponent } from './lib/organisms/winner-card/winner-card.
 export { BzmCountdownViewComponent } from './lib/organisms/countdown-view/countdown-view.component';
 export { BzmQuestionEditorComponent } from './lib/organisms/question-editor/question-editor.component';
 export type { QuestionEditorData } from './lib/organisms/question-editor/question-editor.component';
+export { BzmHeroComponent } from './lib/organisms/hero/hero.component';
