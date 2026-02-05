@@ -48,7 +48,7 @@ Compose molecules into larger game-specific components in `libs/ui/src/lib/organ
 
 Replace all inline UI in the 9 page components with `@bazam/ui` imports. After this phase, page components should be **thin containers** with only layout orchestration and service wiring — zero custom CSS for visual elements.
 
-- [ ] **Home** → BzmHero, BzmActionBar, BzmButton
+- [x] **Home** → BzmHero, BzmActionBar, BzmButton
 - [ ] **Create Quiz** → BzmPageTitle, BzmCard, BzmQuestionEditor, BzmErrorMessage, BzmActionBar, BzmButton
 - [ ] **Host Lobby** → BzmPageTitle, BzmCard, BzmRoomCode, BzmPlayerList, BzmButton
 - [ ] **Host Game** → BzmCountdownView, BzmProgressBar, BzmQuestionHeader, BzmAnswerGrid, BzmCard, BzmLeaderboard, BzmButton
