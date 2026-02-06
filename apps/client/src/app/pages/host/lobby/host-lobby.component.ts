@@ -1,37 +1,41 @@
 import { Component, inject } from '@angular/core';
-import { BzmButtonComponent } from '@bazam/ui';
+import {
+  BzmButtonComponent,
+  BzmPageTitleComponent,
+  BzmCardComponent,
+  BzmRoomCodeComponent,
+  BzmPlayerListComponent,
+} from '@bazam/ui';
 import { GameStateService } from '../../../services/game-state.service';
 import { WebSocketService } from '../../../services/websocket.service';
-import { RoomCodeComponent } from '../../../components/room-code/room-code.component';
-import { PlayerListComponent } from '../../../components/player-list/player-list.component';
 
 @Component({
   selector: 'app-host-lobby',
-  imports: [RoomCodeComponent, PlayerListComponent, BzmButtonComponent],
+  imports: [BzmButtonComponent, BzmPageTitleComponent, BzmCardComponent, BzmRoomCodeComponent, BzmPlayerListComponent],
   template: `
     <div class="lobby">
-      <h2 class="animate-in">Wachtkamer</h2>
+      <bzm-page-title>Wachtkamer</bzm-page-title>
 
-      <div class="code-section card animate-in" style="animation-delay: 0.05s">
+      <bzm-card borderColor="var(--bzm-color-primary)">
         <p class="share-text">Deel deze code met je spelers:</p>
-        <app-room-code [code]="gameState.roomCode() ?? '----'" />
-      </div>
+        <bzm-room-code [code]="gameState.roomCode() ?? '----'" />
+      </bzm-card>
 
-      <div class="player-section card animate-in" style="animation-delay: 0.1s" aria-live="polite">
-        <h3>Spelers ({{ gameState.players().length }})</h3>
-        <app-player-list [players]="gameState.players()" />
-      </div>
+      <bzm-card>
+        <div class="player-section" aria-live="polite">
+          <bzm-page-title size="sm" color="var(--bzm-color-answer-a)">Spelers ({{ gameState.players().length }})</bzm-page-title>
+          <bzm-player-list [players]="gameState.players()" />
+        </div>
+      </bzm-card>
 
-      <div class="animate-in" style="animation-delay: 0.15s">
-        <bzm-button
-          variant="primary"
-          size="lg"
-          [disabled]="gameState.players().length === 0"
-          (click)="startGame()"
-        >
-          Start Quiz!
-        </bzm-button>
-      </div>
+      <bzm-button
+        variant="primary"
+        size="lg"
+        [disabled]="gameState.players().length === 0"
+        (click)="startGame()"
+      >
+        Start Quiz!
+      </bzm-button>
     </div>
   `,
   styles: `
@@ -43,37 +47,19 @@ import { PlayerListComponent } from '../../../components/player-list/player-list
       padding: 2rem;
       width: 100%;
       max-width: 600px;
-
-      & h2 {
-        color: var(--color-primary);
-        text-shadow: 2px 2px 0 #000;
-      }
-    }
-
-    .code-section {
-      width: 100%;
-      text-align: center;
-      border-color: var(--color-primary);
-      background: var(--color-surface);
     }
 
     .share-text {
+      font-family: var(--bzm-font-family);
       font-weight: 600;
-      color: var(--color-text-muted);
-      margin-bottom: 1rem;
+      color: var(--bzm-color-text-muted);
+      margin: 0 0 1rem;
+      text-align: center;
     }
 
     .player-section {
-      width: 100%;
       text-align: center;
-
-      & h3 {
-        margin-bottom: 1rem;
-        color: var(--color-cyan);
-        text-shadow: 2px 2px 0 #000;
-      }
     }
-
   `,
 })
 export class HostLobbyComponent {

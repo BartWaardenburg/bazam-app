@@ -50,7 +50,7 @@ Replace all inline UI in the 9 page components with `@bazam/ui` imports. After t
 
 - [x] **Home** → BzmHero, BzmActionBar, BzmButton
 - [x] **Create Quiz** → BzmPageTitle, BzmCard, BzmQuestionEditor, BzmErrorMessage, BzmActionBar, BzmButton
-- [ ] **Host Lobby** → BzmPageTitle, BzmCard, BzmRoomCode, BzmPlayerList, BzmButton
+- [x] **Host Lobby** → BzmPageTitle, BzmCard, BzmRoomCode, BzmPlayerList, BzmButton
 - [ ] **Host Game** → BzmCountdownView, BzmProgressBar, BzmQuestionHeader, BzmAnswerGrid, BzmCard, BzmLeaderboard, BzmButton
 - [ ] **Host Results** → BzmPageTitle, BzmWinnerCard, BzmLeaderboard, BzmActionBar, BzmButton
 - [ ] **Player Join** → BzmPageTitle, BzmCard, BzmPinInput, BzmInput, BzmErrorMessage, BzmButton
