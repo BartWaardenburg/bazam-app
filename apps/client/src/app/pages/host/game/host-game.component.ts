@@ -1,22 +1,35 @@
 import { Component, inject } from '@angular/core';
 import { GameStateService } from '../../../services/game-state.service';
 import { WebSocketService } from '../../../services/websocket.service';
-import { LeaderboardComponent } from '../../../components/leaderboard/leaderboard.component';
-import { BzmAnswerOptionComponent, BzmButtonComponent, BzmProgressBarComponent, BzmTimerComponent } from '@bazam/ui';
-import type { AnswerLetter } from '@bazam/ui';
-
-const ANSWER_LETTERS: AnswerLetter[] = ['A', 'B', 'C', 'D'];
+import {
+  BzmButtonComponent,
+  BzmProgressBarComponent,
+  BzmCountdownViewComponent,
+  BzmQuestionHeaderComponent,
+  BzmAnswerGridComponent,
+  BzmCardComponent,
+  BzmLeaderboardComponent,
+  BzmPageTitleComponent,
+  type AnswerGridItem,
+} from '@bazam/ui';
 
 @Component({
   selector: 'app-host-game',
-  imports: [LeaderboardComponent, BzmAnswerOptionComponent, BzmButtonComponent, BzmProgressBarComponent, BzmTimerComponent],
+  imports: [
+    BzmButtonComponent,
+    BzmProgressBarComponent,
+    BzmCountdownViewComponent,
+    BzmQuestionHeaderComponent,
+    BzmAnswerGridComponent,
+    BzmCardComponent,
+    BzmLeaderboardComponent,
+    BzmPageTitleComponent,
+  ],
   template: `
     <div class="host-game">
       @switch (gameState.gamePhase()) {
         @case ('countdown') {
-          <div class="countdown animate-scale">
-            <h2>Maak je klaar!</h2>
-          </div>
+          <bzm-countdown-view />
         }
 
         @case ('question') {
@@ -26,36 +39,26 @@ const ANSWER_LETTERS: AnswerLetter[] = ['A', 'B', 'C', 'D'];
                 [current]="gameState.questionIndex()"
                 [total]="gameState.totalQuestions()"
               />
-
-              <div class="question-header">
-                <h2 class="question-text animate-in">{{ q.text }}</h2>
-                <bzm-timer
-                  [duration]="gameState.timeLimit()"
-                  [running]="true"
-                />
-              </div>
-
-              <div class="answers-grid">
-                @for (answer of q.answers; track $index) {
-                  <bzm-answer-option
-                    [letter]="answerLetter($index)"
-                    [text]="answer"
-                    [disabled]="true"
-                  />
-                }
-              </div>
-
-              <div class="answer-stats card">
-                <span>{{ gameState.answeredCount() }} / {{ gameState.players().length }} beantwoord</span>
-              </div>
+              <bzm-question-header
+                [questionText]="q.text"
+                [timerDuration]="gameState.timeLimit()"
+                [timerRunning]="true"
+              />
+              <bzm-answer-grid
+                [answers]="toAnswerGridItems(q.answers)"
+                [disabled]="true"
+              />
+              <bzm-card borderColor="var(--bzm-color-accent)">
+                <p class="answer-stats">{{ gameState.answeredCount() }} / {{ gameState.players().length }} beantwoord</p>
+              </bzm-card>
             </div>
           }
         }
 
         @case ('leaderboard') {
-          <div class="leaderboard-view animate-in">
-            <h2>Tussenstand</h2>
-            <app-leaderboard [entries]="gameState.sortedLeaderboard()" />
+          <div class="leaderboard-view">
+            <bzm-page-title color="var(--bzm-color-accent)">Tussenstand</bzm-page-title>
+            <bzm-leaderboard [entries]="gameState.sortedLeaderboard()" />
             <bzm-button variant="primary" size="lg" (click)="nextQuestion()">
               {{ gameState.isLastQuestion() ? 'Resultaten' : 'Volgende vraag' }}
             </bzm-button>
@@ -75,20 +78,6 @@ const ANSWER_LETTERS: AnswerLetter[] = ['A', 'B', 'C', 'D'];
       max-width: 800px;
     }
 
-    .countdown {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-
-      & h2 {
-        font-size: 2.5rem;
-        color: var(--color-accent);
-        text-shadow: 3px 3px 0 #000;
-      }
-    }
-
     .question-view {
       width: 100%;
       display: flex;
@@ -96,45 +85,12 @@ const ANSWER_LETTERS: AnswerLetter[] = ['A', 'B', 'C', 'D'];
       gap: 1.5rem;
     }
 
-    .question-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1.5rem;
-    }
-
-    .question-text {
-      flex: 1;
-      font-size: clamp(1.1rem, 3.5vw, 1.6rem);
-      line-height: 1.3;
-      color: var(--color-text);
-      text-shadow: 2px 2px 0 #000;
-      text-transform: none;
-      word-break: break-word;
-    }
-
-    .answers-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-    }
-
-    @media (max-width: 500px) {
-      .answers-grid { grid-template-columns: 1fr; }
-      .question-header { flex-direction: column; align-items: flex-start; }
-    }
-
     .answer-stats {
       text-align: center;
+      font-family: var(--bzm-font-family);
       font-weight: 700;
-      color: var(--color-text-muted);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      padding: 1rem;
-      border-color: var(--color-accent);
-      background: var(--color-surface);
+      color: var(--bzm-color-text-muted);
+      margin: 0;
     }
 
     .leaderboard-view {
@@ -143,12 +99,6 @@ const ANSWER_LETTERS: AnswerLetter[] = ['A', 'B', 'C', 'D'];
       align-items: center;
       gap: 2rem;
       width: 100%;
-
-      & h2 {
-        color: var(--color-accent);
-        font-size: 2rem;
-        text-shadow: 3px 3px 0 #000;
-      }
     }
   `,
 })
@@ -156,8 +106,8 @@ export class HostGameComponent {
   readonly gameState = inject(GameStateService);
   private readonly wsService = inject(WebSocketService);
 
-  answerLetter(index: number): AnswerLetter {
-    return ANSWER_LETTERS[index];
+  toAnswerGridItems(answers: string[]): AnswerGridItem[] {
+    return answers.map((text) => ({ text }));
   }
 
   nextQuestion(): void {
