@@ -45,6 +45,7 @@ const MEDAL_LABELS = ['1ST', '2ND', '3RD'] as const;
             [nickname]="entry.nickname"
             [streak]="entry.streak ?? 0"
             [points]="entry.score"
+            [isCurrentUser]="entry.nickname === highlightNickname()"
           />
         }
       </div>
@@ -154,6 +155,7 @@ const MEDAL_LABELS = ['1ST', '2ND', '3RD'] as const;
 export class BzmLeaderboardComponent {
   readonly entries = input.required<LeaderboardPlayer[]>();
   readonly showPodium = input<boolean>(false);
+  readonly highlightNickname = input<string | undefined>(undefined);
 
   protected readonly topThree = computed(() => this.entries().slice(0, 3));
 
