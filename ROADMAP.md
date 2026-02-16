@@ -57,7 +57,7 @@ Replace all inline UI in the 9 page components with `@bazam/ui` imports. After t
 - [x] **Player Lobby** → BzmPageTitle, BzmWaitingState, BzmCard, BzmPlayerList
 - [x] **Player Game** → BzmCountdownView, BzmProgressBar, BzmQuestionHeader, BzmAnswerGrid, BzmAnswerFeedback, BzmScoreDisplay, BzmWaitingState
 - [x] **Player Results** → BzmCard, BzmScoreDisplay, BzmLeaderboard, BzmButton
-- [ ] **App Shell** → BzmComicBackground
+- [x] **App Shell** → BzmComicBackground
 
 ## Phase 5: Cleanup
 
