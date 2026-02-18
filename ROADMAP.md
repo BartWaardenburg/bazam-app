@@ -62,7 +62,7 @@ Replace all inline UI in the 9 page components with `@bazam/ui` imports. After t
 ## Phase 5: Cleanup
 
 - [x] Delete `apps/client/src/app/components/` (moved to `@bazam/ui`)
-- [ ] Delete `apps/client/src/web-components/` (replaced by BzmTimer, BzmProgressBar, BzmAvatar)
+- [x] Delete `apps/client/src/web-components/` (replaced by BzmTimer, BzmProgressBar, BzmAvatar)
 - [ ] Move `animate-in`, `animate-scale` utility classes into UI components
 - [ ] Audit `styles.css` for dead CSS (`.card` class, etc.)
 
