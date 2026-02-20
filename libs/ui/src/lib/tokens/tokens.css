@@ -81,6 +81,7 @@
 
   /* ─── Typography ─── */
   --bzm-font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+  --bzm-font-heading: 'Bangers', 'Impact', system-ui, sans-serif;
 
   --bzm-font-size-xs: 0.75rem;
   --bzm-font-size-sm: 0.875rem;
