@@ -15,7 +15,7 @@ import { WebSocketService } from '../../../services/websocket.service';
   imports: [BzmButtonComponent, BzmPageTitleComponent, BzmWinnerCardComponent, BzmLeaderboardComponent, BzmActionBarComponent],
   template: `
     <div class="results">
-      <bzm-page-title color="var(--bzm-color-accent)">Eindstand!</bzm-page-title>
+      <bzm-page-title size="lg" color="var(--bzm-color-accent)">Eindstand!</bzm-page-title>
 
       @if (gameState.sortedLeaderboard().length > 0) {
         <bzm-winner-card

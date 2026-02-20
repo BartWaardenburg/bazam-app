@@ -14,7 +14,7 @@ import { WebSocketService } from '../../../services/websocket.service';
   imports: [BzmButtonComponent, BzmPageTitleComponent, BzmCardComponent, BzmRoomCodeComponent, BzmPlayerListComponent],
   template: `
     <div class="lobby">
-      <bzm-page-title>Wachtkamer</bzm-page-title>
+      <bzm-page-title size="lg">Wachtkamer</bzm-page-title>
 
       <bzm-card borderColor="var(--bzm-color-primary)">
         <p class="share-text">Deel deze code met je spelers:</p>
@@ -23,7 +23,7 @@ import { WebSocketService } from '../../../services/websocket.service';
 
       <bzm-card>
         <div class="player-section" aria-live="polite">
-          <bzm-page-title size="sm" color="var(--bzm-color-answer-a)">Spelers ({{ gameState.players().length }})</bzm-page-title>
+          <bzm-page-title size="md" color="var(--bzm-color-answer-a)">Spelers ({{ gameState.players().length }})</bzm-page-title>
           <bzm-player-list [players]="gameState.players()" />
         </div>
       </bzm-card>

@@ -15,7 +15,7 @@ import { WebSocketService } from '../../../services/websocket.service';
   imports: [BzmButtonComponent, BzmPageTitleComponent, BzmCardComponent, BzmPinInputComponent, BzmInputComponent, BzmErrorMessageComponent],
   template: `
     <div class="join-game">
-      <bzm-page-title>Meedoen!</bzm-page-title>
+      <bzm-page-title size="lg">Meedoen!</bzm-page-title>
 
       <bzm-card>
         <div class="form">

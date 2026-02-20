@@ -64,7 +64,7 @@ const SAMPLE_QUESTIONS: QuestionInput[] = [
   ],
   template: `
     <div class="create-quiz">
-      <bzm-page-title color="var(--bzm-color-primary)">Quiz aanmaken</bzm-page-title>
+      <bzm-page-title size="lg" color="var(--bzm-color-primary)">Quiz aanmaken</bzm-page-title>
 
       <bzm-card borderColor="var(--bzm-color-accent)">
         <div class="quick-start">

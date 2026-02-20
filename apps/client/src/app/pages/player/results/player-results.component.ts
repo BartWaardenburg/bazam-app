@@ -23,7 +23,7 @@ import { WebSocketService } from '../../../services/websocket.service';
     <div class="player-results">
       <bzm-card>
         <div class="result-header">
-          <bzm-page-title color="var(--bzm-color-primary)">Einde!</bzm-page-title>
+          <bzm-page-title size="lg" color="var(--bzm-color-primary)">Einde!</bzm-page-title>
           <bzm-score-display
             [value]="'#' + playerRank()"
             label="Jouw plek"

@@ -32,23 +32,23 @@ export type PageTitleSize = 'sm' | 'md' | 'lg' | 'xl';
 
     /* ── Sizes ── */
     .size-sm {
-      font-size: var(--bzm-font-size-xl);
+      font-size: clamp(1.25rem, 3vw, 1.75rem);
       text-shadow: 2px 2px 0 var(--bzm-black);
       -webkit-text-stroke: 1px var(--bzm-black);
     }
 
     .size-md {
-      font-size: var(--bzm-font-size-2xl);
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
       text-shadow: 3px 3px 0 var(--bzm-black);
     }
 
     .size-lg {
-      font-size: var(--bzm-font-size-3xl);
+      font-size: clamp(2rem, 6vw, 3rem);
       text-shadow: 3px 3px 0 var(--bzm-black);
     }
 
     .size-xl {
-      font-size: var(--bzm-font-size-4xl);
+      font-size: clamp(2.5rem, 8vw, 4rem);
       text-shadow: 4px 4px 0 var(--bzm-black);
       -webkit-text-stroke: 2px var(--bzm-black);
     }
