@@ -270,22 +270,25 @@ const ANSWER_COLORS: Record<number, { bg: string; border: string; badge: string;
 
     .bzm-qe__check {
       position: absolute;
-      top: -8px;
-      right: -8px;
+      top: -6px;
+      right: -6px;
       min-width: 20px;
-      height: 20px;
-      padding: 0 4px;
-      border-radius: var(--bzm-radius-full);
-      background: var(--bzm-color-success);
+      height: auto;
+      padding: 0 var(--bzm-space-1);
+      border-radius: 3px;
+      background-color: var(--bzm-color-success);
       color: var(--bzm-white);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.7rem;
-      font-weight: var(--bzm-font-weight-bold);
-      border: 2px solid var(--bzm-white);
+      font-size: 10px;
+      font-weight: var(--bzm-font-weight-extrabold);
+      font-family: var(--bzm-font-family);
+      line-height: 16px;
+      border: 2px solid var(--bzm-black);
+      border-width: 1.5px 2px 2px 1.5px;
       pointer-events: none;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+      box-shadow: var(--bzm-shadow-sm);
     }
 
     /* ── Timer ── */
