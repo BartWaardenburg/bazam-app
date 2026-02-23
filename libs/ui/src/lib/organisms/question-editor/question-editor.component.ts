@@ -156,7 +156,7 @@ const ANSWER_COLORS: Record<number, { bg: string; border: string; badge: string;
     }
 
     .bzm-qe__question-input:focus {
-      border-color: var(--bzm-color-primary);
+      border-color: var(--bzm-color-answer-a);
       box-shadow: var(--bzm-shadow-card);
     }
 
@@ -219,7 +219,6 @@ const ANSWER_COLORS: Record<number, { bg: string; border: string; badge: string;
     .bzm-qe__answer--selected {
       background: color-mix(in srgb, var(--answer-color) 12%, var(--bzm-color-surface));
       box-shadow: var(--bzm-shadow-card);
-      border-width: 4px;
     }
 
     .bzm-qe__radio {
@@ -270,18 +269,23 @@ const ANSWER_COLORS: Record<number, { bg: string; border: string; badge: string;
     }
 
     .bzm-qe__check {
-      width: 28px;
-      height: 28px;
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 4px;
       border-radius: var(--bzm-radius-full);
       background: var(--bzm-color-success);
       color: var(--bzm-white);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.9rem;
+      font-size: 0.7rem;
       font-weight: var(--bzm-font-weight-bold);
-      flex-shrink: 0;
-      border: 2px solid var(--bzm-black);
+      border: 2px solid var(--bzm-white);
+      pointer-events: none;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     }
 
     /* ── Timer ── */

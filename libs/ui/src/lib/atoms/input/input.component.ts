@@ -67,7 +67,7 @@ export type InputSize = 'sm' | 'md' | 'lg';
     }
 
     input:focus {
-      border-color: var(--bzm-color-primary);
+      border-color: var(--bzm-color-answer-a);
       box-shadow: var(--bzm-shadow-sm);
     }
 
