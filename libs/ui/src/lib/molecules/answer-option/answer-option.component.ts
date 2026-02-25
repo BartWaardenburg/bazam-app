@@ -87,8 +87,8 @@ export type AnswerLetter = 'A' | 'B' | 'C' | 'D';
     }
 
     .bzm-answer-option:disabled {
-      opacity: 0.6;
       cursor: not-allowed;
+      filter: grayscale(0.5);
     }
 
     .bzm-answer-option__letter {

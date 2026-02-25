@@ -61,8 +61,9 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
     }
 
     button:disabled {
-      opacity: 0.7;
       cursor: not-allowed;
+      filter: grayscale(0.6);
+      color: var(--bzm-color-text-muted);
     }
 
     /* ── Sizes ── */

@@ -88,8 +88,10 @@ import {
     }
 
     .bzm-pin-input__digit:disabled {
-      opacity: 0.6;
       cursor: not-allowed;
+      background: var(--bzm-gray-100);
+      color: var(--bzm-color-text-muted);
+      border-color: var(--bzm-gray-300);
     }
 
     @media (prefers-reduced-motion: reduce) {

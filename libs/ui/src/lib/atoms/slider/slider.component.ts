@@ -169,7 +169,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
     /* ── Disabled ── */
     .slider-disabled {
-      opacity: 0.5;
+      filter: grayscale(0.6);
     }
 
     .slider-disabled input[type="range"] {
