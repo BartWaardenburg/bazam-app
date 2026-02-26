@@ -252,15 +252,21 @@ const ANSWER_COLORS: Record<number, { bg: string; border: string; badge: string;
 
     .bzm-qe__answer-input {
       flex: 1;
-      border: none;
-      background: transparent;
-      padding: var(--bzm-space-2) 0;
+      border: 2px solid var(--bzm-gray-200);
+      border-radius: var(--bzm-radius-sm);
+      background: var(--bzm-white);
+      padding: var(--bzm-space-2) var(--bzm-space-3);
       font-family: var(--bzm-font-family);
       font-weight: var(--bzm-font-weight-semibold);
       font-size: clamp(0.95rem, 2vw, 1.1rem);
       color: var(--bzm-color-text);
       outline: none;
       min-width: 0;
+      transition: border-color var(--bzm-transition-base);
+    }
+
+    .bzm-qe__answer-input:focus {
+      border-color: var(--answer-color);
     }
 
     .bzm-qe__answer-input::placeholder {
