@@ -252,7 +252,7 @@ const ANSWER_COLORS: Record<number, { bg: string; border: string; badge: string;
 
     .bzm-qe__answer-input {
       flex: 1;
-      border: 2px solid var(--bzm-gray-200);
+      border: 2px dashed var(--bzm-gray-300);
       border-radius: var(--bzm-radius-sm);
       background: var(--bzm-white);
       padding: var(--bzm-space-2) var(--bzm-space-3);
