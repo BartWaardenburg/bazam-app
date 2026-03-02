@@ -187,6 +187,7 @@ const ANSWER_COLORS: Record<number, { bg: string; border: string; badge: string;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: var(--bzm-space-3);
+      overflow: hidden;
     }
 
     @media (max-width: 480px) {
@@ -198,13 +199,15 @@ const ANSWER_COLORS: Record<number, { bg: string; border: string; badge: string;
       flex-direction: row;
       align-items: center;
       gap: var(--bzm-space-3);
-      padding: var(--bzm-space-4);
+      padding: var(--bzm-space-3);
       border-radius: var(--bzm-radius-md);
       border: 3px solid var(--answer-color);
       border-width: 3px 4px 4px 3px;
       background: var(--bzm-color-surface);
       cursor: pointer;
       position: relative;
+      min-width: 0;
+      box-sizing: border-box;
       transition:
         transform var(--bzm-transition-playful),
         box-shadow var(--bzm-transition-base),
@@ -262,6 +265,8 @@ const ANSWER_COLORS: Record<number, { bg: string; border: string; badge: string;
       color: var(--bzm-color-text);
       outline: none;
       min-width: 0;
+      width: 0;
+      box-sizing: border-box;
       transition: border-color var(--bzm-transition-base);
     }
 

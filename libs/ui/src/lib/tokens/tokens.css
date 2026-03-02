@@ -50,17 +50,17 @@
   --bzm-color-primary: #FF3B30;
   --bzm-color-primary-dark: #CC2D25;
   --bzm-color-primary-light: #FF6B63;
-  --bzm-color-primary-bg: rgba(255, 59, 48, 0.12);
-  --bzm-color-primary-surface: rgba(255, 59, 48, 0.06);
+  --bzm-color-primary-bg: #F8DCD9;
+  --bzm-color-primary-surface: #FEF0EF;
 
   --bzm-color-accent: #FFD60A;
   --bzm-color-accent-dark: #E6C009;
   --bzm-color-accent-light: #FFE566;
 
   --bzm-color-success: #34C759;
-  --bzm-color-success-bg: rgba(52, 199, 89, 0.12);
+  --bzm-color-success-bg: #D6F2DE;
   --bzm-color-error: #FF3B30;
-  --bzm-color-error-bg: rgba(255, 59, 48, 0.12);
+  --bzm-color-error-bg: #F8DCD9;
 
   --bzm-color-bg: #F5F0E8;
   --bzm-color-surface: #FFFFFF;

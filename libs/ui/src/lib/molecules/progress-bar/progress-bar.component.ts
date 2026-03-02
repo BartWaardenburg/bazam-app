@@ -35,6 +35,9 @@ import { Component, ChangeDetectionStrategy, computed, input } from '@angular/co
       background: var(--bzm-gray-200);
       transition: background 0.4s ease,
                   transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      border: 3px solid var(--bzm-black);
+      border-width: 2px 3px 3px 2px;
+
     }
 
     .bzm-progress-bar__segment--completed {
