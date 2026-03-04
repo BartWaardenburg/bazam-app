@@ -187,7 +187,6 @@ const ANSWER_COLORS: Record<number, { bg: string; border: string; badge: string;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: var(--bzm-space-3);
-      overflow: hidden;
     }
 
     @media (max-width: 480px) {
@@ -207,7 +206,6 @@ const ANSWER_COLORS: Record<number, { bg: string; border: string; badge: string;
       cursor: pointer;
       position: relative;
       min-width: 0;
-      box-sizing: border-box;
       transition:
         transform var(--bzm-transition-playful),
         box-shadow var(--bzm-transition-base),
@@ -265,8 +263,6 @@ const ANSWER_COLORS: Record<number, { bg: string; border: string; badge: string;
       color: var(--bzm-color-text);
       outline: none;
       min-width: 0;
-      width: 0;
-      box-sizing: border-box;
       transition: border-color var(--bzm-transition-base);
     }
 

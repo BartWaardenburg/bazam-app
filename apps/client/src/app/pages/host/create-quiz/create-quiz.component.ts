@@ -108,7 +108,7 @@ const SAMPLE_QUESTIONS: QuestionInput[] = [
     .create-quiz {
       width: 100%;
       max-width: 700px;
-      padding: 1rem;
+      padding: 1rem 1.5rem;
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
