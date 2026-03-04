@@ -8,13 +8,22 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <button
-      [class]="buttonClasses()"
-      [disabled]="disabled()"
-      [style.width]="fullWidth() ? '100%' : 'auto'"
-    >
-      <ng-content />
-    </button>
+    <div class="bzm-btn-wrap" [class.bzm-btn-wrap--full]="fullWidth()">
+      <button
+        [class]="buttonClasses()"
+        [disabled]="disabled()"
+        [style.width]="fullWidth() ? '100%' : 'auto'"
+      >
+        <ng-content />
+      </button>
+      @if (disabled()) {
+        <span class="bzm-btn-badge" aria-hidden="true">
+          <svg viewBox="0 0 16 16" fill="currentColor" width="10" height="10">
+            <path d="M11.5 6V4.5a3.5 3.5 0 1 0-7 0V6H3v7.5A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5V6h-1.5zm-5.5-.5V6h4V4.5a2 2 0 1 0-4 0z"/>
+          </svg>
+        </span>
+      }
+    </div>
   `,
   styles: `
     :host {
@@ -23,6 +32,16 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
     }
 
     :host([fullWidth]) {
+      display: block;
+      width: 100%;
+    }
+
+    .bzm-btn-wrap {
+      position: relative;
+      display: inline-block;
+    }
+
+    .bzm-btn-wrap--full {
       display: block;
       width: 100%;
     }
@@ -48,7 +67,6 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
       white-space: nowrap;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
-
     }
 
     button:hover:not(:disabled) {
@@ -64,6 +82,25 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
       cursor: not-allowed;
       filter: grayscale(0.6);
       color: var(--bzm-color-text-muted);
+    }
+
+    /* ── Disabled badge ── */
+    .bzm-btn-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 24px;
+      height: 24px;
+      border-radius: 3px;
+      background-color: var(--bzm-color-text-muted);
+      color: var(--bzm-white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--bzm-black);
+      border-width: 1.5px 2px 2px 1.5px;
+      box-shadow: var(--bzm-shadow-sm);
+      pointer-events: none;
     }
 
     /* ── Sizes ── */
