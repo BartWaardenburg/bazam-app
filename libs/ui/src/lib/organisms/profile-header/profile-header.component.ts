@@ -14,9 +14,7 @@ import { BzmAvatarComponent } from '../../atoms/avatar/avatar.component';
         aria-label="Close profile"
         (click)="closeClick.emit()"
       >
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-          <path d="M14 4L4 14M4 4l10 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-        </svg>
+<i class="ph-duotone ph-x" aria-hidden="true" style="font-size: 18px;"></i>
       </button>
 
       <div class="profile-content">

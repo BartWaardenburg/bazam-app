@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, signal } from '@angular/core';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'accent' | 'ghost';
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -8,7 +8,13 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="bzm-btn-wrap" [class.bzm-btn-wrap--full]="fullWidth()">
+    <div
+      class="bzm-btn-wrap"
+      [class.bzm-btn-wrap--full]="fullWidth()"
+      [class.bzm-btn-wrap--disabled]="disabled()"
+      [class.bzm-btn-shake]="shaking()"
+      (click)="onWrapClick()"
+    >
       <button
         [class]="buttonClasses()"
         [disabled]="disabled()"
@@ -18,9 +24,7 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
       </button>
       @if (disabled()) {
         <span class="bzm-btn-badge" aria-hidden="true">
-          <svg viewBox="0 0 16 16" fill="currentColor" width="10" height="10">
-            <path d="M11.5 6V4.5a3.5 3.5 0 1 0-7 0V6H3v7.5A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5V6h-1.5zm-5.5-.5V6h4V4.5a2 2 0 1 0-4 0z"/>
-          </svg>
+          <i class="ph-duotone ph-lock"></i>
         </span>
       }
     </div>
@@ -44,6 +48,10 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
     .bzm-btn-wrap--full {
       display: block;
       width: 100%;
+    }
+
+    .bzm-btn-wrap--disabled {
+      cursor: not-allowed;
     }
 
     button {
@@ -80,27 +88,50 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
 
     button:disabled {
       cursor: not-allowed;
-      filter: grayscale(0.6);
-      color: var(--bzm-color-text-muted);
+      opacity: 0.7;
+      filter: grayscale(0.4) saturate(0.6);
+      pointer-events: none;
+    }
+
+    /* ── Shake animation for disabled click ── */
+    @keyframes bzm-shake {
+      0%, 100% { transform: translateX(0); }
+      15% { transform: translateX(-6px) rotate(-2deg); }
+      30% { transform: translateX(5px) rotate(1.5deg); }
+      45% { transform: translateX(-4px) rotate(-1deg); }
+      60% { transform: translateX(3px) rotate(0.5deg); }
+      75% { transform: translateX(-2px); }
+      90% { transform: translateX(1px); }
+    }
+
+    .bzm-btn-shake {
+      animation: bzm-shake 0.4s ease-in-out;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bzm-btn-shake {
+        animation: none;
+      }
     }
 
     /* ── Disabled badge ── */
     .bzm-btn-badge {
       position: absolute;
-      top: -8px;
-      right: -8px;
-      width: 24px;
-      height: 24px;
-      border-radius: 3px;
-      background-color: var(--bzm-color-text-muted);
+      top: -12px;
+      right: -12px;
+      width: 36px;
+      height: 36px;
+      border-radius: 4px;
+      background-color: var(--bzm-black);
       color: var(--bzm-white);
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 2px solid var(--bzm-black);
-      border-width: 1.5px 2px 2px 1.5px;
+      border: 3px solid var(--bzm-black);
+      border-width: 2px 3px 3px 2px;
       box-shadow: var(--bzm-shadow-sm);
       pointer-events: none;
+      font-size: 18px;
     }
 
     /* ── Sizes ── */
@@ -158,7 +189,7 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
     }
 
     .variant-ghost {
-      background-color: transparent;
+      background-color: var(--bzm-color-bg);
       color: var(--bzm-color-primary);
     }
 
@@ -173,7 +204,15 @@ export class BzmButtonComponent {
   readonly disabled = input<boolean>(false);
   readonly fullWidth = input<boolean>(false);
 
+  protected readonly shaking = signal(false);
+
   protected readonly buttonClasses = computed(
     () => `variant-${this.variant()} size-${this.size()}`
   );
+
+  protected onWrapClick(): void {
+    if (!this.disabled() || this.shaking()) return;
+    this.shaking.set(true);
+    setTimeout(() => this.shaking.set(false), 400);
+  }
 }

@@ -17,6 +17,8 @@ const meta: Meta<BzmInputComponent> = {
   },
   args: {
     placeholder: 'Typ hier...',
+    value: '',
+    type: 'text',
     size: 'md',
     disabled: false,
   },

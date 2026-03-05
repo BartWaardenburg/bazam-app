@@ -100,7 +100,7 @@ export type InputSize = 'sm' | 'md' | 'lg';
     }
 
     .input--error:focus {
-      border-color: var(--bzm-color-error);
+      border-color: var(--bzm-color-answer-a);
     }
 
     .bzm-input__error {

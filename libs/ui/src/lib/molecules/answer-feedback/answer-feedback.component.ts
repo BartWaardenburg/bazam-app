@@ -33,10 +33,10 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
 
     .bzm-answer-feedback__title {
       margin: 0;
-      font-size: var(--bzm-font-size-3xl);
+      font-size: clamp(3rem, 8vw, 5rem);
       font-weight: var(--bzm-font-weight-black);
-      text-shadow: 2px 2px 0 var(--bzm-black);
-      -webkit-text-stroke: 1px var(--bzm-black);
+      text-shadow: 3px 3px 0 var(--bzm-black);
+      -webkit-text-stroke: 2px var(--bzm-black);
       paint-order: stroke fill;
     }
 

@@ -20,16 +20,12 @@ export type AnswerLetter = 'A' | 'B' | 'C' | 'D';
       <span class="bzm-answer-option__text">{{ text() }}</span>
       @if (correct() === true) {
         <span class="bzm-answer-option__icon bzm-answer-option__icon--correct">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M4 10l4 4 8-8" stroke="var(--bzm-color-text-on-primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+<i class="ph-duotone ph-check" style="font-size: 20px; color: var(--bzm-color-text-on-primary);"></i>
         </span>
       }
       @if (correct() === false) {
         <span class="bzm-answer-option__icon bzm-answer-option__icon--incorrect">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M5 5l10 10M15 5l-10 10" stroke="var(--bzm-color-text-on-primary)" stroke-width="2.5" stroke-linecap="round"/>
-          </svg>
+<i class="ph-duotone ph-x" style="font-size: 20px; color: var(--bzm-color-text-on-primary);"></i>
         </span>
       }
     </button>
@@ -129,6 +125,10 @@ export type AnswerLetter = 'A' | 'B' | 'C' | 'D';
 
     .bzm-answer-option__icon--incorrect {
       background: var(--bzm-color-error);
+    }
+
+    .bzm-answer-option__icon i::before {
+      opacity: 0;
     }
   `,
 })

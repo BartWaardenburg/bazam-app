@@ -56,9 +56,7 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
       border-radius: var(--bzm-radius-sm);
       border: 4px solid var(--bzm-black);
       border-width: 3px 4px 5px 3px;
-      box-shadow:
-        0 6px 0 var(--bzm-color-primary-dark),
-        5px 5px 0 var(--bzm-black);
+      box-shadow: 5px 5px 0 var(--bzm-black);
       transition: transform var(--bzm-transition-playful);
       letter-spacing: 0.05em;
       animation: bzm-digit-pop 0.3s var(--bzm-transition-playful) backwards;

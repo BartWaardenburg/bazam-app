@@ -37,7 +37,7 @@ const MEDAL_LABELS = ['1ST', '2ND', '3RD'] as const;
       }
 
       <div class="bzm-leaderboard__list" role="list" aria-label="Volledige ranglijst">
-        @for (entry of entries(); track entry.id; let i = $index) {
+        @for (entry of remainingEntries(); track entry.id; let i = $index) {
           <bzm-leaderboard-item
             role="listitem"
             [style.animation-delay]="(i * 0.06) + 's'"
@@ -89,15 +89,21 @@ const MEDAL_LABELS = ['1ST', '2ND', '3RD'] as const;
       order: 2;
       transform: scale(1.1);
       border-color: var(--bzm-color-accent);
+      animation-name: bzm-podium-pop-first;
     }
 
     .place-2 { order: 1; }
     .place-3 { order: 3; }
 
     .bzm-leaderboard__medal {
+      font-family: var(--bzm-font-heading);
       font-size: var(--bzm-font-size-4xl);
       filter: drop-shadow(2px 2px 0 var(--bzm-black));
     }
+
+    .place-1 .bzm-leaderboard__medal { color: #FFD700; }
+    .place-2 .bzm-leaderboard__medal { color: #C0C0C0; }
+    .place-3 .bzm-leaderboard__medal { color: #CD7F32; }
 
     .bzm-leaderboard__name {
       font-weight: var(--bzm-font-weight-bold);
@@ -130,10 +136,6 @@ const MEDAL_LABELS = ['1ST', '2ND', '3RD'] as const;
       }
     }
 
-    .place-1 {
-      animation-name: bzm-podium-pop-first;
-    }
-
     @keyframes bzm-podium-pop-first {
       from {
         transform: scale(0) translateY(20px);
@@ -158,6 +160,9 @@ export class BzmLeaderboardComponent {
   readonly highlightNickname = input<string | undefined>(undefined);
 
   protected readonly topThree = computed(() => this.entries().slice(0, 3));
+  protected readonly remainingEntries = computed(() =>
+    this.showPodium() ? this.entries().slice(3) : this.entries()
+  );
 
   protected medalLabel(index: number): string {
     return MEDAL_LABELS[index] ?? '';

@@ -2,7 +2,7 @@ import {
   Component,
   ChangeDetectionStrategy,
   input,
-  output,
+  model,
   computed,
   forwardRef,
 } from '@angular/core';
@@ -189,12 +189,10 @@ export class BzmSliderComponent implements ControlValueAccessor {
   readonly min = input<number>(0);
   readonly max = input<number>(100);
   readonly step = input<number>(1);
-  readonly value = input<number>(50);
+  readonly value = model<number>(50);
   readonly disabled = input<boolean>(false);
   readonly label = input<string>('');
   readonly suffix = input<string>('');
-
-  readonly valueChange = output<number>();
 
   private onChange: (value: number) => void = () => {};
   private onTouched: () => void = () => {};
@@ -208,13 +206,13 @@ export class BzmSliderComponent implements ControlValueAccessor {
 
   onInput(event: Event): void {
     const val = Number((event.target as HTMLInputElement).value);
-    this.valueChange.emit(val);
+    this.value.set(val);
     this.onChange(val);
     this.onTouched();
   }
 
   writeValue(value: number): void {
-    // Value is driven by the input() signal from the parent
+    this.value.set(value);
   }
 
   registerOnChange(fn: (value: number) => void): void {

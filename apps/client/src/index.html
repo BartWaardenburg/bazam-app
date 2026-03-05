@@ -10,15 +10,6 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
-  <!-- SVG filter for hand-drawn/sketchy border effect -->
-  <svg width="0" height="0" style="position:absolute">
-    <defs>
-      <filter id="sketchy" x="-2%" y="-2%" width="104%" height="104%">
-        <feTurbulence type="turbulence" baseFrequency="0.008 0.01" numOctaves="2" seed="2" result="noise" />
-        <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.8" xChannelSelector="R" yChannelSelector="G" />
-      </filter>
-    </defs>
-  </svg>
-  <app-root></app-root>
+<app-root></app-root>
 </body>
 </html>

@@ -16,7 +16,7 @@ const meta: Meta<BzmRoomCodeComponent> = {
   decorators: [
     (story) => ({
       ...story(),
-      styles: [`:host { display: block; max-width: 400px; padding: 24px; }`],
+      styles: [`:host { display: block; max-width: 400px; padding: 24px; padding-bottom: 32px; }`],
     }),
   ],
 };

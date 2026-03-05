@@ -25,10 +25,7 @@ import { Component, ChangeDetectionStrategy, computed, input } from '@angular/co
         }
       </div>
       <div class="bzm-leaderboard-item__points" [class.bzm-leaderboard-item__points--current]="isCurrentUser()">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="bzm-leaderboard-item__star">
-          <path d="M8 1l2.1 4.3 4.7.7-3.4 3.3.8 4.7L8 11.8 3.8 14l.8-4.7L1.2 6l4.7-.7L8 1z"
-                [attr.fill]="isCurrentUser() ? 'var(--bzm-color-primary)' : 'var(--bzm-color-accent)'"/>
-        </svg>
+<i class="ph-duotone ph-star bzm-leaderboard-item__star" [style.color]="isCurrentUser() ? 'var(--bzm-color-primary)' : 'var(--bzm-color-accent)'" style="font-size: 16px;"></i>
         <span>{{ points() }}</span>
       </div>
     </div>

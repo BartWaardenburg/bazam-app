@@ -15,11 +15,7 @@ import { Component, ChangeDetectionStrategy, computed, input, output } from '@an
         @if (imageUrl()) {
           <img [src]="imageUrl()" [alt]="title()" class="bzm-quiz-card__img" />
         } @else {
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <path d="M14 2L2 8l12 6 12-6-12-6z" fill="white" opacity="0.9"/>
-            <path d="M2 8v10l12 6V14L2 8z" fill="white" opacity="0.7"/>
-            <path d="M26 8v10l-12 6V14l12-6z" fill="white" opacity="0.5"/>
-          </svg>
+<i class="ph-duotone ph-brain" style="font-size: 40px; color: white;"></i>
         }
       </div>
       <div class="bzm-quiz-card__content">
@@ -35,10 +31,8 @@ import { Component, ChangeDetectionStrategy, computed, input, output } from '@an
         }
         <span class="bzm-quiz-card__count">{{ questionCount() }} questions</span>
       </div>
-      <div class="bzm-quiz-card__chevron">
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M7.5 5l5 5-5 5" stroke="var(--bzm-color-text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+      <div class="bzm-quiz-card__play" [style]="playStyle()">
+        <i class="ph-duotone ph-play" style="font-size: 22px; color: white;"></i>
       </div>
     </button>
   `,
@@ -144,13 +138,21 @@ import { Component, ChangeDetectionStrategy, computed, input, output } from '@an
       transition: width var(--bzm-transition-smooth);
     }
 
-    .bzm-quiz-card__chevron {
+    .bzm-quiz-card__play {
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      width: 32px;
-      height: 32px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--bzm-radius-full);
+      transition: transform var(--bzm-transition-playful),
+                  filter var(--bzm-transition-base);
+    }
+
+    .bzm-quiz-card:hover .bzm-quiz-card__play {
+      transform: scale(1.1);
+      filter: brightness(1.1);
     }
   `,
 })
@@ -167,6 +169,11 @@ export class BzmQuizCardComponent {
   readonly hasProgress = computed(() => this.progress() !== undefined);
 
   readonly imageAreaStyle = computed(() => {
+    const c = this.color() ?? 'var(--bzm-color-primary)';
+    return `background: ${c}`;
+  });
+
+  readonly playStyle = computed(() => {
     const c = this.color() ?? 'var(--bzm-color-primary)';
     return `background: ${c}`;
   });

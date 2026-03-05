@@ -6,7 +6,10 @@ const config: StorybookConfig = {
     name: '@storybook/angular',
     options: {},
   },
-  staticDirs: ['../src/lib/tokens'],
+  staticDirs: [
+    '../src/lib/tokens',
+    { from: '../../../node_modules/@phosphor-icons/web/src/duotone', to: '/phosphor-duotone' },
+  ],
 };
 
 export default config;

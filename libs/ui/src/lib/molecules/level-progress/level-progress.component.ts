@@ -9,10 +9,7 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
       <div class="bzm-level-progress__header">
         <span class="bzm-level-progress__label">{{ label() }}</span>
         <div class="bzm-level-progress__xp">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="bzm-level-progress__star">
-            <path d="M8 1l2.1 4.3 4.7.7-3.4 3.3.8 4.7L8 11.8 3.8 14l.8-4.7L1.2 6l4.7-.7L8 1z"
-                  fill="var(--bzm-color-accent)"/>
-          </svg>
+<i class="ph-duotone ph-star bzm-level-progress__star" style="font-size: 16px; color: var(--bzm-color-accent);"></i>
           <span class="bzm-level-progress__xp-text">{{ xp() }} XP</span>
         </div>
       </div>

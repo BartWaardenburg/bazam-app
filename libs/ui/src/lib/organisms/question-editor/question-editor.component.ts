@@ -1,7 +1,6 @@
 import { Component, ChangeDetectionStrategy, input, output, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BzmSliderComponent } from '../../atoms/slider/slider.component';
-import { BzmButtonComponent } from '../../atoms/button/button.component';
 
 export interface QuestionEditorData {
   readonly text: string;
@@ -24,16 +23,16 @@ const ANSWER_COLORS: Record<number, { bg: string; border: string; badge: string;
 @Component({
   selector: 'bzm-question-editor',
   standalone: true,
-  imports: [FormsModule, BzmSliderComponent, BzmButtonComponent],
+  imports: [FormsModule, BzmSliderComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="bzm-qe">
       <div class="bzm-qe__header">
         <span class="bzm-qe__number">Vraag {{ questionNumber() }}</span>
         @if (removable()) {
-          <bzm-button variant="ghost" size="sm" (click)="removed.emit()" aria-label="Vraag verwijderen">
-            &times;
-          </bzm-button>
+          <button class="bzm-qe__close" (click)="removed.emit()" aria-label="Vraag verwijderen">
+            <i class="ph-duotone ph-x-circle"></i>
+          </button>
         }
       </div>
 
@@ -113,6 +112,35 @@ const ANSWER_COLORS: Record<number, { bg: string; border: string; badge: string;
       display: flex;
       justify-content: space-between;
       align-items: center;
+    }
+
+    .bzm-qe__close {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bzm-color-surface);
+      border: 3px solid var(--bzm-black);
+      border-width: 2px 3px 3px 2px;
+      border-radius: var(--bzm-radius-md);
+      cursor: pointer;
+      color: var(--bzm-color-answer-c);
+      font-size: 1.5rem;
+      transition:
+        transform var(--bzm-transition-playful),
+        box-shadow var(--bzm-transition-base);
+      box-shadow: var(--bzm-shadow-sm);
+    }
+
+    .bzm-qe__close:hover {
+      transform: translateY(-2px) rotate(-3deg);
+      box-shadow: var(--bzm-shadow-md);
+    }
+
+    .bzm-qe__close:active {
+      transform: translateY(2px);
+      box-shadow: none;
     }
 
     .bzm-qe__number {

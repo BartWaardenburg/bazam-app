@@ -4,6 +4,8 @@ import {
   input,
   output,
   signal,
+  computed,
+  effect,
   ElementRef,
   viewChildren,
   afterNextRender,
@@ -50,9 +52,10 @@ import {
     .bzm-pin-input__digit {
       width: clamp(2.5rem, 12vw, 3.5rem);
       height: clamp(3rem, 14vw, 4rem);
+      padding: 0;
       text-align: center;
       font-family: var(--bzm-font-family);
-      font-size: clamp(1.5rem, 6vw, 2.25rem);
+      font-size: clamp(1.25rem, 5vw, 1.75rem);
       font-weight: var(--bzm-font-weight-extrabold);
       color: var(--bzm-color-text);
       background: var(--bzm-color-surface);
@@ -73,7 +76,7 @@ import {
     }
 
     .bzm-pin-input__digit:focus {
-      border-color: var(--bzm-color-primary);
+      border-color: var(--bzm-color-answer-a);
       box-shadow: var(--bzm-shadow-md);
       transform: translateY(-2px);
     }
@@ -119,6 +122,14 @@ export class BzmPinInputComponent {
   readonly digitInputs = viewChildren<ElementRef<HTMLInputElement>>('digitInput');
 
   constructor() {
+    effect(() => {
+      const len = this.length();
+      const current = this.digits();
+      if (current.length !== len) {
+        this.digits.set(Array(len).fill(''));
+      }
+    });
+
     afterNextRender(() => {
       if (this.autoFocus()) {
         const inputs = this.digitInputs();
