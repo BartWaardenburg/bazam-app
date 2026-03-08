@@ -1,30 +1,78 @@
 # Bazam
 
-Real-time multiplayer quiz platform. Create quizzes, share a room code, and play together live.
+Real-time multiplayer quiz platform — create quizzes, share a room code, and play together live. Built as a fullstack showcase of modern web technologies.
 
 ## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | Angular 21 (zoneless, signals, standalone) |
-| Backend | Bun + Elysia (WebSocket) |
-| Database | PostgreSQL 17 + Drizzle ORM |
-| UI Library | `@bazam/ui` (atomic design, Storybook) |
-| Monorepo | Nx 22 + pnpm workspaces |
-| Deployment | Fly.io (Amsterdam) |
+| **Frontend** | Angular 21 (zoneless, signals, standalone components) |
+| **Backend** | Bun + Elysia (WebSocket real-time communication) |
+| **Database** | PostgreSQL 17 + Drizzle ORM |
+| **UI Library** | `@bazam/ui` — 42 components, atomic design, Storybook |
+| **Web Components** | Vanilla Custom Elements (quiz-timer, quiz-progress-bar, quiz-avatar) |
+| **State Management** | Angular Signals (no RxJS for state) |
+| **Shared Types** | `@bazam/shared-types` — type-safe WebSocket protocol |
+| **Monorepo** | Nx 22 + pnpm workspaces |
+| **Containerization** | Docker Compose (PostgreSQL + server) |
+| **Deployment** | Fly.io (Amsterdam region) |
+
+## Key Technical Highlights
+
+### Modern Angular (v21)
+- **Zoneless** change detection — no Zone.js overhead
+- **Signals** for reactive state management throughout the app
+- **Standalone components** — no NgModules
+- `OnPush` change detection on all UI components
+
+### Custom Web Components
+Vanilla Custom Elements with full lifecycle management (`connectedCallback`, `disconnectedCallback`), Shadow DOM encapsulation, ARIA roles, and `prefers-reduced-motion` support.
+
+### Component Library (`@bazam/ui`)
+42 components organized in atomic design (14 atoms, 14 molecules, 14 organisms), each with Storybook stories. Design token system with CSS custom properties (`--bzm-*`). Every component is accessible (ARIA labels, semantic HTML, keyboard navigation).
+
+### Real-time Architecture
+WebSocket server with a `ConnectionRegistry` pattern that decouples transport from game logic. `RoomManager` uses abstract connection IDs, making the game engine testable independently from WebSocket internals. Shared TypeScript types (`@bazam/shared-types`) enforce a type-safe message protocol between client and server.
+
+### TypeScript Throughout
+Strict TypeScript across the entire stack — client, server, shared types, and UI library. Branded types like `AnswerIndex = 0 | 1 | 2 | 3` for compile-time safety on domain values.
+
+### Accessibility & Motion
+All components include ARIA labels and semantic HTML. Global `prefers-reduced-motion` media query disables animations. Web Components respect motion preferences at the element level.
+
+### CI/CD & Containerization
+Docker Compose for local development (PostgreSQL + server). Fly.io deployment with health checks, auto-scaling, and HTTPS enforcement. Drizzle Kit for type-safe database migrations.
 
 ## Project Structure
 
 ```
 bazam.app/
 ├── apps/
-│   ├── client/          # Angular frontend
-│   └── server/          # Bun + Elysia API & WebSocket server
+│   ├── client/                    # Angular 21 frontend
+│   │   └── src/app/
+│   │       ├── pages/
+│   │       │   ├── home/          # Landing page
+│   │       │   ├── host/          # Quiz host flow (create → lobby → game → results)
+│   │       │   └── player/        # Player flow (join → lobby → game → results)
+│   │       └── services/          # WebSocket, game state, routing
+│   └── server/                    # Bun + Elysia backend
+│       └── src/
+│           ├── game/
+│           │   ├── connection-registry.ts
+│           │   ├── room-manager.ts
+│           │   └── scoring.ts
+│           └── db/                # Drizzle ORM schema & migrations
 ├── libs/
-│   ├── shared-types/    # Shared TypeScript types
-│   └── ui/              # Component library (Storybook)
-├── docker-compose.yml   # Local PostgreSQL + server
-└── fly.toml             # Fly.io deployment config
+│   ├── shared-types/              # TypeScript message & game types
+│   └── ui/                        # @bazam/ui component library
+│       └── src/lib/
+│           ├── atoms/             # 14 primitives (Button, Input, Card, Spinner, ...)
+│           ├── molecules/         # 14 compositions (AnswerOption, RoomCode, Timer, ...)
+│           ├── organisms/         # 14 features (Leaderboard, QuestionEditor, Hero, ...)
+│           └── tokens/            # Design tokens (CSS custom properties)
+├── docker-compose.yml             # PostgreSQL + server containers
+├── fly.toml                       # Fly.io deployment config
+└── STYLE_GUIDE.md                 # Design language documentation
 ```
 
 ## Getting Started
@@ -46,7 +94,7 @@ pnpm install
 cd apps/server && bun install
 ```
 
-### Run Development Servers
+### Development
 
 ```bash
 # Start everything (client + server)
@@ -54,7 +102,10 @@ pnpm dev
 
 # Or individually
 pnpm dev:client    # Angular dev server
-pnpm dev:server    # Bun server with watch
+pnpm dev:server    # Bun server with --watch
+
+# Storybook (component library)
+npx nx storybook ui
 ```
 
 ### Database
@@ -64,33 +115,36 @@ pnpm dev:server    # Bun server with watch
 docker compose up -d postgres
 
 # Run migrations
-cd apps/server
-bun run db:migrate
+cd apps/server && bun run db:migrate
 
 # Open Drizzle Studio
 bun run db:studio
 ```
 
-### Storybook
-
-```bash
-npx nx storybook ui
-```
-
-## Build
+### Build
 
 ```bash
 pnpm build
 ```
 
-## Deployment
-
-Deployed on [Fly.io](https://fly.io) in the Amsterdam region.
+### Deploy
 
 ```bash
 fly deploy
 ```
 
+## Architecture Decisions
+
+| Decision | Rationale |
+|----------|-----------|
+| Angular Signals over RxJS | Simpler mental model for UI state, less boilerplate, better performance with zoneless |
+| Vanilla Web Components | Demonstrates native platform APIs alongside framework components |
+| ConnectionRegistry pattern | Decouples WebSocket transport from game logic for testability |
+| Atomic design for UI library | Enforces composition hierarchy and reusability across pages |
+| Bun + Elysia | Fast runtime with native WebSocket support, TypeScript-first |
+| Monorepo with shared types | Single source of truth for the client-server protocol |
+| CSS custom properties | Runtime-themeable design tokens without build-time tooling |
+
 ## License
 
-Private - All rights reserved.
+All rights reserved.
