@@ -17,6 +17,8 @@ export { BzmPageTitleComponent } from './lib/atoms/page-title/page-title.compone
 export type { PageTitleSize } from './lib/atoms/page-title/page-title.component';
 export { BzmSplatComponent } from './lib/atoms/splat/splat.component';
 export type { SplatShape } from './lib/atoms/splat/splat.component';
+export { BzmMascotComponent } from './lib/atoms/mascot/mascot.component';
+export type { MascotExpression, MascotSize, MascotAnimation } from './lib/atoms/mascot/mascot.component';
 
 // Molecules
 export { BzmAnswerOptionComponent } from './lib/molecules/answer-option/answer-option.component';

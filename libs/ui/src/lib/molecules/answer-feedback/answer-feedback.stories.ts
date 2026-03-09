@@ -47,6 +47,16 @@ export const CustomMessages: Story = {
   },
 };
 
+export const CorrectWithMascot: Story = {
+  name: 'Correct (Happy Mascot)',
+  args: { correct: true, score: 750 },
+};
+
+export const IncorrectWithMascot: Story = {
+  name: 'Incorrect (Sad Mascot)',
+  args: { correct: false, incorrectMessage: 'Volgende keer beter!' },
+};
+
 export const BothStates: Story = {
   render: () => ({
     template: `

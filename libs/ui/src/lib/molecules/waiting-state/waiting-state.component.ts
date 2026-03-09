@@ -1,14 +1,20 @@
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
-import { BzmSpinnerComponent } from '../../atoms/spinner/spinner.component';
+import { BzmMascotComponent } from '../../atoms/mascot/mascot.component';
 
 @Component({
   selector: 'bzm-waiting-state',
   standalone: true,
-  imports: [BzmSpinnerComponent],
+  imports: [BzmMascotComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="bzm-waiting-state" role="status" [attr.aria-label]="message()">
-      <bzm-spinner [size]="spinnerSize()" />
+      <bzm-mascot
+        expression="neutral"
+        animate="bounce"
+        [showBadge]="true"
+        badgeText="?"
+        [size]="spinnerSize()"
+      />
       <p class="bzm-waiting-state__message">{{ message() }}</p>
     </div>
   `,

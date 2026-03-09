@@ -1,14 +1,24 @@
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 import { BzmCardComponent } from '../../atoms/card/card.component';
+import { BzmMascotComponent } from '../../atoms/mascot/mascot.component';
 
 @Component({
   selector: 'bzm-winner-card',
   standalone: true,
-  imports: [BzmCardComponent],
+  imports: [BzmCardComponent, BzmMascotComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <bzm-card borderColor="var(--bzm-color-accent)" [ariaLabel]="'Winnaar: ' + name()">
       <div class="bzm-winner-card">
+        <div class="bzm-winner-card__mascot">
+          <bzm-mascot
+            expression="excited"
+            animate="bounce"
+            badgeText="!"
+            size="lg"
+            bodyColor="var(--bzm-color-accent)"
+          />
+        </div>
         <p class="bzm-winner-card__label">{{ label() }}</p>
         <p class="bzm-winner-card__name">{{ name() }}</p>
         <p class="bzm-winner-card__score">{{ score() }} {{ scoreLabel() }}</p>
@@ -23,6 +33,10 @@ import { BzmCardComponent } from '../../atoms/card/card.component';
 
     .bzm-winner-card {
       text-align: center;
+    }
+
+    .bzm-winner-card__mascot {
+      margin-bottom: var(--bzm-space-4);
     }
 
     .bzm-winner-card__label {

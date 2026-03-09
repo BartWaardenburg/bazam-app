@@ -38,8 +38,12 @@ export const NextQuestion: Story = {
   args: { message: 'Volgende vraag wordt geladen...' },
 };
 
-export const SmallSpinner: Story = {
+export const SmallMascot: Story = {
   args: { message: 'Verbinden...', spinnerSize: 'sm' },
+};
+
+export const MediumMascot: Story = {
+  args: { message: 'Laden...', spinnerSize: 'md' },
 };
 
 export const AllExamples: Story = {

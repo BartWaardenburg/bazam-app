@@ -1,11 +1,21 @@
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
+import { BzmMascotComponent } from '../../atoms/mascot/mascot.component';
 
 @Component({
   selector: 'bzm-countdown-view',
   standalone: true,
+  imports: [BzmMascotComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="bzm-countdown" role="status" aria-live="assertive">
+      <div class="bzm-countdown__mascot">
+        <bzm-mascot
+          expression="excited"
+          animate="bounce"
+          badgeText="!"
+          size="lg"
+        />
+      </div>
       <h2 class="bzm-countdown__text">{{ text() }}</h2>
     </div>
   `,
@@ -24,6 +34,10 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
       gap: var(--bzm-space-4);
       min-height: 200px;
       padding: var(--bzm-space-8);
+      animation: bzm-countdown-pop 0.5s var(--bzm-transition-playful);
+    }
+
+    .bzm-countdown__mascot {
       animation: bzm-countdown-pop 0.5s var(--bzm-transition-playful);
     }
 
@@ -53,7 +67,8 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .bzm-countdown {
+      .bzm-countdown,
+      .bzm-countdown__mascot {
         animation: none;
       }
     }

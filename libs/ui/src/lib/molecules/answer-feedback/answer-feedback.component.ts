@@ -1,11 +1,21 @@
 import { Component, ChangeDetectionStrategy, input, computed } from '@angular/core';
+import { BzmMascotComponent } from '../../atoms/mascot/mascot.component';
 
 @Component({
   selector: 'bzm-answer-feedback',
   standalone: true,
+  imports: [BzmMascotComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div [class]="feedbackClasses()" role="status" aria-live="polite">
+      <bzm-mascot
+        class="bzm-answer-feedback__mascot"
+        [expression]="correct() ? 'happy' : 'sad'"
+        [animate]="correct() ? 'bounce' : 'shake'"
+        [badgeText]="correct() ? '!' : 'X'"
+        [bodyColor]="correct() ? 'var(--bzm-color-success)' : 'var(--bzm-color-error)'"
+        size="lg"
+      />
       <h3 class="bzm-answer-feedback__title">{{ correct() ? correctTitle() : incorrectTitle() }}</h3>
       @if (correct() && score() !== undefined) {
         <p class="bzm-answer-feedback__score">+{{ score() }} punten</p>
@@ -22,6 +32,9 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
     }
 
     .bzm-answer-feedback {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       text-align: center;
       padding: var(--bzm-space-12) var(--bzm-space-8);
       background: var(--bzm-color-surface);
@@ -29,6 +42,10 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
       border: 4px solid var(--bzm-color-border);
       border-width: 3px 4px 5px 3px;
       box-shadow: var(--bzm-shadow-card);
+    }
+
+    .bzm-answer-feedback__mascot {
+      margin-bottom: var(--bzm-space-4);
     }
 
     .bzm-answer-feedback__title {

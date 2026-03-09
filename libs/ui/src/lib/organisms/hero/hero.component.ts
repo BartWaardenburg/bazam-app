@@ -1,26 +1,38 @@
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 import { BzmSplatComponent } from '../../atoms/splat/splat.component';
+import { BzmMascotComponent } from '../../atoms/mascot/mascot.component';
 
 @Component({
   selector: 'bzm-hero',
   standalone: true,
-  imports: [BzmSplatComponent],
+  imports: [BzmSplatComponent, BzmMascotComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <header class="bzm-hero">
-      <div class="bzm-hero__title-wrapper">
-        <div class="bzm-hero__splat bzm-hero__splat--1">
-          <bzm-splat shape="burst" color="var(--bzm-color-primary)" size="120px" />
+      <div class="bzm-hero__content">
+        <div class="bzm-hero__title-wrapper">
+          <div class="bzm-hero__splat bzm-hero__splat--1">
+            <bzm-splat shape="burst" color="var(--bzm-color-primary)" size="120px" />
+          </div>
+          <div class="bzm-hero__splat bzm-hero__splat--2">
+            <bzm-splat shape="star" color="var(--bzm-color-accent)" size="90px" />
+          </div>
+          <h1 class="bzm-hero__title">
+            <span class="bzm-hero__title-main">{{ title() }}</span>
+            @if (subtitle()) {
+              <span class="bzm-hero__title-sub">{{ subtitle() }}</span>
+            }
+          </h1>
         </div>
-        <div class="bzm-hero__splat bzm-hero__splat--2">
-          <bzm-splat shape="star" color="var(--bzm-color-accent)" size="90px" />
-        </div>
-        <h1 class="bzm-hero__title">
-          <span class="bzm-hero__title-main">{{ title() }}</span>
-          @if (subtitle()) {
-            <span class="bzm-hero__title-sub">{{ subtitle() }}</span>
-          }
-        </h1>
+        @if (showMascot()) {
+          <div class="bzm-hero__mascot">
+            <bzm-mascot
+              expression="neutral"
+              animate="float"
+              size="xl"
+            />
+          </div>
+        }
       </div>
       @if (tagline()) {
         <p class="bzm-hero__tagline">{{ tagline() }}</p>
@@ -38,6 +50,13 @@ import { BzmSplatComponent } from '../../atoms/splat/splat.component';
       display: flex;
       flex-direction: column;
       align-items: center;
+    }
+
+    .bzm-hero__content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--bzm-space-6);
     }
 
     .bzm-hero__title-wrapper {
@@ -90,11 +109,33 @@ import { BzmSplatComponent } from '../../atoms/splat/splat.component';
       margin-top: var(--bzm-space-1);
     }
 
+    .bzm-hero__mascot {
+      transform: rotate(5deg);
+      flex-shrink: 0;
+    }
+
     .bzm-hero__tagline {
       font-size: var(--bzm-font-size-xl);
       color: var(--bzm-color-text);
       margin: var(--bzm-space-3) 0 0;
       font-weight: var(--bzm-font-weight-semibold);
+    }
+
+    @media (max-width: 640px) {
+      .bzm-hero__content {
+        flex-direction: column;
+        gap: var(--bzm-space-4);
+      }
+
+      .bzm-hero__mascot {
+        transform: rotate(0deg);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bzm-hero__mascot {
+        transform: rotate(5deg);
+      }
     }
   `,
 })
@@ -102,4 +143,5 @@ export class BzmHeroComponent {
   readonly title = input<string>('Bazam');
   readonly subtitle = input<string | undefined>('Quiz Battle');
   readonly tagline = input<string | undefined>('Daag je vrienden uit!');
+  readonly showMascot = input<boolean>(true);
 }
