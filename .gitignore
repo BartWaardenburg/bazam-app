@@ -5,3 +5,4 @@ dist
 *.log
 .nx
 .pnpm-store
+.playwright-mcp
