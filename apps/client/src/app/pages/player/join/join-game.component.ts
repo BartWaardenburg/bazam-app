@@ -83,12 +83,12 @@ export class JoinGameComponent {
   }
 
   async joinGame(): Promise<void> {
-    this.gameState.role.set('player');
-    this.gameState.playerNickname.set(this.nickname.trim());
     this.gameState.errorMessage.set(null);
 
     try {
       await this.wsService.connect();
+      this.gameState.role.set('player');
+      this.gameState.playerNickname.set(this.nickname.trim());
       this.wsService.send({
         type: 'JOIN_ROOM',
         payload: {
@@ -97,6 +97,8 @@ export class JoinGameComponent {
         },
       });
     } catch {
+      this.gameState.role.set(null);
+      this.gameState.playerNickname.set('');
       this.gameState.errorMessage.set('Kan geen verbinding maken met de server. Probeer het opnieuw.');
     }
   }

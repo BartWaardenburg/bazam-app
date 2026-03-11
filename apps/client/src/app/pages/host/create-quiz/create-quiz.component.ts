@@ -170,17 +170,19 @@ export class CreateQuizComponent {
   }
 
   async createRoom(): Promise<void> {
-    this.gameState.role.set('host');
-    this.gameState.questions.set(this.questions());
     this.gameState.errorMessage.set(null);
 
     try {
       await this.wsService.connect();
+      this.gameState.role.set('host');
+      this.gameState.questions.set(this.questions());
       this.wsService.send({
         type: 'CREATE_ROOM',
         payload: { hostName: 'Host', questions: this.questions() },
       });
     } catch {
+      this.gameState.role.set(null);
+      this.gameState.questions.set([]);
       this.gameState.errorMessage.set('Kan geen verbinding maken met de server. Probeer het opnieuw.');
     }
   }

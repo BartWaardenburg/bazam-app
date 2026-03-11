@@ -1,4 +1,5 @@
 import { Component, effect, inject, signal } from '@angular/core';
+import type { AnswerIndex } from '@bazam/shared-types';
 import {
   BzmCountdownViewComponent,
   BzmProgressBarComponent,
@@ -127,12 +128,13 @@ export class PlayerGameComponent {
 
   submitAnswer(answerIndex: number): void {
     if (this.gameState.hasAnswered()) return;
+    if (answerIndex < 0 || answerIndex > 3) return;
     this.selectedAnswer.set(answerIndex);
     this.wsService.send({
       type: 'SUBMIT_ANSWER',
       payload: {
         questionIndex: this.gameState.questionIndex(),
-        answerIndex,
+        answerIndex: answerIndex as AnswerIndex,
         timestamp: Date.now(),
       },
     });

@@ -4,7 +4,6 @@ import type { ClientMessage, ServerMessage } from '@bazam/shared-types';
 import { GameStateService } from './game-state.service';
 
 const MAX_CONNECTION_TIMEOUT_MS = 5000;
-const RETRY_INTERVAL_MS = 50;
 
 @Injectable({ providedIn: 'root' })
 export class WebSocketService {
@@ -27,35 +26,55 @@ export class WebSocketService {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const host = window.location.hostname;
     const port = window.location.port === '4200' ? '3001' : window.location.port;
-    this.ws = new WebSocket(`${protocol}//${host}:${port}/ws`);
+    const ws = new WebSocket(`${protocol}//${host}:${port}/ws`);
+    this.ws = ws;
 
     return new Promise<void>((resolve, reject) => {
+      let settled = false;
+
       const timeout = setTimeout(() => {
+        if (settled) return;
+        settled = true;
         this.disconnect();
         reject(new Error('WebSocket connection timed out'));
       }, MAX_CONNECTION_TIMEOUT_MS);
 
-      this.ws!.onopen = () => {
+      ws.onopen = () => {
+        if (settled) return;
+        settled = true;
         clearTimeout(timeout);
         this.connectionStatus.set('connected');
         resolve();
       };
 
-      this.ws!.onmessage = (event) => {
-        const message = JSON.parse(event.data as string) as ServerMessage;
-        this.handleMessage(message);
+      ws.onmessage = (event) => {
+        try {
+          const message = JSON.parse(event.data as string) as ServerMessage;
+          this.handleMessage(message);
+        } catch {
+          this.gameState.errorMessage.set('Ongeldig bericht ontvangen van de server');
+        }
       };
 
-      this.ws!.onclose = () => {
+      ws.onclose = () => {
         clearTimeout(timeout);
-        this.connectionStatus.set('disconnected');
-        this.ws = null;
+        if (this.ws === ws) {
+          this.ws = null;
+          this.connectionStatus.set('disconnected');
+        }
+        if (!settled) {
+          settled = true;
+          reject(new Error('WebSocket connection closed'));
+        }
       };
 
-      this.ws!.onerror = () => {
+      ws.onerror = () => {
         clearTimeout(timeout);
-        this.connectionStatus.set('disconnected');
-        reject(new Error('WebSocket connection failed'));
+        if (!settled) {
+          settled = true;
+          this.connectionStatus.set('disconnected');
+          reject(new Error('WebSocket connection failed'));
+        }
       };
     });
   }
@@ -66,40 +85,15 @@ export class WebSocketService {
     }
   }
 
-  /**
-   * Sends a message, waiting for the connection to open first if needed.
-   * Rejects if the connection cannot be established within the timeout.
-   */
-  async sendWhenReady(message: ClientMessage): Promise<void> {
-    if (this.ws?.readyState === WebSocket.OPEN) {
-      this.send(message);
-      return;
-    }
-
-    return new Promise<void>((resolve, reject) => {
-      let elapsed = 0;
-
-      const poll = (): void => {
-        if (this.ws?.readyState === WebSocket.OPEN) {
-          this.send(message);
-          resolve();
-          return;
-        }
-
-        elapsed += RETRY_INTERVAL_MS;
-        if (elapsed >= MAX_CONNECTION_TIMEOUT_MS) {
-          reject(new Error('Connection timed out while waiting to send message'));
-          return;
-        }
-        setTimeout(poll, RETRY_INTERVAL_MS);
-      };
-
-      poll();
-    });
-  }
-
   disconnect(): void {
-    this.ws?.close();
+    const ws = this.ws;
+    if (ws) {
+      ws.onopen = null;
+      ws.onmessage = null;
+      ws.onclose = null;
+      ws.onerror = null;
+      ws.close();
+    }
     this.ws = null;
     this.connectionStatus.set('disconnected');
   }
@@ -118,6 +112,10 @@ export class WebSocketService {
           this.gameState.gamePhase.set('lobby');
           void this.router.navigate(['/play/lobby']);
         }
+        break;
+
+      case 'PLAYERS_UPDATED':
+        this.gameState.players.set(message.payload.players);
         break;
 
       case 'PLAYER_LEFT':
