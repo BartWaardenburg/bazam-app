@@ -40,8 +40,8 @@ Strict TypeScript across the entire stack — client, server, shared types, and 
 ### Accessibility & Motion
 All components include ARIA labels and semantic HTML. Global `prefers-reduced-motion` media query disables animations. Web Components respect motion preferences at the element level.
 
-### CI/CD & Containerization
-Docker Compose for local development (PostgreSQL + server). Fly.io deployment with health checks, auto-scaling, and HTTPS enforcement. Drizzle Kit for type-safe database migrations.
+### Containerization & Deployment
+Docker Compose for local development (PostgreSQL + server). Fly.io deployment with health checks and HTTPS enforcement. Drizzle Kit for type-safe database migrations.
 
 ## Project Structure
 
@@ -147,4 +147,4 @@ fly deploy
 
 ## License
 
-All rights reserved.
+MIT License — see [LICENSE](LICENSE).
