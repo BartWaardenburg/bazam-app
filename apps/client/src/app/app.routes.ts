@@ -1,5 +1,18 @@
 import { Routes } from '@angular/router';
 
+/**
+ * Application route definitions with lazy-loaded page components.
+ *
+ * Organized into two parallel flows:
+ * - **Host flow** (`/host/*`) -- Create a quiz, manage the lobby, run the
+ *   game, and view final results.
+ * - **Player flow** (`/play/*`) -- Join a game, wait in the lobby, answer
+ *   questions, and see personal results.
+ *
+ * All page components are lazy-loaded via dynamic `import()` to keep the
+ * initial bundle size minimal. The wildcard route redirects unknown paths
+ * back to the home page.
+ */
 export const routes: Routes = [
   {
     path: '',

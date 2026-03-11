@@ -102,14 +102,38 @@ import {
     }
   `,
 })
+/**
+ * Host game view that drives the live quiz session.
+ *
+ * Renders different sub-views depending on the current game phase:
+ * - **countdown** -- Displays an animated countdown before the first question.
+ * - **question** -- Shows the question text, answer options (disabled for host),
+ *   a timer, and a live count of how many players have answered.
+ * - **leaderboard** -- Presents the intermediate standings with a button to
+ *   advance to the next question or finish the game.
+ */
 export class HostGameComponent {
+  /** Injected game state for reading question data, phases, and player stats. */
   readonly gameState = inject(GameStateService);
+
   private readonly wsService = inject(WebSocketService);
 
+  /**
+   * Maps raw answer strings to {@link AnswerGridItem} objects expected
+   * by the `BzmAnswerGridComponent`.
+   *
+   * @param answers - Array of answer text strings from the current question.
+   * @returns An array of grid items with `text` populated and no selection state.
+   */
   toAnswerGridItems(answers: string[]): AnswerGridItem[] {
     return answers.map((text) => ({ text }));
   }
 
+  /**
+   * Sends a `NEXT_QUESTION` message to the server, advancing the quiz to
+   * the next question or triggering the game-over sequence if this was
+   * the last question.
+   */
   nextQuestion(): void {
     this.wsService.send({ type: 'NEXT_QUESTION' });
   }

@@ -28,9 +28,21 @@ import { BzmButtonComponent, BzmHeroComponent, BzmActionBarComponent } from '@ba
     }
   `,
 })
+/**
+ * Landing page that serves as the main entry point of the Bazam app.
+ *
+ * Presents the hero branding and two primary call-to-action buttons:
+ * - "Quiz aanmaken" -- navigates the host to the quiz creation flow.
+ * - "Meedoen" -- navigates a player to the join-game flow.
+ */
 export class HomeComponent {
   private readonly router = inject(Router);
 
+  /**
+   * Navigates to the given route path using the Angular Router.
+   *
+   * @param path - Absolute route path (e.g. `'/host/create'` or `'/play/join'`).
+   */
   navigateTo(path: string): void {
     void this.router.navigate([path]);
   }

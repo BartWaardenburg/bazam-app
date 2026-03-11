@@ -34,4 +34,12 @@ import { BzmComicBackgroundComponent } from '@bazam/ui';
     }
   `,
 })
+/**
+ * Root application shell component.
+ *
+ * Provides the full-viewport layout wrapper (`min-height: 100dvh`) with
+ * a decorative comic-style background rendered behind all routed views.
+ * The `<router-outlet>` renders the active page component based on the
+ * current route defined in {@link routes}.
+ */
 export class App {}

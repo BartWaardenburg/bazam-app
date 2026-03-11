@@ -12,6 +12,7 @@ import {
 import { GameStateService } from '../../../services/game-state.service';
 import { WebSocketService } from '../../../services/websocket.service';
 
+/** Blank question template cloned when the host adds a new question to the list. */
 const EMPTY_QUESTION: QuestionInput = {
   text: '',
   answers: ['', '', '', ''],
@@ -19,6 +20,7 @@ const EMPTY_QUESTION: QuestionInput = {
   timeLimitSeconds: 20,
 };
 
+/** Pre-built sample questions for quick-start demos. */
 const SAMPLE_QUESTIONS: QuestionInput[] = [
   {
     text: 'Welke taal wordt het meest gebruikt voor web development?',
@@ -131,21 +133,53 @@ const SAMPLE_QUESTIONS: QuestionInput[] = [
     }
   `,
 })
+/**
+ * Quiz creation page where the host authors questions and starts a new game room.
+ *
+ * Provides a form-style interface for building a list of quiz questions,
+ * with the option to load pre-built sample questions for quick demos.
+ * On submission, the component connects to the WebSocket server and
+ * sends a `CREATE_ROOM` message containing the authored questions.
+ */
 export class CreateQuizComponent {
+  /** Injected game state service for reading/writing session state. */
   readonly gameState = inject(GameStateService);
+
   private readonly wsService = inject(WebSocketService);
+
+  /**
+   * Derived signal that is `true` while the WebSocket handshake is in progress.
+   * Used to disable the submit button and show a "Verbinden..." label.
+   */
   readonly isConnecting = computed(() => this.wsService.connectionStatus() === 'connecting');
 
+  /**
+   * Mutable list of questions being authored by the host.
+   * Initialized with a single empty question template.
+   */
   readonly questions = signal<QuestionInput[]>([structuredClone(EMPTY_QUESTION)]);
 
+  /** Appends a blank question template to the end of the question list. */
   addQuestion(): void {
     this.questions.update((qs) => [...qs, structuredClone(EMPTY_QUESTION)]);
   }
 
+  /**
+   * Removes the question at the given index from the list.
+   *
+   * @param index - Zero-based position of the question to remove.
+   */
   removeQuestion(index: number): void {
     this.questions.update((qs) => qs.filter((_, i) => i !== index));
   }
 
+  /**
+   * Handles a change event from a question editor and updates the
+   * corresponding question in the list.
+   *
+   * @param index - Zero-based position of the question that changed.
+   * @param data - The updated question data emitted by the editor.
+   */
   onQuestionChange(index: number, data: QuestionEditorData): void {
     this.questions.update((qs) => {
       const updated = structuredClone(qs);
@@ -159,16 +193,30 @@ export class CreateQuizComponent {
     });
   }
 
+  /** Replaces the current questions with pre-built sample questions. */
   loadSampleQuestions(): void {
     this.questions.set(structuredClone(SAMPLE_QUESTIONS));
   }
 
+  /**
+   * Validates the current question list.
+   *
+   * @returns `true` if every question has non-empty text and all four
+   *          answer options are filled in; `false` otherwise.
+   */
   isValid(): boolean {
     return this.questions().every(
       (q) => q.text.trim() && q.answers.every((a) => a.trim())
     );
   }
 
+  /**
+   * Connects to the WebSocket server and creates a new game room.
+   *
+   * Sets the user role to `'host'`, stores the authored questions in
+   * game state, and sends a `CREATE_ROOM` message. On failure, rolls
+   * back the role and questions and sets a user-visible error message.
+   */
   async createRoom(): Promise<void> {
     this.gameState.errorMessage.set(null);
 

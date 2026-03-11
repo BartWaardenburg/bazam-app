@@ -1,9 +1,13 @@
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 import { BzmAvatarComponent } from '../../atoms/avatar/avatar.component';
 
+/** Data shape for a single player entry in the player list. */
 export interface PlayerListItem {
+  /** Unique identifier for the player, used as a tracking key for rendering. */
   readonly id: string;
+  /** Player's display name shown below their avatar. */
   readonly nickname: string;
+  /** Optional point score displayed when `showScores` is enabled on the list. */
   readonly score?: number;
 }
 
@@ -118,9 +122,34 @@ export interface PlayerListItem {
     }
   `,
 })
+/**
+ * Renders a wrapping grid of player avatar cards with optional scores and a staggered pop-in animation.
+ *
+ * Displays each player as a card with an avatar and nickname in a centered flex-wrap layout.
+ * Cards animate in with a staggered delay and tilt playfully on hover. Shows an empty-state
+ * message when no players are present. Respects `prefers-reduced-motion`.
+ *
+ * @selector bzm-player-list
+ *
+ * @example
+ * ```html
+ * <bzm-player-list
+ *   [players]="[{ id: '1', nickname: 'Bart', score: 500 }]"
+ *   [showScores]="true"
+ *   emptyText="Nog geen spelers..."
+ * />
+ * ```
+ */
 export class BzmPlayerListComponent {
+  /** Array of player entries to render. Each player is displayed as an avatar card. */
   readonly players = input.required<PlayerListItem[]>();
+
+  /** Whether to show point scores alongside each player's nickname. @default false */
   readonly showScores = input<boolean>(false);
+
+  /** Text displayed when the players array is empty. @default 'Wachten op spelers...' */
   readonly emptyText = input<string>('Wachten op spelers...');
+
+  /** Accessible label for the player list container. @default 'Spelers' */
   readonly ariaLabel = input<string>('Spelers');
 }

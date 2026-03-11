@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, input, output, computed, ElementRef, viewChild } from '@angular/core';
 
+/** Size preset for the input field. */
 export type InputSize = 'sm' | 'md' | 'lg';
 
 @Component({
@@ -112,21 +113,95 @@ export type InputSize = 'sm' | 'md' | 'lg';
     }
   `,
 })
+/**
+ * Displays a comic-styled text input with optional label, inline error message, and keyboard event support.
+ *
+ * Supports ARIA attributes for accessible error states, and exposes a `focus()` method
+ * for programmatic focus control. The label is automatically linked to the input via the `inputId`.
+ *
+ * @selector bzm-input
+ *
+ * @example
+ * ```html
+ * <bzm-input
+ *   label="Nickname"
+ *   placeholder="Kies een naam..."
+ *   [value]="name()"
+ *   (valueChange)="name.set($event)"
+ *   (enterPressed)="submit()"
+ * />
+ * <bzm-input size="lg" [error]="'Veld is verplicht'" />
+ * ```
+ */
 export class BzmInputComponent {
+  /**
+   * Optional label displayed above the input field. Also used as the default `aria-label`.
+   * @default undefined
+   */
   readonly label = input<string | undefined>(undefined);
+
+  /**
+   * Placeholder text shown when the input is empty.
+   * @default ''
+   */
   readonly placeholder = input<string>('');
+
+  /**
+   * Current value of the input field.
+   * @default ''
+   */
   readonly value = input<string>('');
+
+  /**
+   * HTML input type attribute (e.g., `'text'`, `'email'`, `'password'`).
+   * @default 'text'
+   */
   readonly type = input<string>('text');
+
+  /**
+   * Size preset controlling padding and font size.
+   * @default 'md'
+   */
   readonly size = input<InputSize>('md');
+
+  /**
+   * Disables the input, preventing user interaction and applying muted styling.
+   * @default false
+   */
   readonly disabled = input<boolean>(false);
+
+  /**
+   * Error message displayed below the input. When set, applies error border styling
+   * and links the message to the input via `aria-describedby`.
+   * @default undefined
+   */
   readonly error = input<string | undefined>(undefined);
+
+  /**
+   * Maximum character length enforced on the input field.
+   * @default undefined
+   */
   readonly maxLength = input<number | undefined>(undefined);
+
+  /**
+   * Custom ARIA label for the input. Falls back to the `label` input when not provided.
+   * @default undefined
+   */
   readonly ariaLabel = input<string | undefined>(undefined);
+
+  /**
+   * HTML `id` attribute for the input element. Used to link the label and error message.
+   * @default 'bzm-input'
+   */
   readonly inputId = input<string>('bzm-input');
 
+  /** Emits the updated input value on every keystroke. */
   readonly valueChange = output<string>();
+
+  /** Emits when the Enter key is pressed inside the input field. */
   readonly enterPressed = output<void>();
 
+  /** Reference to the underlying native input element. */
   readonly inputEl = viewChild<ElementRef<HTMLInputElement>>('inputEl');
 
   protected readonly inputClasses = computed(() => {
@@ -137,11 +212,13 @@ export class BzmInputComponent {
     return classes.join(' ');
   });
 
+  /** Emits the current input value on every keystroke. */
   onInput(event: Event): void {
     const target = event.target as HTMLInputElement;
     this.valueChange.emit(target.value);
   }
 
+  /** Programmatically focuses the underlying input element. */
   focus(): void {
     this.inputEl()?.nativeElement.focus();
   }

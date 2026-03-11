@@ -117,8 +117,33 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
     }
   `,
 })
+/**
+ * Displays an achievement badge with an icon or star placeholder, a label, and an optional locked overlay.
+ *
+ * When locked, the badge is desaturated and dimmed with a lock icon overlay. Use this component
+ * to represent unlockable achievements, rewards, or collectible items in player profiles.
+ *
+ * @selector bzm-badge-icon
+ *
+ * @example
+ * ```html
+ * <bzm-badge-icon label="Quiz Master" [iconUrl]="badge.icon" />
+ * <bzm-badge-icon label="Perfectionist" [locked]="true" />
+ * ```
+ */
 export class BzmBadgeIconComponent {
+  /**
+   * Optional URL for the badge icon image. Falls back to a star placeholder when not provided.
+   * @default undefined
+   */
   readonly iconUrl = input<string | undefined>(undefined);
+
+  /** Descriptive label displayed below the badge icon. Also used as the image alt text. */
   readonly label = input.required<string>();
+
+  /**
+   * Applies a greyscale locked overlay with a lock icon, indicating the badge has not been earned yet.
+   * @default false
+   */
   readonly locked = input<boolean>(false);
 }

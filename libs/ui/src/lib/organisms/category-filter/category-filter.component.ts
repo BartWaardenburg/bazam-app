@@ -55,10 +55,32 @@ import { BzmChipComponent } from '../../atoms/chip/chip.component';
     }
   `,
 })
+/**
+ * Displays a horizontally scrollable row of selectable category chips.
+ *
+ * Use this component to let users filter content by category. The active
+ * category is visually highlighted and the component emits the selected
+ * category string on change.
+ *
+ * @selector bzm-category-filter
+ *
+ * @example
+ * ```html
+ * <bzm-category-filter
+ *   [categories]="['All', 'Science', 'History']"
+ *   [activeCategory]="'All'"
+ *   (categoryChange)="onCategoryChange($event)"
+ * />
+ * ```
+ */
 export class BzmCategoryFilterComponent {
+  /** List of category names to render as selectable chips. */
   readonly categories = input.required<string[]>();
+
+  /** Currently active category, used to highlight the matching chip. */
   readonly activeCategory = input.required<string>();
 
+  /** Emits the category name when the user selects a different chip. */
   readonly categoryChange = output<string>();
 
   protected readonly chipColor = (category: string): string | undefined => {

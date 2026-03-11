@@ -185,13 +185,62 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
     }
   `,
 })
+/**
+ * Displays a range slider with an optional label, live value display, and Angular Reactive Forms
+ * integration via `ControlValueAccessor`. Features a filled track indicator and comic-styled thumb.
+ *
+ * The slider visually fills the track from left to right proportional to the current value.
+ * When a label is set, it is displayed alongside the formatted current value and optional suffix.
+ *
+ * @selector bzm-slider
+ *
+ * @example
+ * ```html
+ * <bzm-slider label="Tijdslimiet" [min]="5" [max]="60" [(value)]="timeLimit" suffix="s" />
+ * <bzm-slider label="Volume" [min]="0" [max]="100" [step]="5" />
+ * ```
+ */
 export class BzmSliderComponent implements ControlValueAccessor {
+  /**
+   * Minimum allowed value for the slider.
+   * @default 0
+   */
   readonly min = input<number>(0);
+
+  /**
+   * Maximum allowed value for the slider.
+   * @default 100
+   */
   readonly max = input<number>(100);
+
+  /**
+   * Step increment between allowed values.
+   * @default 1
+   */
   readonly step = input<number>(1);
+
+  /**
+   * Two-way bindable model for the current slider value.
+   * @default 50
+   */
   readonly value = model<number>(50);
+
+  /**
+   * Disables the slider, applying greyscale styling and preventing interaction.
+   * @default false
+   */
   readonly disabled = input<boolean>(false);
+
+  /**
+   * Optional label displayed above the slider track alongside the current value.
+   * @default ''
+   */
   readonly label = input<string>('');
+
+  /**
+   * Optional suffix appended to the displayed value (e.g., "s" for seconds, "%" for percent).
+   * @default ''
+   */
   readonly suffix = input<string>('');
 
   private onChange: (value: number) => void = () => {};
@@ -204,6 +253,7 @@ export class BzmSliderComponent implements ControlValueAccessor {
     return `--track-fill: ${pct}%`;
   });
 
+  /** Handles native range input changes, updates the model value, and notifies form controls. */
   onInput(event: Event): void {
     const val = Number((event.target as HTMLInputElement).value);
     this.value.set(val);
@@ -211,14 +261,17 @@ export class BzmSliderComponent implements ControlValueAccessor {
     this.onTouched();
   }
 
+  /** Writes a new value from the form control to the slider model. */
   writeValue(value: number): void {
     this.value.set(value);
   }
 
+  /** Registers the `onChange` callback provided by Angular forms. */
   registerOnChange(fn: (value: number) => void): void {
     this.onChange = fn;
   }
 
+  /** Registers the `onTouched` callback provided by Angular forms. */
   registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
   }

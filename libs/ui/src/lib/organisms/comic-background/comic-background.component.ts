@@ -160,4 +160,24 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
     }
   `,
 })
+/**
+ * Renders a full-viewport decorative background with drifting comic-style shapes.
+ *
+ * Displays halftone patterns, starbursts, speed lines, zigzags, explosions, and
+ * triangles that slowly drift using CSS animations. All shapes are marked
+ * `aria-hidden` and the host uses `pointer-events: none`, so the background
+ * never interferes with interactive content. Animations are disabled when
+ * the user prefers reduced motion.
+ *
+ * Place this component once at the root of a page layout to provide a
+ * consistent comic-book atmosphere.
+ *
+ * @selector bzm-comic-background
+ *
+ * @example
+ * ```html
+ * <bzm-comic-background />
+ * <main>Page content here</main>
+ * ```
+ */
 export class BzmComicBackgroundComponent {}

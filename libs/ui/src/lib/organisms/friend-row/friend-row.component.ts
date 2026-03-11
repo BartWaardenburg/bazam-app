@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, input, output, computed } from '@angular/core';
 import { BzmAvatarComponent } from '../../atoms/avatar/avatar.component';
 
+/** Data shape for a single friend in the friend row. */
 export interface FriendEntry {
   readonly nickname: string;
   readonly avatarUrl?: string;
@@ -136,10 +137,35 @@ export interface FriendEntry {
     }
   `,
 })
+/**
+ * Displays a horizontal row of friend avatars with an overflow indicator and a "See All" action.
+ *
+ * Renders up to `maxVisible` friend avatars in a scrollable row. When the list
+ * exceeds that limit, a "+N" overflow badge is appended. Each avatar lifts on
+ * hover for a playful interaction.
+ *
+ * @selector bzm-friend-row
+ *
+ * @example
+ * ```html
+ * <bzm-friend-row
+ *   [friends]="friendList"
+ *   [maxVisible]="4"
+ *   (seeAllClick)="navigateToFriends()"
+ * />
+ * ```
+ */
 export class BzmFriendRowComponent {
+  /** Array of friend entries to display as avatars. */
   readonly friends = input.required<FriendEntry[]>();
+
+  /**
+   * Maximum number of avatars to render before showing the overflow count.
+   * @default 6
+   */
   readonly maxVisible = input<number>(6);
 
+  /** Emits when the user clicks the "See All" button. */
   readonly seeAllClick = output<void>();
 
   protected readonly visibleFriends = computed(() =>

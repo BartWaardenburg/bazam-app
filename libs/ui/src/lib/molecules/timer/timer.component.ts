@@ -10,6 +10,7 @@ import {
   effect,
 } from '@angular/core';
 
+/** Size preset for the timer display. */
 export type TimerSize = 'sm' | 'md' | 'lg';
 
 @Component({
@@ -110,14 +111,41 @@ export type TimerSize = 'sm' | 'md' | 'lg';
     }
   `,
 })
+/**
+ * Manages a countdown timer with visual warning/danger states and a shrinking progress fill bar.
+ *
+ * Counts down from `duration` (or `initialRemaining`) in one-second intervals when `running` is true.
+ * Automatically transitions through three visual states:
+ * - Normal: default styling when more than 30% of time remains
+ * - Warning: yellow background when less than 30% remains
+ * - Danger: red background with a shake animation when 3 seconds or fewer remain
+ *
+ * Emits `timerComplete` when the countdown reaches zero. Cleans up the interval on destroy.
+ *
+ * @selector bzm-timer
+ *
+ * @example
+ * ```html
+ * <bzm-timer [duration]="30" [running]="true" size="md" (timerComplete)="onTimeUp()" />
+ * ```
+ */
 export class BzmTimerComponent implements OnInit, OnDestroy {
+  /** Total duration in seconds for the countdown. Also used to calculate the fill percentage. */
   readonly duration = input.required<number>();
+
+  /** Optional initial remaining seconds. When provided, the timer starts from this value instead of `duration`. @default undefined */
   readonly initialRemaining = input<number | undefined>(undefined);
+
+  /** Whether the timer is actively counting down. Toggling this starts or stops the interval. @default false */
   readonly running = input<boolean>(false);
+
+  /** Size preset controlling the timer's dimensions and font size. @default 'md' */
   readonly size = input<TimerSize>('md');
 
+  /** Emits when the countdown reaches zero. */
   readonly timerComplete = output<void>();
 
+  /** Reactive signal holding the current remaining seconds. Updates every second while running. */
   readonly remainingSeconds = signal(0);
 
   private intervalId: ReturnType<typeof setInterval> | null = null;
@@ -148,6 +176,7 @@ export class BzmTimerComponent implements OnInit, OnDestroy {
     }
   });
 
+  /** Maps each size preset to pixel dimensions for the timer container. */
   readonly sizeMap: Record<TimerSize, { width: number; height: number }> = {
     sm: { width: 56, height: 56 },
     md: { width: 80, height: 80 },
@@ -188,10 +217,12 @@ export class BzmTimerComponent implements OnInit, OnDestroy {
     return `font-size: ${fontSize}`;
   });
 
+  /** Initializes the component. Timer setup is handled by the `durationEffect`. */
   ngOnInit(): void {
     // initialization handled by durationEffect
   }
 
+  /** Stops the countdown interval to prevent memory leaks on component teardown. */
   ngOnDestroy(): void {
     this.stopTimer();
   }

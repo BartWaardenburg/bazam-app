@@ -89,8 +89,33 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
     }
   `,
 })
+/**
+ * Displays a notification bell button with an optional unread count badge.
+ *
+ * Shows a small dot indicator when `hasNotification` is true, or a numeric badge when `count`
+ * is provided and greater than zero. Counts above 99 are displayed as "99+". The ARIA label
+ * is automatically computed based on the notification state.
+ *
+ * @selector bzm-notification-bell
+ *
+ * @example
+ * ```html
+ * <bzm-notification-bell [hasNotification]="true" />
+ * <bzm-notification-bell [hasNotification]="true" [count]="5" />
+ * ```
+ */
 export class BzmNotificationBellComponent {
+  /**
+   * Shows a notification indicator on the bell. When `count` is not set, displays a small dot.
+   * @default false
+   */
   readonly hasNotification = input<boolean>(false);
+
+  /**
+   * Number of unread notifications. Displayed as a numeric badge when greater than zero.
+   * Values above 99 are capped and shown as "99+".
+   * @default undefined
+   */
   readonly count = input<number | undefined>(undefined);
 
   protected readonly showCount = computed(() => {

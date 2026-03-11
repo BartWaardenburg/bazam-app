@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, input, computed } from '@angular/core';
 
+/** Size preset for the avatar component. */
 export type AvatarSize = 'sm' | 'md' | 'lg' | 'xl';
 
 const SIZE_MAP: Record<AvatarSize, number> = {
@@ -20,6 +21,7 @@ const AVATAR_COLORS = [
   'var(--bzm-cyan-600)',
 ];
 
+/** Deterministic hash for mapping a nickname to a consistent avatar color. */
 const hashString = (str: string): number => {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -161,11 +163,49 @@ const hashString = (str: string): number => {
     }
   `,
 })
+/**
+ * Displays a player avatar with initials fallback, deterministic color mapping, and optional rank/streak badges.
+ *
+ * When no image URL is provided, generates a two-letter initials avatar with a background color
+ * deterministically derived from the player's nickname. Supports optional rank and streak badges
+ * positioned at the bottom-right corner.
+ *
+ * @selector bzm-avatar
+ *
+ * @example
+ * ```html
+ * <bzm-avatar nickname="Jan de Vries" size="lg" />
+ * <bzm-avatar nickname="Anna" [imageUrl]="player.avatarUrl" [rankBadge]="1" />
+ * ```
+ */
 export class BzmAvatarComponent {
+  /** Player nickname used to derive initials and background color. */
   readonly nickname = input.required<string>();
+
+  /**
+   * Optional URL for a custom avatar image. Falls back to initials when not provided.
+   * @default undefined
+   */
   readonly imageUrl = input<string | undefined>(undefined);
+
+  /**
+   * Controls the dimensions of the avatar (32px, 40px, 52px, or 68px).
+   * @default 'md'
+   */
   readonly size = input<AvatarSize>('md');
+
+  /**
+   * Optional rank number displayed as a badge in the bottom-right corner.
+   * Takes priority over the streak badge when both are set.
+   * @default undefined
+   */
   readonly rankBadge = input<number | undefined>(undefined);
+
+  /**
+   * Optional streak count displayed as a badge with a lightning icon.
+   * Only shown when no rank badge is present.
+   * @default undefined
+   */
   readonly streakBadge = input<number | undefined>(undefined);
 
   protected readonly sizePx = computed(() => SIZE_MAP[this.size()]);

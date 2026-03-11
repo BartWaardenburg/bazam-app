@@ -80,11 +80,35 @@ import { BzmMascotComponent } from '../../atoms/mascot/mascot.component';
     }
   `,
 })
+/**
+ * Displays post-answer feedback with an animated mascot reaction, correctness title, and points earned.
+ *
+ * Shows a happy bouncing mascot with earned points for correct answers,
+ * or a sad shaking mascot with an encouragement message for incorrect answers.
+ * Uses `aria-live="polite"` to announce feedback to screen readers.
+ *
+ * @selector bzm-answer-feedback
+ *
+ * @example
+ * ```html
+ * <bzm-answer-feedback [correct]="true" [score]="150" />
+ * <bzm-answer-feedback [correct]="false" incorrectMessage="Probeer het opnieuw!" />
+ * ```
+ */
 export class BzmAnswerFeedbackComponent {
+  /** Whether the player's answer was correct. Determines mascot expression, colors, and displayed text. */
   readonly correct = input.required<boolean>();
+
+  /** Points earned for a correct answer. Displayed as "+{score} punten" when the answer is correct. @default undefined */
   readonly score = input<number | undefined>(undefined);
+
+  /** Title text shown when the answer is correct. @default 'Goed zo!' */
   readonly correctTitle = input<string>('Goed zo!');
+
+  /** Title text shown when the answer is incorrect. @default 'Helaas!' */
   readonly incorrectTitle = input<string>('Helaas!');
+
+  /** Encouragement message shown below the title for incorrect answers. @default 'Volgende keer beter!' */
   readonly incorrectMessage = input<string>('Volgende keer beter!');
 
   protected readonly feedbackClasses = computed(

@@ -126,6 +126,22 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
     }
   `,
 })
+/**
+ * Renders an accent-colored banner that prominently displays the player's
+ * current streak count alongside animated fire and star icons.
+ *
+ * The banner acts as a tappable call-to-action with hover/active states
+ * and a right-pointing chevron. Use it on dashboard or profile pages to
+ * encourage continued play.
+ *
+ * @selector bzm-streak-banner
+ *
+ * @example
+ * ```html
+ * <bzm-streak-banner [streakCount]="7" />
+ * ```
+ */
 export class BzmStreakBannerComponent {
+  /** Number of consecutive streaks to display in the banner. */
   readonly streakCount = input.required<number>();
 }

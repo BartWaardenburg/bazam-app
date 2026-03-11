@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, input, computed } from '@angular/core';
 
+/** Size preset for the spinner component. */
 export type SpinnerSize = 'sm' | 'md' | 'lg';
 
 @Component({
@@ -347,8 +348,33 @@ export type SpinnerSize = 'sm' | 'md' | 'lg';
     }
   `,
 })
+/**
+ * Displays an animated loading spinner featuring a bouncing mascot character, orbiting
+ * answer-color dots, rotating starburst backdrop, and sparkle effects.
+ *
+ * The animation includes physically-motivated bounce timing with squash-and-stretch, a synced
+ * ground shadow, and a follow-through question-mark badge. Gracefully degrades to a simple
+ * pulse animation when `prefers-reduced-motion` is active.
+ *
+ * @selector bzm-spinner
+ *
+ * @example
+ * ```html
+ * <bzm-spinner size="lg" ariaLabel="Quiz wordt geladen..." />
+ * <bzm-spinner size="sm" />
+ * ```
+ */
 export class BzmSpinnerComponent {
+  /**
+   * Size preset controlling the SVG dimensions (48px, 80px, or 120px width).
+   * @default 'md'
+   */
   readonly size = input<SpinnerSize>('md');
+
+  /**
+   * Accessible label announced by screen readers for the loading state.
+   * @default 'Laden...'
+   */
   readonly ariaLabel = input<string>('Laden...');
 
   protected readonly spinnerClasses = computed(

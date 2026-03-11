@@ -1,6 +1,7 @@
 import { pgTable, uuid, text, timestamp, jsonb, integer } from 'drizzle-orm/pg-core';
 import type { QuestionInput } from '@bazam/shared-types';
 
+/** Stored quiz templates with their questions. */
 export const quizzes = pgTable('quizzes', {
   id: uuid('id').primaryKey().defaultRandom(),
   title: text('title').notNull(),
@@ -8,6 +9,7 @@ export const quizzes = pgTable('quizzes', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
+/** Records of played game sessions linked to a quiz. */
 export const gameSessions = pgTable('game_sessions', {
   id: uuid('id').primaryKey().defaultRandom(),
   quizId: uuid('quiz_id').references(() => quizzes.id),
@@ -17,6 +19,7 @@ export const gameSessions = pgTable('game_sessions', {
   endedAt: timestamp('ended_at'),
 });
 
+/** Individual player results within a game session. */
 export const gameResults = pgTable('game_results', {
   id: uuid('id').primaryKey().defaultRandom(),
   sessionId: uuid('session_id').references(() => gameSessions.id).notNull(),

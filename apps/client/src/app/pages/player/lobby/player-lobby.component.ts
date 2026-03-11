@@ -39,6 +39,14 @@ import { GameStateService } from '../../../services/game-state.service';
     }
   `,
 })
+/**
+ * Player lobby (waiting room) displayed after successfully joining a game.
+ *
+ * Greets the player by nickname, shows a waiting indicator until the host
+ * starts the quiz, and displays a live list of all connected players.
+ * This is a read-only view -- the player cannot trigger any actions here.
+ */
 export class PlayerLobbyComponent {
+  /** Injected game state for reading the player nickname and connected players. */
   readonly gameState = inject(GameStateService);
 }

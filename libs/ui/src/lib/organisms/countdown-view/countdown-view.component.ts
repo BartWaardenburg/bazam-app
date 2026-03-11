@@ -74,6 +74,27 @@ import { BzmMascotComponent } from '../../atoms/mascot/mascot.component';
     }
   `,
 })
+/**
+ * Displays a pre-game countdown screen with an excited mascot and announcement text.
+ *
+ * Use this as a full-screen interstitial before a quiz round starts. The mascot
+ * bounces in with a pop animation, and the text is announced to screen readers
+ * via `aria-live="assertive"`. Animations are disabled when the user prefers
+ * reduced motion.
+ *
+ * @selector bzm-countdown-view
+ *
+ * @example
+ * ```html
+ * <bzm-countdown-view text="3..." />
+ * <bzm-countdown-view /> <!-- defaults to "Maak je klaar!" -->
+ * ```
+ */
 export class BzmCountdownViewComponent {
+  /**
+   * Announcement text displayed below the mascot.
+   * Typically a countdown number or a "get ready" message.
+   * @default 'Maak je klaar!'
+   */
   readonly text = input<string>('Maak je klaar!');
 }

@@ -41,7 +41,24 @@ import { BzmMascotComponent } from '../../atoms/mascot/mascot.component';
     }
   `,
 })
+/**
+ * Displays a waiting indicator with a bouncing mascot and a customizable status message.
+ *
+ * Renders a centered column with an animated mascot (neutral expression, question-mark badge)
+ * and a muted text message. Used as a placeholder while waiting for game events such as
+ * the host starting the game or the next question loading.
+ *
+ * @selector bzm-waiting-state
+ *
+ * @example
+ * ```html
+ * <bzm-waiting-state message="De host start het spel..." spinnerSize="md" />
+ * ```
+ */
 export class BzmWaitingStateComponent {
+  /** Status message displayed below the mascot. @default 'Even geduld...' */
   readonly message = input<string>('Even geduld...');
+
+  /** Size of the bouncing mascot animation. @default 'lg' */
   readonly spinnerSize = input<'sm' | 'md' | 'lg'>('lg');
 }

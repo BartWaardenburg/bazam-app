@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
 import { BzmAvatarComponent } from '../../atoms/avatar/avatar.component';
 import { BzmLeaderboardItemComponent } from '../../molecules/leaderboard-item/leaderboard-item.component';
 
+/** Data shape for a single player in the leaderboard. */
 export interface LeaderboardPlayer {
   readonly id: string;
   readonly nickname: string;
@@ -154,9 +155,40 @@ const MEDAL_LABELS = ['1ST', '2ND', '3RD'] as const;
     }
   `,
 })
+/**
+ * Displays a full leaderboard with an optional animated podium for the top 3
+ * players and a scrollable ranked list for the remaining entries.
+ *
+ * When `showPodium` is enabled, the first three entries are rendered as podium
+ * spots with medal labels (1ST, 2ND, 3RD) and pop-in animations. The rest
+ * appear as `BzmLeaderboardItem` rows. A player can be visually highlighted
+ * by matching their nickname via `highlightNickname`.
+ *
+ * @selector bzm-leaderboard
+ *
+ * @example
+ * ```html
+ * <bzm-leaderboard
+ *   [entries]="players"
+ *   [showPodium]="true"
+ *   [highlightNickname]="currentPlayer"
+ * />
+ * ```
+ */
 export class BzmLeaderboardComponent {
+  /** Sorted array of player entries to display in the leaderboard. */
   readonly entries = input.required<LeaderboardPlayer[]>();
+
+  /**
+   * Whether to render the top 3 players in an animated podium layout.
+   * @default false
+   */
   readonly showPodium = input<boolean>(false);
+
+  /**
+   * Nickname of the player to visually highlight in the list.
+   * @default undefined
+   */
   readonly highlightNickname = input<string | undefined>(undefined);
 
   protected readonly topThree = computed(() => this.entries().slice(0, 3));
@@ -164,6 +196,7 @@ export class BzmLeaderboardComponent {
     this.showPodium() ? this.entries().slice(3) : this.entries()
   );
 
+  /** Returns the medal position label (1ST, 2ND, 3RD) for a given podium index. */
   protected medalLabel(index: number): string {
     return MEDAL_LABELS[index] ?? '';
   }

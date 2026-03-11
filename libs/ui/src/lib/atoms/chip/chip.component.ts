@@ -75,11 +75,39 @@ import { Component, ChangeDetectionStrategy, input, output, computed } from '@an
     }
   `,
 })
+/**
+ * Displays a toggleable chip button with active/inactive visual states and an optional custom
+ * background color. Used for filter controls, category selection, and tag-style toggles.
+ *
+ * Emits a `toggled` event on click. The parent component is responsible for managing
+ * the active state.
+ *
+ * @selector bzm-chip
+ *
+ * @example
+ * ```html
+ * <bzm-chip label="Sport" [active]="selectedCategory === 'sport'" (toggled)="select('sport')" />
+ * <bzm-chip label="Muziek" [active]="true" color="var(--bzm-green-500)" />
+ * ```
+ */
 export class BzmChipComponent {
+  /** Text label displayed inside the chip. */
   readonly label = input.required<string>();
+
+  /**
+   * Toggles the chip between active (highlighted) and inactive (muted) visual states.
+   * @default false
+   */
   readonly active = input<boolean>(false);
+
+  /**
+   * Optional custom background color applied when the chip is active.
+   * When set, uses white text on the custom color instead of the default accent theme.
+   * @default undefined
+   */
   readonly color = input<string | undefined>(undefined);
 
+  /** Emits when the chip is clicked, signaling a toggle request to the parent. */
   readonly toggled = output<void>();
 
   protected readonly chipClasses = computed(() => {

@@ -62,10 +62,23 @@ import { WebSocketService } from '../../../services/websocket.service';
     }
   `,
 })
+/**
+ * Host lobby (waiting room) displayed after a room has been created.
+ *
+ * Shows the shareable room code that players can use to join, a live
+ * player list that updates as players connect, and a "Start Quiz" button
+ * that is enabled once at least one player has joined.
+ */
 export class HostLobbyComponent {
+  /** Injected game state for reading the room code and connected players. */
   readonly gameState = inject(GameStateService);
+
   private readonly wsService = inject(WebSocketService);
 
+  /**
+   * Sends a `START_GAME` message to the server, transitioning all
+   * connected clients from the lobby into the countdown phase.
+   */
   startGame(): void {
     this.wsService.send({ type: 'START_GAME' });
   }

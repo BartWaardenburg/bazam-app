@@ -107,18 +107,43 @@ import { WebSocketService } from '../../../services/websocket.service';
     }
   `,
 })
+/**
+ * Player game view that renders the active quiz experience.
+ *
+ * Displays different sub-views based on the current game phase:
+ * - **countdown** -- Animated countdown before the first question.
+ * - **question** -- Question text, timer, and interactive answer grid.
+ *   After the player answers, shows correctness feedback and points earned.
+ * - **leaderboard** -- The player's current score with a waiting indicator
+ *   until the host advances to the next question.
+ */
 export class PlayerGameComponent {
+  /** Injected game state for reading questions, scores, and phase transitions. */
   readonly gameState = inject(GameStateService);
+
   private readonly wsService = inject(WebSocketService);
+
+  /**
+   * Tracks which answer the player has tapped in the current question.
+   * Reset to `null` each time the question index changes (via effect).
+   */
   readonly selectedAnswer = signal<number | null>(null);
 
   constructor() {
+    /** Resets the selected answer whenever a new question begins. */
     effect(() => {
       this.gameState.questionIndex();
       this.selectedAnswer.set(null);
     });
   }
 
+  /**
+   * Maps raw answer strings to {@link AnswerGridItem} objects, enriching
+   * each item with the current selection state.
+   *
+   * @param answers - Array of answer text strings from the current question.
+   * @returns Grid items with `text` and `selected` properties.
+   */
   toAnswerGridItems(answers: string[]): AnswerGridItem[] {
     return answers.map((text, index) => ({
       text,
@@ -126,6 +151,15 @@ export class PlayerGameComponent {
     }));
   }
 
+  /**
+   * Submits the player's selected answer to the server.
+   *
+   * Guards against duplicate submissions and out-of-range indices.
+   * Sends a `SUBMIT_ANSWER` message containing the question index,
+   * the chosen answer, and a timestamp for speed-based scoring.
+   *
+   * @param answerIndex - Zero-based index (0-3) of the selected answer.
+   */
   submitAnswer(answerIndex: number): void {
     if (this.gameState.hasAnswered()) return;
     if (answerIndex < 0 || answerIndex > 3) return;

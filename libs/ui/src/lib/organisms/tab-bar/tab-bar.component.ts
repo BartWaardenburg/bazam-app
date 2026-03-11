@@ -72,9 +72,34 @@ import { Component, ChangeDetectionStrategy, input, output, computed } from '@an
     }
   `,
 })
+/**
+ * Renders a segmented tab navigation bar with active state highlighting.
+ *
+ * Each tab is rendered as a button with proper ARIA `role="tab"` and
+ * `aria-selected` attributes. The active tab receives a primary-colored
+ * background. Use this component to switch between views or filter modes.
+ *
+ * @selector bzm-tab-bar
+ *
+ * @example
+ * ```html
+ * <bzm-tab-bar
+ *   [tabs]="['World', 'Weekly', 'Friends']"
+ *   [activeIndex]="selectedTab"
+ *   (tabChange)="selectedTab = $event"
+ * />
+ * ```
+ */
 export class BzmTabBarComponent {
+  /** Array of tab label strings to render as buttons. */
   readonly tabs = input.required<string[]>();
+
+  /**
+   * Zero-based index of the currently active tab.
+   * @default 0
+   */
   readonly activeIndex = input<number>(0);
 
+  /** Emits the zero-based index of the tab the user clicked. */
   readonly tabChange = output<number>();
 }

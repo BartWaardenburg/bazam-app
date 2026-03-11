@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, computed, input, output } from '@angular/core';
 
+/** Single-character letter label for answer options. */
 export type AnswerLetter = 'A' | 'B' | 'C' | 'D';
 
 @Component({
@@ -132,15 +133,46 @@ export type AnswerLetter = 'A' | 'B' | 'C' | 'D';
     }
   `,
 })
+/**
+ * Renders a single answer option button with a color-coded letter badge and correct/incorrect feedback states.
+ *
+ * Displays the answer text alongside a colored letter label (A-D). Supports selection
+ * highlighting, correct/incorrect visual feedback with check/cross icons, and
+ * keyboard-accessible focus styles. Typically used as a child of `BzmAnswerGrid`.
+ *
+ * @selector bzm-answer-option
+ *
+ * @example
+ * ```html
+ * <bzm-answer-option
+ *   letter="A"
+ *   text="Amsterdam"
+ *   [selected]="true"
+ *   [correct]="null"
+ *   (selected)="onSelect()"
+ * />
+ * ```
+ */
 export class BzmAnswerOptionComponent {
+  /** Letter label (A-D) displayed in the color-coded badge. */
   readonly letter = input.required<AnswerLetter>();
+
+  /** Answer text displayed next to the letter badge. */
   readonly text = input.required<string>();
+
+  /** Whether this option is currently selected by the player. @default false */
   readonly selected = input<boolean>(false);
+
+  /** Correctness state: `true` shows a green check, `false` shows a red cross, `null` hides feedback. @default null */
   readonly correct = input<boolean | null>(null);
+
+  /** Prevents the option from being clicked when true. @default false */
   readonly disabled = input<boolean>(false);
 
+  /** Emits when the player clicks this answer option (only when not disabled). */
   readonly selectedEvent = output<void>({ alias: 'selected' });
 
+  /** Maps each letter to its text color CSS variable. */
   readonly letterColorMap: Record<AnswerLetter, string> = {
     A: 'var(--bzm-cyan-700)',
     B: 'var(--bzm-yellow-700)',
@@ -148,6 +180,7 @@ export class BzmAnswerOptionComponent {
     D: 'var(--bzm-green-700)',
   };
 
+  /** Maps each letter to its background color CSS variable. */
   readonly letterBgMap: Record<AnswerLetter, string> = {
     A: 'var(--bzm-cyan-100)',
     B: 'var(--bzm-yellow-100)',
@@ -163,6 +196,7 @@ export class BzmAnswerOptionComponent {
     return classes.join(' ');
   });
 
+  /** Maps each letter to its border color CSS variable for the selected state. */
   readonly borderColorMap: Record<AnswerLetter, string> = {
     A: 'var(--bzm-color-answer-a)',
     B: 'var(--bzm-color-answer-b)',
@@ -183,6 +217,7 @@ export class BzmAnswerOptionComponent {
     return `color: ${this.letterColorMap[l]}; background: ${this.letterBgMap[l]}`;
   });
 
+  /** Handles button click, emitting the `selected` output only when the option is not disabled. */
   handleClick(): void {
     if (!this.disabled()) {
       this.selectedEvent.emit();

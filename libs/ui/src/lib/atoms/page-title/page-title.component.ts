@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, input, computed } from '@angular/core';
 
+/** Size preset for the page title component. */
 export type PageTitleSize = 'sm' | 'md' | 'lg' | 'xl';
 
 @Component({
@@ -60,9 +61,39 @@ export type PageTitleSize = 'sm' | 'md' | 'lg' | 'xl';
     .align-right { text-align: right; }
   `,
 })
+/**
+ * Displays a comic-styled page heading with text stroke, drop shadow, and configurable size,
+ * color, and alignment. Projects heading content via `ng-content`.
+ *
+ * Uses the display/heading font family with `paint-order: stroke fill` for a bold outlined
+ * text effect. Sizes scale responsively using `clamp()` for consistent appearance across viewports.
+ *
+ * @selector bzm-page-title
+ *
+ * @example
+ * ```html
+ * <bzm-page-title size="lg" color="var(--bzm-color-accent)">BAZAM!</bzm-page-title>
+ * <bzm-page-title size="sm" align="left">Scorebord</bzm-page-title>
+ * ```
+ */
 export class BzmPageTitleComponent {
+  /**
+   * Size preset controlling font size, text stroke width, and text shadow offset.
+   * Scales responsively from mobile to desktop via `clamp()`.
+   * @default 'md'
+   */
   readonly size = input<PageTitleSize>('md');
+
+  /**
+   * CSS color value for the heading text.
+   * @default 'var(--bzm-color-primary)'
+   */
   readonly color = input<string>('var(--bzm-color-primary)');
+
+  /**
+   * Horizontal text alignment of the heading.
+   * @default 'center'
+   */
   readonly align = input<'left' | 'center' | 'right'>('center');
 
   protected readonly titleClasses = computed(

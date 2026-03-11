@@ -70,18 +70,49 @@ import { WebSocketService } from '../../../services/websocket.service';
     }
   `,
 })
+/**
+ * Player join form where users enter a room code and nickname to join an
+ * existing game session.
+ *
+ * Presents a PIN input for the 6-digit room code, a text input for the
+ * player's nickname, and a join button. On submission, connects to the
+ * WebSocket server and sends a `JOIN_ROOM` message.
+ */
 export class JoinGameComponent {
+  /** Injected game state for reading/writing error messages and player info. */
   readonly gameState = inject(GameStateService);
+
   private readonly wsService = inject(WebSocketService);
+
+  /**
+   * Derived signal that is `true` while the WebSocket handshake is in progress.
+   * Used to disable the join button and show a connecting label.
+   */
   readonly isConnecting = computed(() => this.wsService.connectionStatus() === 'connecting');
 
+  /** The 6-digit room code entered by the player. */
   roomCode = '';
+
+  /** The display nickname chosen by the player (max 20 characters). */
   nickname = '';
 
+  /**
+   * Validates the join form fields.
+   *
+   * @returns `true` if the room code is exactly 6 characters and the
+   *          nickname is non-empty; `false` otherwise.
+   */
   isValid(): boolean {
     return this.roomCode.trim().length === 6 && this.nickname.trim().length > 0;
   }
 
+  /**
+   * Connects to the WebSocket server and joins the specified room.
+   *
+   * Sets the user role to `'player'`, stores the trimmed nickname in
+   * game state, and sends a `JOIN_ROOM` message. On failure, rolls back
+   * the role and nickname and sets a user-visible error message.
+   */
   async joinGame(): Promise<void> {
     this.gameState.errorMessage.set(null);
 

@@ -137,12 +137,43 @@ import { Component, ChangeDetectionStrategy, computed, input } from '@angular/co
     }
   `,
 })
+/**
+ * Displays a single leaderboard row with rank badge, avatar, nickname, streak indicator, and point total.
+ *
+ * Renders a compact row suitable for vertical leaderboard lists. Top-3 ranks receive
+ * gold/silver/bronze coloring. The current user's row is visually highlighted with
+ * a distinct border and background color.
+ *
+ * @selector bzm-leaderboard-item
+ *
+ * @example
+ * ```html
+ * <bzm-leaderboard-item
+ *   [rank]="1"
+ *   nickname="Speler1"
+ *   [points]="2400"
+ *   [streak]="3"
+ *   [isCurrentUser]="true"
+ * />
+ * ```
+ */
 export class BzmLeaderboardItemComponent {
+  /** Numeric rank position (1-based). Ranks 1-3 receive gold, silver, and bronze colors. */
   readonly rank = input.required<number>();
+
+  /** Player's display name. The first character is used as an avatar fallback. */
   readonly nickname = input.required<string>();
+
+  /** URL for the player's avatar image. Falls back to a letter placeholder when not provided. @default undefined */
   readonly avatarUrl = input<string | undefined>(undefined);
+
+  /** Current answer streak count. Displayed as "{n} Streak" when greater than zero. @default 0 */
   readonly streak = input<number>(0);
+
+  /** Total points earned by the player. */
   readonly points = input.required<number>();
+
+  /** Whether this row represents the current (local) player. Applies a highlighted visual style. @default false */
   readonly isCurrentUser = input<boolean>(false);
 
   readonly containerClass = computed(() => {

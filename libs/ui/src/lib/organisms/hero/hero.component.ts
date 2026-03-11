@@ -139,9 +139,50 @@ import { BzmMascotComponent } from '../../atoms/mascot/mascot.component';
     }
   `,
 })
+/**
+ * Renders the landing page hero section with a bold title, optional subtitle,
+ * tagline, and decorative splat shapes alongside the Bazam mascot.
+ *
+ * Designed as the primary visual anchor for the home page. The title uses
+ * comic-style text shadows and a slight rotation. On mobile the layout
+ * stacks vertically.
+ *
+ * @selector bzm-hero
+ *
+ * @example
+ * ```html
+ * <bzm-hero
+ *   title="Bazam"
+ *   subtitle="Quiz Battle"
+ *   tagline="Daag je vrienden uit!"
+ *   [showMascot]="true"
+ * />
+ * ```
+ */
 export class BzmHeroComponent {
+  /**
+   * Primary hero title rendered in large comic-style text.
+   * @default 'Bazam'
+   */
   readonly title = input<string>('Bazam');
+
+  /**
+   * Secondary line displayed below the main title.
+   * Pass `undefined` to hide it.
+   * @default 'Quiz Battle'
+   */
   readonly subtitle = input<string | undefined>('Quiz Battle');
+
+  /**
+   * Tagline paragraph shown beneath the title block.
+   * Pass `undefined` to hide it.
+   * @default 'Daag je vrienden uit!'
+   */
   readonly tagline = input<string | undefined>('Daag je vrienden uit!');
+
+  /**
+   * Whether to display the floating mascot beside the title.
+   * @default true
+   */
   readonly showMascot = input<boolean>(true);
 }

@@ -1,7 +1,9 @@
 import { Component, ChangeDetectionStrategy, input, computed } from '@angular/core';
 
+/** Available clip-path shapes for the splat decoration. */
 export type SplatShape = 'burst' | 'star';
 
+/** CSS clip-path polygons for each splat shape. */
 const CLIP_PATHS: Record<SplatShape, string> = {
   burst: `polygon(
     50% 0%, 58% 28%, 85% 10%, 66% 36%, 100% 40%, 68% 50%,
@@ -48,9 +50,36 @@ const CLIP_PATHS: Record<SplatShape, string> = {
     }
   `,
 })
+/**
+ * Displays a decorative background splat shape using CSS clip-path polygons. Provides visual flair
+ * as a background element with a gentle pulsing animation. Marked as `aria-hidden` since it is
+ * purely decorative. Respects `prefers-reduced-motion` by disabling the animation.
+ *
+ * @selector bzm-splat
+ *
+ * @example
+ * ```html
+ * <bzm-splat shape="burst" color="var(--bzm-color-accent)" size="200px" />
+ * <bzm-splat shape="star" color="var(--bzm-yellow-400)" size="80px" />
+ * ```
+ */
 export class BzmSplatComponent {
+  /**
+   * Clip-path shape variant applied to the splat element.
+   * @default 'burst'
+   */
   readonly shape = input<SplatShape>('burst');
+
+  /**
+   * CSS color value for the splat background.
+   * @default 'var(--bzm-color-primary)'
+   */
   readonly color = input<string>('var(--bzm-color-primary)');
+
+  /**
+   * CSS dimension for both width and height of the splat element.
+   * @default '120px'
+   */
   readonly size = input<string>('120px');
 
   protected readonly splatStyle = computed(() => {

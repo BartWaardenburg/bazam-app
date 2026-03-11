@@ -126,10 +126,38 @@ import { BzmAvatarComponent } from '../../atoms/avatar/avatar.component';
     }
   `,
 })
+/**
+ * Displays a profile header banner with the user's avatar, display name,
+ * username, and a close button, over a decorative halftone background.
+ *
+ * Typically placed at the top of a profile or settings panel. The close
+ * button emits an event so the parent can handle dismissal.
+ *
+ * @selector bzm-profile-header
+ *
+ * @example
+ * ```html
+ * <bzm-profile-header
+ *   name="Bart"
+ *   username="@bartw"
+ *   [avatarUrl]="user.avatarUrl"
+ *   (closeClick)="closeProfile()"
+ * />
+ * ```
+ */
 export class BzmProfileHeaderComponent {
+  /** Display name shown prominently in the header. */
   readonly name = input.required<string>();
+
+  /** Username shown below the display name, typically prefixed with @. */
   readonly username = input.required<string>();
+
+  /**
+   * URL of the user's avatar image. Falls back to an initial-based avatar when not provided.
+   * @default undefined
+   */
   readonly avatarUrl = input<string | undefined>(undefined);
 
+  /** Emits when the user clicks the close button in the top-right corner. */
   readonly closeClick = output<void>();
 }

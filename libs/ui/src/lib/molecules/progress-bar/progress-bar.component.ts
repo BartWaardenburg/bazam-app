@@ -72,8 +72,25 @@ import { Component, ChangeDetectionStrategy, computed, input } from '@angular/co
     }
   `,
 })
+/**
+ * Displays a segmented quiz progress bar showing completed, active, and pending question segments.
+ *
+ * Renders one segment per question. Completed segments are filled, the active segment
+ * pulses with an animation, and pending segments remain empty. A label badge shows
+ * the current question number out of the total (e.g., "3 / 10").
+ *
+ * @selector bzm-progress-bar
+ *
+ * @example
+ * ```html
+ * <bzm-progress-bar [current]="2" [total]="10" />
+ * ```
+ */
 export class BzmProgressBarComponent {
+  /** Zero-based index of the current (active) question. Questions before this index appear as completed. */
   readonly current = input.required<number>();
+
+  /** Total number of questions in the quiz. Determines the number of rendered segments. */
   readonly total = input.required<number>();
 
   readonly segments = computed(() => {

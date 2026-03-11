@@ -47,9 +47,34 @@ import { BzmTimerComponent } from '../timer/timer.component';
     }
   `,
 })
+/**
+ * Displays the current question text alongside an optional countdown timer.
+ *
+ * Lays out the question heading and a `BzmTimer` instance in a horizontal flex row,
+ * collapsing to a vertical stack on small screens. The timer can be shown or hidden
+ * and controlled independently via inputs.
+ *
+ * @selector bzm-question-header
+ *
+ * @example
+ * ```html
+ * <bzm-question-header
+ *   questionText="Wat is de hoofdstad van Nederland?"
+ *   [timerDuration]="20"
+ *   [timerRunning]="true"
+ * />
+ * ```
+ */
 export class BzmQuestionHeaderComponent {
+  /** The question text displayed as the heading. */
   readonly questionText = input.required<string>();
+
+  /** Whether to render the countdown timer alongside the question. @default true */
   readonly showTimer = input<boolean>(true);
+
+  /** Duration in seconds for the countdown timer. @default 30 */
   readonly timerDuration = input<number>(30);
+
+  /** Whether the countdown timer is actively counting down. @default false */
   readonly timerRunning = input<boolean>(false);
 }

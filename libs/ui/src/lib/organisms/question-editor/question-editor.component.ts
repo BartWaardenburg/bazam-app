@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, input, output, computed } from '@an
 import { FormsModule } from '@angular/forms';
 import { BzmSliderComponent } from '../../atoms/slider/slider.component';
 
+/** Data emitted by the question editor when any field changes. */
 export interface QuestionEditorData {
   readonly text: string;
   readonly answers: [string, string, string, string];
@@ -342,12 +343,48 @@ const ANSWER_COLORS: Record<number, { bg: string; border: string; badge: string;
     }
   `,
 })
+/**
+ * Provides an interactive question editor with a text input, four color-coded
+ * answer fields, a correct-answer radio selector, and a time limit slider.
+ *
+ * Each field change immediately emits an updated `QuestionEditorData` object
+ * through `questionChange`. The correct answer is selected by clicking on the
+ * corresponding answer row (radio button). The component also supports removal
+ * via the close button when `removable` is true.
+ *
+ * @selector bzm-question-editor
+ *
+ * @example
+ * ```html
+ * <bzm-question-editor
+ *   [question]="questionData"
+ *   [questionNumber]="2"
+ *   [removable]="questions.length > 1"
+ *   (questionChange)="updateQuestion(2, $event)"
+ *   (removed)="removeQuestion(2)"
+ * />
+ * ```
+ */
 export class BzmQuestionEditorComponent {
+  /** Current question data including text, answers, correct index, and time limit. */
   readonly question = input.required<QuestionEditorData>();
+
+  /**
+   * Display number shown in the editor header (e.g., "Vraag 1").
+   * @default 1
+   */
   readonly questionNumber = input<number>(1);
+
+  /**
+   * Whether to show the remove button in the editor header.
+   * @default true
+   */
   readonly removable = input<boolean>(true);
 
+  /** Emits the full updated question data whenever any field changes. */
   readonly questionChange = output<QuestionEditorData>();
+
+  /** Emits when the user clicks the remove button to delete this question. */
   readonly removed = output<void>();
 
   protected answerLabel(index: number): string {

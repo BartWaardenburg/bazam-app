@@ -108,17 +108,66 @@ import {
     }
   `,
 })
+/**
+ * Displays a numeric PIN input with individual digit fields, clipboard paste support, and full
+ * arrow key / backspace keyboard navigation. Used for entering room codes to join a game.
+ *
+ * Automatically advances focus to the next field on digit entry and emits a `completed` event
+ * once all digits are filled. Supports auto-focus on render and programmatic reset.
+ *
+ * @selector bzm-pin-input
+ *
+ * @example
+ * ```html
+ * <bzm-pin-input
+ *   [length]="6"
+ *   [autoFocus]="true"
+ *   (valueChange)="onCodeChange($event)"
+ *   (completed)="joinGame($event)"
+ * />
+ * ```
+ */
 export class BzmPinInputComponent {
+  /**
+   * Number of individual digit fields to render.
+   * @default 6
+   */
   readonly length = input<number>(6);
+
+  /**
+   * Disables all digit fields, preventing user input.
+   * @default false
+   */
   readonly disabled = input<boolean>(false);
+
+  /**
+   * Applies error border styling to all digit fields.
+   * @default false
+   */
   readonly error = input<boolean>(false);
+
+  /**
+   * Accessible label for the pin input group.
+   * @default 'Voer code in'
+   */
   readonly ariaLabel = input<string>('Voer code in');
+
+  /**
+   * Automatically focuses the first digit field after the component renders.
+   * @default false
+   */
   readonly autoFocus = input<boolean>(false);
 
+  /** Emits the concatenated digit string on every change. */
   readonly valueChange = output<string>();
+
+  /** Emits the complete PIN string once all digit fields are filled. */
   readonly completed = output<string>();
 
+  /** Internal signal holding the current value of each digit field. */
   readonly digits = signal<string[]>(Array(6).fill(''));
+
+  /** Query list of native digit input elements for focus management. */
   readonly digitInputs = viewChildren<ElementRef<HTMLInputElement>>('digitInput');
 
   constructor() {
@@ -140,6 +189,7 @@ export class BzmPinInputComponent {
     });
   }
 
+  /** Handles single-digit input and auto-advances to the next field. */
   onDigitInput(index: number, event: Event): void {
     const target = event.target as HTMLInputElement;
     const value = target.value.replace(/\D/g, '');
@@ -158,6 +208,7 @@ export class BzmPinInputComponent {
     }
   }
 
+  /** Handles backspace and arrow key navigation between digit fields. */
   onKeyDown(index: number, event: KeyboardEvent): void {
     const inputs = this.digitInputs();
 
@@ -179,6 +230,7 @@ export class BzmPinInputComponent {
     }
   }
 
+  /** Distributes pasted numeric content across all digit fields. */
   onPaste(event: ClipboardEvent): void {
     event.preventDefault();
     const pasted = (event.clipboardData?.getData('text') ?? '').replace(/\D/g, '');
@@ -197,6 +249,7 @@ export class BzmPinInputComponent {
     this.emitValue();
   }
 
+  /** Selects the digit field content on focus for easy overwrite. */
   onFocus(index: number): void {
     const inputs = this.digitInputs();
     inputs[index].nativeElement.select();
@@ -217,6 +270,7 @@ export class BzmPinInputComponent {
     }
   }
 
+  /** Clears all digits and focuses the first field. */
   reset(): void {
     this.digits.set(Array(this.length()).fill(''));
     const inputs = this.digitInputs();

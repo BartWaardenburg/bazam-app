@@ -69,9 +69,42 @@ import { BzmMascotComponent } from '../../atoms/mascot/mascot.component';
     }
   `,
 })
+/**
+ * Displays a celebratory winner card featuring an excited bouncing mascot,
+ * the winning player's name in bold comic-style text, and their final score.
+ *
+ * Typically shown on the results screen at the end of a quiz game. The card
+ * uses an accent-colored border and the mascot's bounce animation to convey
+ * excitement.
+ *
+ * @selector bzm-winner-card
+ *
+ * @example
+ * ```html
+ * <bzm-winner-card
+ *   name="Bart"
+ *   [score]="4200"
+ *   label="Winnaar"
+ *   scoreLabel="punten"
+ * />
+ * ```
+ */
 export class BzmWinnerCardComponent {
+  /** Display name of the winning player. */
   readonly name = input.required<string>();
+
+  /** Final score achieved by the winner. */
   readonly score = input.required<number>();
+
+  /**
+   * Label text shown above the player name (e.g., "Winnaar", "Winner").
+   * @default 'Winnaar'
+   */
   readonly label = input<string>('Winnaar');
+
+  /**
+   * Unit label displayed after the score value (e.g., "punten", "points").
+   * @default 'punten'
+   */
   readonly scoreLabel = input<string>('punten');
 }

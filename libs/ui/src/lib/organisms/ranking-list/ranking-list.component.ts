@@ -3,12 +3,19 @@ import { BzmTabBarComponent } from '../tab-bar/tab-bar.component';
 import { BzmLeaderboardItemComponent } from '../../molecules/leaderboard-item/leaderboard-item.component';
 import { BzmAvatarComponent } from '../../atoms/avatar/avatar.component';
 
+/** A single entry in the ranking list. */
 export interface RankingEntry {
+  /** Position in the ranking (1-based). */
   readonly rank: number;
+  /** Player display name. */
   readonly nickname: string;
+  /** Optional avatar image URL. */
   readonly avatarUrl?: string;
+  /** Current streak count. */
   readonly streak: number;
+  /** Total accumulated points. */
   readonly points: number;
+  /** Whether this entry belongs to the current user. */
   readonly isCurrentUser?: boolean;
 }
 
@@ -123,10 +130,35 @@ export interface RankingEntry {
     }
   `,
 })
+/**
+ * Displays a tabbed ranking list with a featured top player spotlight and a
+ * scrollable list of leaderboard entries.
+ *
+ * Includes a built-in tab bar with "World", "Weekly", and "Friends" tabs.
+ * The top-ranked player is displayed prominently with a crown icon and
+ * enlarged avatar. The current user's entry is visually highlighted.
+ *
+ * @selector bzm-ranking-list
+ *
+ * @example
+ * ```html
+ * <bzm-ranking-list
+ *   [entries]="rankings"
+ *   [currentUserNickname]="'bartw'"
+ * />
+ * ```
+ */
 export class BzmRankingListComponent {
+  /** Sorted array of ranking entries to display in the list. */
   readonly entries = input.required<RankingEntry[]>();
+
+  /**
+   * Nickname of the current user, used to highlight their row in the list.
+   * @default undefined
+   */
   readonly currentUserNickname = input<string | undefined>(undefined);
 
+  /** Index of the currently active tab (World=0, Weekly=1, Friends=2). */
   readonly activeTab = signal(0);
 
   protected readonly topPlayer = computed(() => {

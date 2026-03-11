@@ -1,6 +1,8 @@
 import { Component, ChangeDetectionStrategy, input, computed, signal } from '@angular/core';
 
+/** Visual style variant for buttons. */
 export type ButtonVariant = 'primary' | 'secondary' | 'accent' | 'ghost';
+/** Size preset controlling padding and font size. */
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 @Component({
@@ -198,10 +200,46 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
     }
   `,
 })
+/**
+ * Displays a comic-styled button with variant themes, configurable sizes, and a playful shake
+ * animation when clicked in a disabled state. Projects content via `ng-content`.
+ *
+ * Shows a lock badge overlay when disabled, and applies hover lift and active press transforms
+ * for tactile feedback. Respects `prefers-reduced-motion` for the shake animation.
+ *
+ * @selector bzm-button
+ *
+ * @example
+ * ```html
+ * <bzm-button variant="primary" size="lg">Start Quiz</bzm-button>
+ * <bzm-button variant="ghost" [disabled]="!isValid()">Volgende</bzm-button>
+ * <bzm-button variant="accent" [fullWidth]="true">Meedoen</bzm-button>
+ * ```
+ */
 export class BzmButtonComponent {
+  /**
+   * Visual style variant controlling background color, text color, and box-shadow.
+   * @default 'primary'
+   */
   readonly variant = input<ButtonVariant>('primary');
+
+  /**
+   * Size preset controlling padding, font size, and minimum height.
+   * @default 'md'
+   */
   readonly size = input<ButtonSize>('md');
+
+  /**
+   * Disables the button, prevents clicks, applies greyscale styling, and shows a lock badge.
+   * Clicking a disabled button triggers a shake animation as visual feedback.
+   * @default false
+   */
   readonly disabled = input<boolean>(false);
+
+  /**
+   * Stretches the button to fill its parent container width.
+   * @default false
+   */
   readonly fullWidth = input<boolean>(false);
 
   protected readonly shaking = signal(false);
@@ -210,6 +248,7 @@ export class BzmButtonComponent {
     () => `variant-${this.variant()} size-${this.size()}`
   );
 
+  /** Triggers the shake animation when the wrapper is clicked while the button is disabled. */
   protected onWrapClick(): void {
     if (!this.disabled() || this.shaking()) return;
     this.shaking.set(true);

@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
 import { BzmQuizCardComponent } from '../../molecules/quiz-card/quiz-card.component';
 
+/** Data shape for a single quiz entry in the quiz list. */
 export interface QuizEntry {
   readonly title: string;
   readonly subtitle: string;
@@ -94,8 +95,30 @@ export interface QuizEntry {
     }
   `,
 })
+/**
+ * Renders a vertical list of quiz cards with a "Latest Quiz" header and a
+ * "See All" action button.
+ *
+ * Each card displays the quiz title, subtitle, question count, and optional
+ * progress. Clicking a card emits its index; clicking "See All" emits `-1`.
+ *
+ * @selector bzm-quiz-list
+ *
+ * @example
+ * ```html
+ * <bzm-quiz-list
+ *   [quizzes]="latestQuizzes"
+ *   (quizSelect)="onQuizSelect($event)"
+ * />
+ * ```
+ */
 export class BzmQuizListComponent {
+  /** Array of quiz entries to render as cards. */
   readonly quizzes = input.required<QuizEntry[]>();
 
+  /**
+   * Emits the index of the selected quiz card, or `-1` when the
+   * "See All" button is clicked.
+   */
   readonly quizSelect = output<number>();
 }

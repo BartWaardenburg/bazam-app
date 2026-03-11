@@ -105,8 +105,26 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
     }
   `,
 })
+/**
+ * Displays a large animated room code with individually styled digit blocks and a staggered pop-in animation.
+ *
+ * Splits the room code string into individual characters, rendering each as a bold,
+ * colorful block that pops in with a staggered delay and tilts playfully on hover.
+ * Used on lobby screens to prominently display the game PIN for joining players.
+ * Respects `prefers-reduced-motion` to disable animations.
+ *
+ * @selector bzm-room-code
+ *
+ * @example
+ * ```html
+ * <bzm-room-code code="4829" label="Game PIN" />
+ * ```
+ */
 export class BzmRoomCodeComponent {
+  /** The room code string to display. Each character is rendered as a separate digit block. */
   readonly code = input.required<string>();
+
+  /** Uppercase label displayed above the digit blocks. @default 'Game PIN' */
   readonly label = input<string>('Game PIN');
 
   protected readonly codeChars = computed(() => this.code().split(''));

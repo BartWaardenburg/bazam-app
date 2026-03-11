@@ -156,14 +156,47 @@ import { Component, ChangeDetectionStrategy, computed, input, output } from '@an
     }
   `,
 })
+/**
+ * Renders a clickable quiz card showing title, subtitle, question count, and optional progress indicator.
+ *
+ * Displays a compact card with a colored image area, quiz metadata, an optional
+ * progress track, and a play button. Scales up on hover with a playful transition.
+ * Used in quiz selection lists.
+ *
+ * @selector bzm-quiz-card
+ *
+ * @example
+ * ```html
+ * <bzm-quiz-card
+ *   title="Aardrijkskunde"
+ *   subtitle="Hoofdsteden van Europa"
+ *   [questionCount]="15"
+ *   [progress]="40"
+ *   color="var(--bzm-cyan-500)"
+ *   (cardClick)="openQuiz()"
+ * />
+ * ```
+ */
 export class BzmQuizCardComponent {
+  /** Quiz title displayed as the primary label. */
   readonly title = input.required<string>();
+
+  /** Secondary descriptive text displayed below the title. */
   readonly subtitle = input.required<string>();
+
+  /** Number of questions in the quiz, shown as a count label. */
   readonly questionCount = input.required<number>();
+
+  /** URL for the quiz thumbnail image. Falls back to a brain icon placeholder when not provided. @default undefined */
   readonly imageUrl = input<string | undefined>(undefined);
+
+  /** Completion percentage (0-100). When provided, renders a thin progress track below the subtitle. @default undefined */
   readonly progress = input<number | undefined>(undefined);
+
+  /** Background color for the image area and play button. @default undefined (falls back to primary) */
   readonly color = input<string | undefined>(undefined);
 
+  /** Emits when the player clicks anywhere on the quiz card. */
   readonly cardClick = output<void>();
 
   readonly hasProgress = computed(() => this.progress() !== undefined);

@@ -44,17 +44,34 @@ import { WebSocketService } from '../../../services/websocket.service';
     }
   `,
 })
+/**
+ * Host results screen displayed after the final question has been answered.
+ *
+ * Highlights the winner with a dedicated card, shows the full final
+ * leaderboard, and offers two actions:
+ * - "Opnieuw spelen" -- resets state and navigates back to quiz creation.
+ * - "Home" -- resets state and returns to the landing page.
+ */
 export class HostResultsComponent {
+  /** Injected game state for reading the final leaderboard and standings. */
   readonly gameState = inject(GameStateService);
+
   private readonly wsService = inject(WebSocketService);
   private readonly router = inject(Router);
 
+  /**
+   * Tears down the current session and navigates to the quiz creation page
+   * so the host can immediately start a new game.
+   */
   playAgain(): void {
     this.wsService.disconnect();
     this.gameState.reset();
     void this.router.navigate(['/host/create']);
   }
 
+  /**
+   * Tears down the current session and navigates back to the landing page.
+   */
   goHome(): void {
     this.wsService.disconnect();
     this.gameState.reset();

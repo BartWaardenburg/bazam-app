@@ -93,7 +93,24 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
     }
   `,
 })
+/**
+ * Displays a two-column grid of stat cards showing the player's level and
+ * total points, each with a themed icon badge.
+ *
+ * Cards lift slightly on hover for a playful interaction. Use this component
+ * on profile or dashboard pages to summarize key player statistics.
+ *
+ * @selector bzm-stats-row
+ *
+ * @example
+ * ```html
+ * <bzm-stats-row level="12" [points]="4500" />
+ * ```
+ */
 export class BzmStatsRowComponent {
+  /** Player's current level, displayed as a string (e.g., "12", "Pro"). */
   readonly level = input.required<string>();
+
+  /** Player's total accumulated points. */
   readonly points = input.required<number>();
 }
