@@ -69,7 +69,7 @@ export interface EquippedBrain {
     .bar {
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-black);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: 4px 4px 0 var(--bzm-black);
       padding: var(--bzm-space-4);
@@ -166,66 +166,66 @@ export interface EquippedBrain {
 
     /* ─── Uncommon glow (Green) ─── */
     .bar__slot--uncommon {
-      border-color: #319236;
+      border-color: var(--bzm-color-rarity-common-text);
       background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
       color: #1b5e20;
       box-shadow:
         2px 2px 0 var(--bzm-black),
-        0 0 12px 2px rgba(49, 146, 54, 0.4);
+        0 0 12px 2px color-mix(in srgb, var(--bzm-color-rarity-common-text) 40%, transparent);
     }
 
     .bar__slot--uncommon:hover:not(:disabled).bar__slot--interactive {
       box-shadow:
         3px 4px 0 var(--bzm-black),
-        0 0 16px 4px rgba(49, 146, 54, 0.5);
+        0 0 16px 4px color-mix(in srgb, var(--bzm-color-rarity-common-text) 50%, transparent);
     }
 
     /* ─── Rare glow (Blue) ─── */
     .bar__slot--rare {
-      border-color: #4C8BFF;
+      border-color: var(--bzm-color-rarity-rare-text);
       background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
       color: #1565c0;
       box-shadow:
         2px 2px 0 var(--bzm-black),
-        0 0 12px 2px rgba(76, 139, 255, 0.4);
+        0 0 12px 2px color-mix(in srgb, var(--bzm-color-rarity-rare-text) 40%, transparent);
     }
 
     .bar__slot--rare:hover:not(:disabled).bar__slot--interactive {
       box-shadow:
         3px 4px 0 var(--bzm-black),
-        0 0 16px 4px rgba(76, 139, 255, 0.5);
+        0 0 16px 4px color-mix(in srgb, var(--bzm-color-rarity-rare-text) 50%, transparent);
     }
 
     /* ─── Epic glow (Purple) ─── */
     .bar__slot--epic {
-      border-color: #B93CF6;
+      border-color: var(--bzm-color-rarity-epic-text);
       background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
       color: #7b1fa2;
       box-shadow:
         2px 2px 0 var(--bzm-black),
-        0 0 14px 3px rgba(185, 60, 246, 0.4);
+        0 0 14px 3px color-mix(in srgb, var(--bzm-color-rarity-epic-text) 40%, transparent);
     }
 
     .bar__slot--epic:hover:not(:disabled).bar__slot--interactive {
       box-shadow:
         3px 4px 0 var(--bzm-black),
-        0 0 18px 4px rgba(185, 60, 246, 0.5);
+        0 0 18px 4px color-mix(in srgb, var(--bzm-color-rarity-epic-text) 50%, transparent);
     }
 
     /* ─── Legendary glow (Orange) ─── */
     .bar__slot--legendary {
-      border-color: #FF8C23;
+      border-color: var(--bzm-color-rarity-legendary-text);
       background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
       color: #e65100;
       box-shadow:
         2px 2px 0 var(--bzm-black),
-        0 0 16px 4px rgba(255, 140, 35, 0.4);
+        0 0 16px 4px color-mix(in srgb, var(--bzm-color-rarity-legendary-text) 40%, transparent);
     }
 
     .bar__slot--legendary:hover:not(:disabled).bar__slot--interactive {
       box-shadow:
         3px 4px 0 var(--bzm-black),
-        0 0 20px 6px rgba(255, 140, 35, 0.5);
+        0 0 20px 6px color-mix(in srgb, var(--bzm-color-rarity-legendary-text) 50%, transparent);
     }
 
     /* ─── Reduced motion ─── */

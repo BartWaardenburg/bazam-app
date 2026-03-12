@@ -84,7 +84,7 @@ import { Component, ChangeDetectionStrategy, computed, input } from '@angular/co
       height: 28px;
       background: var(--bzm-gray-200);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       overflow: hidden;
       position: relative;

@@ -189,6 +189,32 @@ describe('RoomManager', () => {
         expect(r1.data).not.toBe(r2.data);
       }
     });
+
+    it('enforces MAX_ROOMS limit', () => {
+      // Create 1000 rooms (the limit)
+      for (let i = 0; i < 1000; i++) {
+        const r = manager.createRoom(`host-${i}`, `Host${i}`, validQuestions);
+        expect(r.ok).toBe(true);
+      }
+      // The 1001st should fail
+      const result = manager.createRoom('host-overflow', 'Overflow', validQuestions);
+      expect(result.ok).toBe(false);
+      if (!result.ok) {
+        expect(result.error).toContain('Too many active rooms');
+      }
+    });
+
+    it('truncates overly long hostName', () => {
+      const longName = 'A'.repeat(200);
+      const result = manager.createRoom(HOST_CONN, longName, validQuestions);
+      expect(result.ok).toBe(true);
+      // The hostName should be truncated to MAX_HOST_NAME_LENGTH (100)
+    });
+
+    it('stores quizId when provided', () => {
+      const result = manager.createRoom(HOST_CONN, 'Alice', validQuestions, 'quiz-123');
+      expect(result.ok).toBe(true);
+    });
   });
 
   // -----------------------------------------------------------------------
@@ -276,6 +302,18 @@ describe('RoomManager', () => {
       manager.joinRoom(PLAYER_CONN_1, roomCode, 'Bob');
       const result = manager.joinRoom(PLAYER_CONN_2, roomCode, 'Bob');
       expect(result.ok).toBe(false);
+    });
+
+    it('returns an error when room is full', () => {
+      const { roomCode } = setupRoom(manager);
+      // Fill room to MAX_PLAYERS_PER_ROOM (50)
+      for (let i = 0; i < 50; i++) {
+        const r = manager.joinRoom(`p-${i}`, roomCode, `P${i}`);
+        expect(r.ok).toBe(true);
+      }
+      const result = manager.joinRoom('overflow-conn', roomCode, 'Overflow');
+      expect(result.ok).toBe(false);
+      if (!result.ok) expect(result.error).toBe('Room is full');
     });
   });
 
@@ -418,7 +456,7 @@ describe('RoomManager', () => {
       const { playerConns } = setupRoom(manager, { playerCount: 1 });
       startGameAndAdvanceToQuestion(manager);
 
-      const result = manager.submitAnswer(playerConns[0], 0, 5);
+      const result = manager.submitAnswer(playerConns[0], 0, 5 as 0 | 1 | 2 | 3);
       expect(result.ok).toBe(false);
       if (!result.ok) expect(result.error).toBe('Invalid answer index');
     });
@@ -427,7 +465,7 @@ describe('RoomManager', () => {
       const { playerConns } = setupRoom(manager, { playerCount: 1 });
       startGameAndAdvanceToQuestion(manager);
 
-      const result = manager.submitAnswer(playerConns[0], 0, 1.5);
+      const result = manager.submitAnswer(playerConns[0], 0, 1.5 as 0 | 1 | 2 | 3);
       expect(result.ok).toBe(false);
       if (!result.ok) expect(result.error).toBe('Invalid answer index');
     });
@@ -770,6 +808,28 @@ describe('RoomManager', () => {
       expect(result.ok).toBe(false);
       if (!result.ok) expect(result.error).toBe('Not in a room');
     });
+
+    it('clears timers in disconnect all-answered path', () => {
+      const { playerConns } = setupRoom(manager, { playerCount: 2 });
+      startGameAndAdvanceToQuestion(manager);
+
+      // Player1 answers
+      manager.submitAnswer(playerConns[0], 0, 1);
+
+      // Player2 disconnects — triggers all-answered check and should clear timer
+      manager.handleDisconnect(playerConns[1]);
+
+      // The question timer should have been cleared, so advancing past 10s
+      // should not trigger a second closeQuestion
+      vi.advanceTimersByTime(500); // all-answered delay fires closeQuestion
+      vi.advanceTimersByTime(10_000); // original timer would have fired here
+
+      // Only one QUESTION_CLOSED should exist
+      const closedCount = broadcasts.filter((b) =>
+        (b.message as { type: string }).type === 'QUESTION_CLOSED',
+      ).length;
+      expect(closedCount).toBe(1);
+    });
   });
 
   // -----------------------------------------------------------------------
@@ -794,6 +854,7 @@ describe('RoomManager', () => {
         expect(result.data.questionIndex).toBe(0);
         expect(result.data.totalQuestions).toBe(2);
         expect(result.data.question).not.toBeNull();
+        expect(result.data.elapsedMs).toBeTypeOf('number');
         expect(result.data.leaderboard).toHaveLength(1);
         expect(result.data.hasAnswered).toBe(false);
       }
@@ -925,6 +986,38 @@ describe('RoomManager', () => {
       expect(result.ok).toBe(false);
       if (!result.ok) expect(result.error).toBe('Room not found');
     });
+
+    it('works from lobby phase (before game starts)', () => {
+      setupRoom(manager, { playerCount: 1 });
+      broadcasts.length = 0;
+
+      const result = manager.forceEndGame(HOST_CONN);
+      expect(result.ok).toBe(true);
+
+      const gameOver = broadcasts.find((b) =>
+        (b.message as { type: string }).type === 'GAME_OVER',
+      );
+      expect(gameOver).toBeDefined();
+      const payload = (gameOver!.message as { payload: { leaderboard: LeaderboardEntry[] } }).payload;
+      // Players should have zero scores
+      expect(payload.leaderboard).toHaveLength(1);
+      expect(payload.leaderboard[0].score).toBe(0);
+    });
+
+    it('works from countdown phase', () => {
+      setupRoom(manager, { playerCount: 1 });
+      manager.startGame(HOST_CONN);
+      // Don't advance past countdown
+      broadcasts.length = 0;
+
+      const result = manager.forceEndGame(HOST_CONN);
+      expect(result.ok).toBe(true);
+
+      const gameOver = broadcasts.find((b) =>
+        (b.message as { type: string }).type === 'GAME_OVER',
+      );
+      expect(gameOver).toBeDefined();
+    });
   });
 
   // -----------------------------------------------------------------------
@@ -997,9 +1090,6 @@ describe('RoomManager', () => {
       vi.advanceTimersByTime(3000);
 
       // 5. Both players answer
-      const p1Players = (join1 as { ok: true; data: PlayerInfo[] }).data;
-      const p2Players = (join2 as { ok: true; data: PlayerInfo[] }).data;
-
       manager.submitAnswer(PLAYER_CONN_1, 0, 1); // correct
       manager.submitAnswer(PLAYER_CONN_2, 0, 0); // wrong
 

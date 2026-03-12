@@ -145,7 +145,7 @@ export interface ShopSlot {
     .shop {
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-black);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-lg);
       box-shadow: 6px 6px 0 var(--bzm-black);
       padding: var(--bzm-space-6);

@@ -361,6 +361,7 @@ export type MascotAnimation = 'none' | 'bounce' | 'float' | 'shake' | 'pulse';
     }
   `,
 })
+/** Animated mascot character with configurable expression, size, and accessories. */
 export class BzmMascotComponent {
   /** Facial expression controlling eyes and mouth. */
   readonly expression = input<MascotExpression>('neutral');

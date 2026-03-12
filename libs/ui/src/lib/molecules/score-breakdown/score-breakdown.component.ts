@@ -87,7 +87,7 @@ export interface BrainMultiplier {
       padding: var(--bzm-space-5) var(--bzm-space-5);
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-card);
     }
@@ -279,12 +279,9 @@ export class BzmScoreBreakdownComponent {
 
   /** Score after applying the combo bonus. */
   protected readonly afterCombo = computed(() => {
-    const brains = this.brainMults();
-    let total = this.afterCategory();
-    for (const brain of brains) {
-      total = Math.round(total * brain.value);
-    }
-    return Math.round(total * this.comboBonus());
+    const totals = this.runningTotals();
+    const base = totals.length > 0 ? totals[totals.length - 1] : this.afterCategory();
+    return Math.round(base * this.comboBonus());
   });
 
   /** Animation delay for the combo row. */

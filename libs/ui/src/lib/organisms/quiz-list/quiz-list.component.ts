@@ -19,13 +19,13 @@ export interface QuizEntry {
   template: `
     <div class="quiz-list">
       <div class="quiz-list-header">
-        <span class="quiz-list-title">Latest Quiz</span>
+        <span class="quiz-list-title">{{ title() }}</span>
         <button
           class="quiz-list-see-all"
           type="button"
           (click)="quizSelect.emit(-1)"
         >
-          See All
+          {{ seeAllLabel() }}
         </button>
       </div>
 
@@ -115,6 +115,12 @@ export interface QuizEntry {
 export class BzmQuizListComponent {
   /** Array of quiz entries to render as cards. */
   readonly quizzes = input.required<QuizEntry[]>();
+
+  /** Configurable title text. @default 'Nieuwste Quiz' */
+  readonly title = input<string>('Nieuwste Quiz');
+
+  /** Configurable "see all" button label. @default 'Alles bekijken' */
+  readonly seeAllLabel = input<string>('Alles bekijken');
 
   /**
    * Emits the index of the selected quiz card, or `-1` when the

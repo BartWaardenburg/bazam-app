@@ -18,7 +18,9 @@ import { GameStateService } from '../../../services/game-state.service';
       <bzm-card>
         <div class="player-section">
           <bzm-page-title size="md" color="var(--bzm-color-answer-a)">Spelers ({{ gameState.players().length }})</bzm-page-title>
-          <bzm-player-list [players]="gameState.players()" />
+          <div aria-live="polite">
+            <bzm-player-list [players]="gameState.players()" />
+          </div>
         </div>
       </bzm-card>
     </div>

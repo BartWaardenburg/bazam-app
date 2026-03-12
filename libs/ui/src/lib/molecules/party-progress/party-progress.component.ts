@@ -112,7 +112,7 @@ export interface PartyRound {
       border-width: 4px;
       background: var(--bzm-color-primary-surface);
       color: var(--bzm-color-primary);
-      box-shadow: 0 0 0 4px rgba(var(--bzm-color-primary-rgb, 124, 58, 237), 0.2);
+      box-shadow: 0 0 0 4px rgba(var(--bzm-color-primary-rgb), 0.2);
       animation: bzm-pulse-ring 2s ease-in-out infinite;
     }
 
@@ -168,10 +168,10 @@ export interface PartyRound {
 
     @keyframes bzm-pulse-ring {
       0%, 100% {
-        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.2);
+        box-shadow: 0 0 0 4px rgba(var(--bzm-color-primary-rgb), 0.2);
       }
       50% {
-        box-shadow: 0 0 0 8px rgba(124, 58, 237, 0.05);
+        box-shadow: 0 0 0 8px rgba(var(--bzm-color-primary-rgb), 0.05);
       }
     }
 

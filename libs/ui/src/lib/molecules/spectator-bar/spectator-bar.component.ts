@@ -43,7 +43,7 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
       gap: var(--bzm-space-4, 16px);
       background: rgba(0, 0, 0, 0.7);
       border: 4px solid var(--bzm-color-border, var(--bzm-black));
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md, 8px);
       padding: var(--bzm-space-3, 12px) var(--bzm-space-4, 16px);
     }
@@ -90,11 +90,11 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
     }
 
     .bzm-spectator-bar__hype-label--low {
-      color: var(--bzm-blue-400, #60a5fa);
+      color: var(--bzm-blue-400);
     }
 
     .bzm-spectator-bar__hype-label--mid {
-      color: var(--bzm-yellow-400, #facc15);
+      color: var(--bzm-yellow-400);
     }
 
     .bzm-spectator-bar__hype-label--high {
@@ -120,11 +120,11 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
     }
 
     .bzm-spectator-bar__fill--low {
-      background: var(--bzm-blue-400, #60a5fa);
+      background: var(--bzm-blue-400);
     }
 
     .bzm-spectator-bar__fill--mid {
-      background: var(--bzm-yellow-400, #facc15);
+      background: var(--bzm-yellow-400);
     }
 
     .bzm-spectator-bar__fill--high {

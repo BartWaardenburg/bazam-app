@@ -55,7 +55,7 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
       font-weight: var(--bzm-font-weight-extrabold);
       border-radius: var(--bzm-radius-sm);
       border: 4px solid var(--bzm-black);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       box-shadow: 5px 5px 0 var(--bzm-black);
       transition: transform var(--bzm-transition-playful);
       letter-spacing: 0.05em;

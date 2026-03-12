@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
 import { BzmAvatarComponent } from '../../atoms/avatar/avatar.component';
 import { BzmLeaderboardItemComponent } from '../../molecules/leaderboard-item/leaderboard-item.component';
 
-/** Data shape for a single player in the leaderboard. */
+/** Presentation-layer subset of `LeaderboardEntry` from `@bazam/shared-types`. */
 export interface LeaderboardPlayer {
   readonly id: string;
   readonly nickname: string;
@@ -81,7 +81,7 @@ const MEDAL_LABELS = ['1ST', '2ND', '3RD'] as const;
       padding: var(--bzm-space-5) var(--bzm-space-4);
       border-radius: var(--bzm-radius-md);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       box-shadow: var(--bzm-shadow-card);
       animation: bzm-podium-pop 0.5s var(--bzm-transition-playful) backwards;
     }
@@ -102,9 +102,9 @@ const MEDAL_LABELS = ['1ST', '2ND', '3RD'] as const;
       filter: drop-shadow(2px 2px 0 var(--bzm-black));
     }
 
-    .place-1 .bzm-leaderboard__medal { color: #FFD700; }
-    .place-2 .bzm-leaderboard__medal { color: #C0C0C0; }
-    .place-3 .bzm-leaderboard__medal { color: #CD7F32; }
+    .place-1 .bzm-leaderboard__medal { color: var(--bzm-color-gold); }
+    .place-2 .bzm-leaderboard__medal { color: var(--bzm-color-silver); }
+    .place-3 .bzm-leaderboard__medal { color: var(--bzm-color-bronze); }
 
     .bzm-leaderboard__name {
       font-weight: var(--bzm-font-weight-bold);

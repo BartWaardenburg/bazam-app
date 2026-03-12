@@ -1,5 +1,4 @@
 import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
 import {
   BzmButtonComponent,
   BzmPageTitleComponent,
@@ -57,24 +56,19 @@ export class HostResultsComponent {
   readonly gameState = inject(GameStateService);
 
   private readonly wsService = inject(WebSocketService);
-  private readonly router = inject(Router);
 
   /**
    * Tears down the current session and navigates to the quiz creation page
    * so the host can immediately start a new game.
    */
-  playAgain(): void {
-    this.wsService.disconnect();
-    this.gameState.reset();
-    void this.router.navigate(['/host/create']);
-  }
+  readonly playAgain = (): void => {
+    this.wsService.endSession('/host/create');
+  };
 
   /**
    * Tears down the current session and navigates back to the landing page.
    */
-  goHome(): void {
-    this.wsService.disconnect();
-    this.gameState.reset();
-    void this.router.navigate(['/']);
-  }
+  readonly goHome = (): void => {
+    this.wsService.endSession('/');
+  };
 }

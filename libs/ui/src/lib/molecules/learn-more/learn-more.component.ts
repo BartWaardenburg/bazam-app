@@ -69,7 +69,7 @@ const DEFAULT_CATEGORY_COLOR = '#22c55e';
     .bzm-learn-more {
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       border-left: 6px solid var(--category-color, #22c55e);
       box-shadow: var(--bzm-shadow-card);
@@ -95,7 +95,7 @@ const DEFAULT_CATEGORY_COLOR = '#22c55e';
     }
 
     .bzm-learn-more__header:focus-visible {
-      box-shadow: inset 0 0 0 3px var(--bzm-cyan-300);
+      box-shadow: inset 0 0 0 3px var(--bzm-color-focus);
     }
 
     .bzm-learn-more__icon-wrapper {
@@ -167,7 +167,7 @@ const DEFAULT_CATEGORY_COLOR = '#22c55e';
       font-size: var(--bzm-font-size-base);
       font-weight: var(--bzm-font-weight-medium);
       color: var(--bzm-color-text-secondary);
-      line-height: var(--bzm-line-height-relaxed);
+      line-height: var(--bzm-line-height-normal);
     }
 
     .bzm-learn-more__category {

@@ -6,7 +6,6 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "experimentalDecorators": true,
     "importHelpers": true
   },
   "angularCompilerOptions": {

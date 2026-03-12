@@ -89,7 +89,7 @@ const THUMB_SIZE = 22;
       border-radius: 50%;
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       box-shadow: var(--bzm-shadow-sm);
       cursor: pointer;
       color: var(--bzm-color-text);
@@ -106,7 +106,8 @@ const THUMB_SIZE = 22;
     }
 
     .bzm-volume-control__button:focus-visible {
-      box-shadow: 0 0 0 3px var(--bzm-cyan-300);
+      outline: 3px solid var(--bzm-color-focus);
+      outline-offset: 2px;
     }
 
     .bzm-volume-control__button:active {
@@ -150,7 +151,7 @@ const THUMB_SIZE = 22;
     }
 
     .bzm-volume-control__track:focus-visible {
-      outline: 2px solid var(--bzm-cyan-300);
+      outline: 2px solid var(--bzm-color-focus);
       outline-offset: 8px;
       border-radius: 4px;
     }

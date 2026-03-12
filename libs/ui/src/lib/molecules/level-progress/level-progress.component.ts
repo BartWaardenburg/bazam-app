@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, input } from '@angular/core';
 
 @Component({
   selector: 'bzm-level-progress',
@@ -71,9 +71,9 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
       width: 100%;
       height: 12px;
       background: var(--bzm-gray-200);
-      border-radius: 3px;
+      border-radius: var(--bzm-radius-sm);
       border: 3px solid var(--bzm-black);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       overflow: hidden;
     }
 
@@ -116,7 +116,7 @@ export class BzmLevelProgressComponent {
   readonly label = input<string>('My Level Progress');
 
   /** Returns the progress value clamped between 0 and 100 for safe percentage rendering. */
-  clampedProgress(): number {
-    return Math.min(100, Math.max(0, this.progress()));
-  }
+  protected readonly clampedProgress = computed(
+    () => Math.min(100, Math.max(0, this.progress()))
+  );
 }

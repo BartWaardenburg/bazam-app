@@ -6,24 +6,24 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
-      class="item"
-      [class.item--win]="isWin()"
+      class="bzm-match-history-item"
+      [class.bzm-match-history-item--win]="isWin()"
       role="listitem"
       [attr.aria-label]="ariaDescription()"
     >
-      <div class="item__mode">
-        <i [class]="modeIconClass()" class="item__mode-icon"></i>
-        <span class="item__mode-name">{{ mode() }}</span>
+      <div class="bzm-match-history-item__mode">
+        <i [class]="modeIconClass()" class="bzm-match-history-item__mode-icon"></i>
+        <span class="bzm-match-history-item__mode-name">{{ mode() }}</span>
       </div>
-      <div class="item__center">
-        <span class="item__date">{{ date() }}</span>
-        <span class="item__score">{{ score() }} punten</span>
+      <div class="bzm-match-history-item__center">
+        <span class="bzm-match-history-item__date">{{ date() }}</span>
+        <span class="bzm-match-history-item__score">{{ score() }} punten</span>
       </div>
-      <div class="item__rank">
+      <div class="bzm-match-history-item__rank">
         @if (isWin()) {
-          <i class="ph-duotone ph-trophy item__trophy"></i>
+          <i class="ph-duotone ph-trophy bzm-match-history-item__trophy"></i>
         }
-        <span class="item__rank-text" [class.item__rank-text--win]="isWin()">
+        <span class="bzm-match-history-item__rank-text" [class.bzm-match-history-item__rank-text--win]="isWin()">
           #{{ rank() }} / {{ totalPlayers() }}
         </span>
       </div>
@@ -35,14 +35,14 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
       font-family: var(--bzm-font-family);
     }
 
-    .item {
+    .bzm-match-history-item {
       display: flex;
       align-items: center;
       gap: var(--bzm-space-3);
       padding: var(--bzm-space-3) var(--bzm-space-4);
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-sm);
       transition:
@@ -50,16 +50,16 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
         box-shadow var(--bzm-transition-base);
     }
 
-    .item:hover {
+    .bzm-match-history-item:hover {
       transform: translateY(-2px);
       box-shadow: var(--bzm-shadow-md);
     }
 
-    .item--win {
-      border-left: 6px solid #DAA520;
+    .bzm-match-history-item--win {
+      border-left: 6px solid var(--bzm-color-gold);
     }
 
-    .item__mode {
+    .bzm-match-history-item__mode {
       display: flex;
       align-items: center;
       gap: var(--bzm-space-2);
@@ -67,20 +67,20 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
       flex-shrink: 0;
     }
 
-    .item__mode-icon {
+    .bzm-match-history-item__mode-icon {
       font-size: var(--bzm-font-size-xl);
       color: var(--bzm-color-primary);
       flex-shrink: 0;
     }
 
-    .item__mode-name {
+    .bzm-match-history-item__mode-name {
       font-size: var(--bzm-font-size-sm);
       font-weight: var(--bzm-font-weight-bold);
       color: var(--bzm-color-text);
       white-space: nowrap;
     }
 
-    .item__center {
+    .bzm-match-history-item__center {
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -88,46 +88,46 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
       min-width: 0;
     }
 
-    .item__date {
+    .bzm-match-history-item__date {
       font-size: var(--bzm-font-size-sm);
       color: var(--bzm-color-text-muted);
     }
 
-    .item__score {
+    .bzm-match-history-item__score {
       font-size: var(--bzm-font-size-base);
       font-weight: var(--bzm-font-weight-extrabold);
       color: var(--bzm-color-text);
     }
 
-    .item__rank {
+    .bzm-match-history-item__rank {
       display: flex;
       align-items: center;
       gap: var(--bzm-space-1);
       flex-shrink: 0;
     }
 
-    .item__trophy {
+    .bzm-match-history-item__trophy {
       font-size: var(--bzm-font-size-lg);
-      color: #DAA520;
+      color: var(--bzm-color-gold);
     }
 
-    .item__rank-text {
+    .bzm-match-history-item__rank-text {
       font-size: var(--bzm-font-size-sm);
       font-weight: var(--bzm-font-weight-extrabold);
       color: var(--bzm-color-text-secondary);
       white-space: nowrap;
     }
 
-    .item__rank-text--win {
-      color: #B8860B;
+    .bzm-match-history-item__rank-text--win {
+      color: var(--bzm-color-gold);
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .item {
+      .bzm-match-history-item {
         transition: none;
       }
 
-      .item:hover {
+      .bzm-match-history-item:hover {
         transform: none;
       }
     }

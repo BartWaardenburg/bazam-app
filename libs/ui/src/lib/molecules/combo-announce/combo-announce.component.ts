@@ -42,7 +42,7 @@ import { Component, ChangeDetectionStrategy, input, output, effect, OnDestroy } 
       padding: var(--bzm-space-6) var(--bzm-space-8);
       background: linear-gradient(135deg, var(--bzm-color-accent) 0%, #f97316 100%);
       border: 4px solid var(--bzm-black);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: 6px 6px 0 var(--bzm-black);
       cursor: pointer;
@@ -238,12 +238,15 @@ export class BzmComboAnnounceComponent implements OnDestroy {
   readonly dismissed = output<void>();
 
   private dismissTimer: ReturnType<typeof setTimeout> | null = null;
+  private destroyed = false;
 
   constructor() {
     effect(() => {
       if (this.visible()) {
         this.clearTimer();
-        this.dismissTimer = setTimeout(() => this.dismiss(), 3000);
+        this.dismissTimer = setTimeout(() => {
+          if (!this.destroyed) this.dismiss();
+        }, 3000);
       } else {
         this.clearTimer();
       }
@@ -251,6 +254,7 @@ export class BzmComboAnnounceComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroyed = true;
     this.clearTimer();
   }
 

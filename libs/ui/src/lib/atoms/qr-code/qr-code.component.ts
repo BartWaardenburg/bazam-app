@@ -9,7 +9,6 @@ export type QrCodeSize = 'sm' | 'md' | 'lg';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
-      class="bzm-qr-code"
       [class]="containerClasses()"
       role="img"
       [attr.aria-label]="'QR code: ' + label()"
@@ -42,7 +41,7 @@ export type QrCodeSize = 'sm' | 'md' | 'lg';
     .bzm-qr-code__frame {
       background: var(--bzm-white);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       padding: var(--bzm-space-4);
       box-shadow: var(--bzm-shadow-card);

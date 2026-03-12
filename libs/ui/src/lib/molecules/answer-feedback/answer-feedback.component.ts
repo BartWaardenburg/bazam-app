@@ -40,7 +40,7 @@ import { BzmMascotComponent } from '../../atoms/mascot/mascot.component';
       background: var(--bzm-color-surface);
       border-radius: var(--bzm-radius-md);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       box-shadow: var(--bzm-shadow-card);
     }
 

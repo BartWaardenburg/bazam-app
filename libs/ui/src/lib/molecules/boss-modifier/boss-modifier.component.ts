@@ -57,7 +57,7 @@ const DEFAULT_ICON = 'warning';
       padding: var(--bzm-space-4) var(--bzm-space-5);
       background: var(--bzm-gray-900);
       border: 4px solid #E17055;
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: 4px 4px 0 var(--bzm-black);
       color: var(--bzm-white);

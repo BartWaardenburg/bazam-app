@@ -114,6 +114,18 @@ describe('GameStateService', () => {
     it('should initialize errorMessage to null', () => {
       expect(service.errorMessage()).toBeNull();
     });
+
+    it('should initialize playerId to null', () => {
+      expect(service.playerId()).toBeNull();
+    });
+
+    it('should initialize correctAnswerIndex to null', () => {
+      expect(service.correctAnswerIndex()).toBeNull();
+    });
+
+    it('should initialize elapsedMs to 0', () => {
+      expect(service.elapsedMs()).toBe(0);
+    });
   });
 
   // ---------------------------------------------------------------------------
@@ -170,37 +182,7 @@ describe('GameStateService', () => {
   // Computed: topThree
   // ---------------------------------------------------------------------------
 
-  describe('topThree', () => {
-    it('should return the first 3 from sorted leaderboard', () => {
-      const entries: LeaderboardEntry[] = [
-        makeLeaderboardEntry({ id: 'p1', nickname: 'Alice', score: 300 }),
-        makeLeaderboardEntry({ id: 'p2', nickname: 'Bob', score: 200 }),
-        makeLeaderboardEntry({ id: 'p3', nickname: 'Charlie', score: 100 }),
-        makeLeaderboardEntry({ id: 'p4', nickname: 'Dave', score: 50 }),
-      ];
-      service.leaderboard.set(entries);
-
-      const top = service.topThree();
-      expect(top).toHaveLength(3);
-      expect(top.map((e) => e.nickname)).toEqual(['Alice', 'Bob', 'Charlie']);
-    });
-
-    it('should return all entries when fewer than 3 exist', () => {
-      const entries: LeaderboardEntry[] = [
-        makeLeaderboardEntry({ id: 'p1', nickname: 'Alice', score: 100 }),
-        makeLeaderboardEntry({ id: 'p2', nickname: 'Bob', score: 50 }),
-      ];
-      service.leaderboard.set(entries);
-
-      const top = service.topThree();
-      expect(top).toHaveLength(2);
-      expect(top.map((e) => e.nickname)).toEqual(['Alice', 'Bob']);
-    });
-
-    it('should return empty array when leaderboard is empty', () => {
-      expect(service.topThree()).toEqual([]);
-    });
-  });
+  // topThree was removed — it was unused by any component
 
   // ---------------------------------------------------------------------------
   // Computed: answeredCount
@@ -260,10 +242,10 @@ describe('GameStateService', () => {
       expect(service.isLastQuestion()).toBe(true);
     });
 
-    it('should return true when totalQuestions is 0 (edge case: 0 >= -1)', () => {
+    it('should return false when totalQuestions is 0 (no questions loaded)', () => {
       service.questionIndex.set(0);
       service.totalQuestions.set(0);
-      expect(service.isLastQuestion()).toBe(true);
+      expect(service.isLastQuestion()).toBe(false);
     });
 
     it('should return false for middle question', () => {
@@ -288,10 +270,13 @@ describe('GameStateService', () => {
       service.questionIndex.set(3);
       service.totalQuestions.set(10);
       service.timeLimit.set(30);
+      service.elapsedMs.set(5000);
       service.leaderboard.set([makeLeaderboardEntry()]);
       service.playerScore.set(500);
       service.playerNickname.set('TestPlayer');
+      service.playerId.set('player-123');
       service.lastAnswerResult.set(makeAnswerResult());
+      service.correctAnswerIndex.set(2);
       service.questions.set([makeQuestionInput()]);
       service.errorMessage.set('Some error');
 
@@ -313,10 +298,13 @@ describe('GameStateService', () => {
       expect(service.questionIndex()).toBe(0);
       expect(service.totalQuestions()).toBe(0);
       expect(service.timeLimit()).toBe(20);
+      expect(service.elapsedMs()).toBe(0);
       expect(service.leaderboard()).toEqual([]);
       expect(service.playerScore()).toBe(0);
       expect(service.playerNickname()).toBe('');
+      expect(service.playerId()).toBeNull();
       expect(service.lastAnswerResult()).toBeNull();
+      expect(service.correctAnswerIndex()).toBeNull();
       expect(service.questions()).toEqual([]);
       expect(service.errorMessage()).toBeNull();
     });
@@ -337,10 +325,9 @@ describe('GameStateService', () => {
 
       expect(service.hasAnswered()).toBe(false);
       expect(service.sortedLeaderboard()).toEqual([]);
-      expect(service.topThree()).toEqual([]);
       expect(service.answeredCount()).toBe(0);
-      // isLastQuestion with index 0 and total 0: 0 >= -1 is true
-      expect(service.isLastQuestion()).toBe(true);
+      // isLastQuestion with index 0 and total 0: returns false (no questions loaded)
+      expect(service.isLastQuestion()).toBe(false);
     });
   });
 });

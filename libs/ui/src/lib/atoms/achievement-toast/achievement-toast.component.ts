@@ -13,11 +13,11 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
       aria-live="assertive"
     >
       <div class="toast__sparkles">
-        <span class="sparkle sparkle--1">&#10022;</span>
-        <span class="sparkle sparkle--2">&#10022;</span>
-        <span class="sparkle sparkle--3">&#9733;</span>
-        <span class="sparkle sparkle--4">&#10022;</span>
-        <span class="sparkle sparkle--5">&#9733;</span>
+        <span class="sparkle sparkle--1" aria-hidden="true">&#10022;</span>
+        <span class="sparkle sparkle--2" aria-hidden="true">&#10022;</span>
+        <span class="sparkle sparkle--3" aria-hidden="true">&#9733;</span>
+        <span class="sparkle sparkle--4" aria-hidden="true">&#10022;</span>
+        <span class="sparkle sparkle--5" aria-hidden="true">&#9733;</span>
       </div>
       <div class="toast__header">
         <i class="ph-duotone ph-trophy toast__trophy"></i>
@@ -41,7 +41,7 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
       position: relative;
       background: linear-gradient(135deg, #FFF8DC 0%, #FFD700 30%, #FFF8A0 60%, #FFD700 100%);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       padding: var(--bzm-space-4) var(--bzm-space-6);
       box-shadow: var(--bzm-shadow-lg), 0 0 20px rgba(255, 215, 0, 0.3);
@@ -73,13 +73,13 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
 
     .sparkle {
       position: absolute;
-      color: #FFD700;
+      color: var(--bzm-color-gold);
       opacity: 0;
       font-size: 16px;
     }
 
     .toast--visible .sparkle {
-      animation: sparkle-float 2s ease-in-out infinite;
+      animation: bzm-sparkle-float 2s ease-in-out infinite;
     }
 
     .sparkle--1 { top: 10%; left: 5%; animation-delay: 0s; }
@@ -88,7 +88,7 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
     .sparkle--4 { top: 5%; right: 20%; animation-delay: 0.9s; }
     .sparkle--5 { bottom: 10%; right: 5%; animation-delay: 1.2s; }
 
-    @keyframes sparkle-float {
+    @keyframes bzm-sparkle-float {
       0%, 100% { opacity: 0; transform: scale(0.5) rotate(0deg); }
       50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
     }
@@ -134,7 +134,7 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
 
     @media (prefers-reduced-motion: reduce) {
       .toast {
-        transition: opacity 0.2s ease;
+        transition: opacity var(--bzm-transition-base);
       }
 
       .toast--visible {

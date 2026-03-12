@@ -19,18 +19,26 @@
   --bzm-yellow-300: #FFD60A;
   --bzm-yellow-400: #E6C009;
   --bzm-yellow-500: #CCB008;
+  --bzm-yellow-600: #B39A07;
+  --bzm-yellow-700: #8C7706;
+  --bzm-yellow-800: #665804;
 
   --bzm-green-50: #ECFDF5;
   --bzm-green-100: #D1FAE5;
   --bzm-green-300: #86EFAC;
   --bzm-green-500: #34C759;
   --bzm-green-600: #2AA348;
+  --bzm-green-700: #1F8C3B;
 
   --bzm-cyan-50: #E0F7FA;
   --bzm-cyan-100: #B2EBF2;
   --bzm-cyan-300: #4DD0E1;
   --bzm-cyan-500: #00BCD4;
   --bzm-cyan-600: #0097A7;
+  --bzm-cyan-700: #00838F;
+
+  --bzm-blue-50: #EFF6FF;
+  --bzm-blue-400: #60A5FA;
 
   --bzm-gray-50: #FAFAF8;
   --bzm-gray-100: #F5F0E8;
@@ -52,6 +60,7 @@
   --bzm-color-primary-light: #FF6B63;
   --bzm-color-primary-bg: #F8DCD9;
   --bzm-color-primary-surface: #FEF0EF;
+  --bzm-color-primary-rgb: 255, 59, 48;
 
   --bzm-color-accent: #FFD60A;
   --bzm-color-accent-dark: #E6C009;
@@ -61,6 +70,8 @@
   --bzm-color-success-bg: #D6F2DE;
   --bzm-color-error: #FF3B30;
   --bzm-color-error-bg: #F8DCD9;
+  --bzm-color-overlay: rgba(0, 0, 0, 0.75);
+  --bzm-color-focus: var(--bzm-cyan-500);
 
   --bzm-color-bg: #F5F0E8;
   --bzm-color-surface: #FFFFFF;
@@ -103,6 +114,11 @@
   --bzm-line-height-snug: 1.25;
   --bzm-line-height-normal: 1.5;
 
+  --bzm-letter-spacing-tight: 0.04em;
+  --bzm-letter-spacing-normal: 0.05em;
+  --bzm-letter-spacing-wide: 0.08em;
+  --bzm-letter-spacing-wider: 0.1em;
+
   /* ─── Spacing ─── */
   --bzm-space-0: 0;
   --bzm-space-1: 0.25rem;
@@ -138,4 +154,32 @@
   --bzm-transition-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
   --bzm-transition-bounce: 400ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
   --bzm-transition-playful: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ─── Border Widths (comic-style uneven borders) ─── */
+  --bzm-border-width-comic: 3px 4px 5px 3px;
+  --bzm-border-width-comic-sm: 2px 3px 3px 2px;
+
+  /* ─── Medal / Podium Colors ─── */
+  --bzm-color-gold: #FFD700;
+  --bzm-color-silver: #C0C0C0;
+  --bzm-color-bronze: #CD7F32;
+
+  /* ─── Fire / Streak Colors ─── */
+  --bzm-color-fire: #FF6D00;
+  --bzm-color-fire-dark: #E65100;
+  --bzm-color-fire-deep: #BF360C;
+
+  /* ─── Rarity Colors ─── */
+  --bzm-color-rarity-common-bg: #d4ffd4;
+  --bzm-color-rarity-common: #7FE07F;
+  --bzm-color-rarity-common-text: #319236;
+  --bzm-color-rarity-rare-bg: #d0e2ff;
+  --bzm-color-rarity-rare: #7EB2FF;
+  --bzm-color-rarity-rare-text: #4C8BFF;
+  --bzm-color-rarity-epic-bg: #f0d6ff;
+  --bzm-color-rarity-epic: #D89EFF;
+  --bzm-color-rarity-epic-text: #B93CF6;
+  --bzm-color-rarity-legendary-bg: #ffe0be;
+  --bzm-color-rarity-legendary: #FFB366;
+  --bzm-color-rarity-legendary-text: #FF8C23;
 }

@@ -54,7 +54,7 @@ export type InputSize = 'sm' | 'md' | 'lg';
       background: var(--bzm-color-surface);
       color: var(--bzm-color-text);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-md);
       outline: none;
@@ -68,8 +68,14 @@ export type InputSize = 'sm' | 'md' | 'lg';
     }
 
     input:focus {
-      border-color: var(--bzm-color-answer-a);
+      border-color: var(--bzm-color-focus);
       box-shadow: var(--bzm-shadow-sm);
+    }
+
+    input:focus-visible {
+      outline: 3px solid var(--bzm-color-focus);
+      outline-offset: 4px;
+      border-radius: var(--bzm-radius-md);
     }
 
     input:disabled {
@@ -101,7 +107,7 @@ export type InputSize = 'sm' | 'md' | 'lg';
     }
 
     .input--error:focus {
-      border-color: var(--bzm-color-answer-a);
+      border-color: var(--bzm-color-focus);
     }
 
     .bzm-input__error {
@@ -213,7 +219,7 @@ export class BzmInputComponent {
   });
 
   /** Emits the current input value on every keystroke. */
-  onInput(event: Event): void {
+  protected onInput(event: Event): void {
     const target = event.target as HTMLInputElement;
     this.valueChange.emit(target.value);
   }

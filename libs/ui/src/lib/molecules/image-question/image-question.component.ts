@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, output, signal, viewChild, ElementRef, effect, HostListener } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, signal, viewChild, ElementRef, effect, HostListener, OnDestroy } from '@angular/core';
 
 @Component({
   selector: 'bzm-image-question',
@@ -54,6 +54,7 @@ import { Component, ChangeDetectionStrategy, input, output, signal, viewChild, E
         aria-modal="true"
         aria-label="Vergrote afbeelding"
         (click)="closeZoom()"
+        (keydown)="onOverlayKeydown($event)"
       >
         <img
           class="bzm-image-question__overlay-image"
@@ -88,7 +89,7 @@ import { Component, ChangeDetectionStrategy, input, output, signal, viewChild, E
     .bzm-image-question__frame {
       position: relative;
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       overflow: hidden;
       box-shadow: var(--bzm-shadow-card);
@@ -107,7 +108,7 @@ import { Component, ChangeDetectionStrategy, input, output, signal, viewChild, E
     }
 
     .bzm-image-question__frame--zoomable:focus-visible {
-      box-shadow: 0 0 0 3px var(--bzm-cyan-300), var(--bzm-shadow-card);
+      box-shadow: 0 0 0 3px var(--bzm-color-focus), var(--bzm-shadow-card);
     }
 
     /* ── Image ── */
@@ -133,7 +134,7 @@ import { Component, ChangeDetectionStrategy, input, output, signal, viewChild, E
       color: var(--bzm-color-text);
       font-size: var(--bzm-font-size-lg);
       border: 3px solid var(--bzm-color-border);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       box-shadow: var(--bzm-shadow-sm);
       opacity: 0;
       transition: opacity var(--bzm-transition-base);
@@ -259,7 +260,7 @@ import { Component, ChangeDetectionStrategy, input, output, signal, viewChild, E
       width: 40px;
       height: 40px;
       border: 3px solid rgba(255, 255, 255, 0.3);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       border-radius: var(--bzm-radius-md);
       background: var(--bzm-color-surface);
       color: var(--bzm-color-text);
@@ -274,7 +275,7 @@ import { Component, ChangeDetectionStrategy, input, output, signal, viewChild, E
     }
 
     .bzm-image-question__overlay-close:focus-visible {
-      outline: 2px solid var(--bzm-cyan-300);
+      outline: 2px solid var(--bzm-color-focus);
       outline-offset: 2px;
     }
 
@@ -336,7 +337,7 @@ import { Component, ChangeDetectionStrategy, input, output, signal, viewChild, E
  * />
  * ```
  */
-export class BzmImageQuestionComponent {
+export class BzmImageQuestionComponent implements OnDestroy {
   /** URL of the question image. */
   readonly imageUrl = input.required<string>();
 
@@ -371,6 +372,10 @@ export class BzmImageQuestionComponent {
     });
   }
 
+  ngOnDestroy(): void {
+    document.body.style.overflow = '';
+  }
+
   @HostListener('document:keydown.escape')
   protected onEscape(): void {
     if (this.zoomed()) {
@@ -384,6 +389,17 @@ export class BzmImageQuestionComponent {
       this.triggerElement = document.activeElement as HTMLElement;
       this.zoomed.set(true);
       this.imageZoomed.emit();
+    }
+  }
+
+  /** Traps focus within the zoom dialog when Tab is pressed. */
+  protected onOverlayKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Tab') {
+      event.preventDefault();
+      const button = this.closeButton();
+      if (button) {
+        button.nativeElement.focus();
+      }
     }
   }
 

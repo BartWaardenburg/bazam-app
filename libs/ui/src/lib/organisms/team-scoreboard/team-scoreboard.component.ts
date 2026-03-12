@@ -43,7 +43,7 @@ const RANK_LABELS = ['1e', '2e', '3e', '4e'] as const;
                   [class.bzm-team-scoreboard__player--mvp]="showMvp() && team.mvp === player.nickname"
                 >
                   @if (showMvp() && team.mvp === player.nickname) {
-                    <i class="ph-duotone ph-star" style="font-size: 14px; color: #eab308;"></i>
+                    <i class="ph-duotone ph-star bzm-team-scoreboard__mvp-star"></i>
                   }
                   <span class="bzm-team-scoreboard__player-name">{{ player.nickname }}</span>
                   <span class="bzm-team-scoreboard__player-score">{{ player.score }}</span>
@@ -75,7 +75,7 @@ const RANK_LABELS = ['1e', '2e', '3e', '4e'] as const;
       align-items: center;
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-card);
       overflow: hidden;
@@ -145,6 +145,11 @@ const RANK_LABELS = ['1e', '2e', '3e', '4e'] as const;
 
     .bzm-team-scoreboard__player--mvp {
       font-weight: var(--bzm-font-weight-bold);
+    }
+
+    .bzm-team-scoreboard__mvp-star {
+      font-size: 14px;
+      color: var(--bzm-color-gold);
     }
 
     .bzm-team-scoreboard__player-name {

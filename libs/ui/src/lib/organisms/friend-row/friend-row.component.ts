@@ -15,13 +15,13 @@ export interface FriendEntry {
   template: `
     <div class="friend-row">
       <div class="friend-row-header">
-        <span class="friend-row-title">My Friends</span>
+        <span class="friend-row-title">{{ title() }}</span>
         <button
           class="friend-row-see-all"
           type="button"
           (click)="seeAllClick.emit()"
         >
-          See All
+          {{ seeAllLabel() }}
         </button>
       </div>
 
@@ -123,7 +123,7 @@ export interface FriendEntry {
       border-radius: 3px;
       background-color: var(--bzm-color-surface);
       border: 3px solid var(--bzm-black);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -164,6 +164,12 @@ export class BzmFriendRowComponent {
    * @default 6
    */
   readonly maxVisible = input<number>(6);
+
+  /** Configurable title text. @default 'Mijn Vrienden' */
+  readonly title = input<string>('Mijn Vrienden');
+
+  /** Configurable "see all" button label. @default 'Alles bekijken' */
+  readonly seeAllLabel = input<string>('Alles bekijken');
 
   /** Emits when the user clicks the "See All" button. */
   readonly seeAllClick = output<void>();

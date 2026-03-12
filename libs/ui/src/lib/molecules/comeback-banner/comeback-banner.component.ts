@@ -50,20 +50,20 @@ import { Component, ChangeDetectionStrategy, computed, input } from '@angular/co
 
     .bzm-comeback-banner {
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-md);
       overflow: hidden;
     }
 
     .bzm-comeback-banner--active {
-      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      background: linear-gradient(135deg, var(--bzm-color-fire) 0%, #ea580c 100%);
       border-color: #ea580c;
       animation: bzm-comeback-pulse 2s ease-in-out infinite;
     }
 
     .bzm-comeback-banner--complete {
-      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      background: linear-gradient(135deg, var(--bzm-color-success) 0%, #16a34a 100%);
       border-color: #16a34a;
       animation: bzm-comeback-celebrate 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     }

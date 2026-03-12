@@ -152,7 +152,7 @@ export interface QuestionResult {
       padding: var(--bzm-space-4) var(--bzm-space-4) var(--bzm-space-5);
       border-radius: var(--bzm-radius-lg);
       border: 4px solid var(--bzm-black);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       margin-bottom: var(--bzm-space-5);
       text-align: center;
     }
@@ -206,7 +206,7 @@ export interface QuestionResult {
       align-items: center;
       gap: var(--bzm-space-1);
       margin-bottom: var(--bzm-space-5);
-      animation: bzm-result-pop 0.5s var(--bzm-transition-playful) backwards;
+      animation: bzm-summary-result-pop 0.5s var(--bzm-transition-playful) backwards;
     }
 
     .round-summary__result-icon--passed {
@@ -398,7 +398,7 @@ export interface QuestionResult {
       padding: var(--bzm-space-4);
       background: linear-gradient(135deg, #818cf820, #6366f120);
       border: 4px solid var(--bzm-color-primary);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       margin-bottom: var(--bzm-space-5);
       animation: bzm-combo-flash 0.6s ease-out;
@@ -434,7 +434,7 @@ export interface QuestionResult {
       background: var(--bzm-color-primary);
       color: var(--bzm-white);
       border: 4px solid var(--bzm-black);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       font-family: var(--bzm-font-family);
       font-size: var(--bzm-font-size-lg);
@@ -457,7 +457,7 @@ export interface QuestionResult {
     }
 
     /* Animations */
-    @keyframes bzm-result-pop {
+    @keyframes bzm-summary-result-pop {
       from {
         transform: scale(0);
         opacity: 0;
@@ -572,7 +572,7 @@ export class BzmRoundSummaryComponent {
 
   protected readonly progressPercent = computed(() => {
     const maxScore = Math.max(this.currentScore(), this.targetScore());
-    if (maxScore === 0) return 100;
+    if (maxScore === 0) return 0;
     return Math.min(100, (this.currentScore() / maxScore) * 100);
   });
 

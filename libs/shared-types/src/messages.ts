@@ -1,12 +1,12 @@
-import type { AnswerIndex, AnswerResult, GamePhase, LeaderboardEntry, PlayerInfo, QuestionInput, QuestionPublic, ReconnectState } from './game';
+import type { AnswerIndex, AnswerResult, ErrorCode, GamePhase, LeaderboardEntry, PlayerInfo, QuestionInput, QuestionPublic, ReconnectState } from './game';
 
 /** Discriminated union of all messages sent from the client to the server via WebSocket. */
 export type ClientMessage =
-  | { type: 'CREATE_ROOM'; payload: { hostName: string; questions: QuestionInput[] } }
+  | { type: 'CREATE_ROOM'; payload: { hostName: string; questions: QuestionInput[]; quizId?: string } }
   | { type: 'JOIN_ROOM'; payload: { roomCode: string; nickname: string } }
   | { type: 'START_GAME' }
   | { type: 'NEXT_QUESTION' }
-  | { type: 'SUBMIT_ANSWER'; payload: { questionIndex: number; answerIndex: AnswerIndex; timestamp: number } }
+  | { type: 'SUBMIT_ANSWER'; payload: { questionIndex: number; answerIndex: AnswerIndex } }
   | { type: 'END_GAME' }
   | { type: 'RECONNECT'; payload: { roomCode: string; playerId: string } };
 
@@ -23,4 +23,4 @@ export type ServerMessage =
   | { type: 'GAME_OVER'; payload: { leaderboard: LeaderboardEntry[] } }
   | { type: 'PHASE_CHANGE'; payload: { phase: GamePhase } }
   | { type: 'RECONNECTED'; payload: ReconnectState }
-  | { type: 'ERROR'; payload: { message: string; code: string } };
+  | { type: 'ERROR'; payload: { message: string; code: ErrorCode } };

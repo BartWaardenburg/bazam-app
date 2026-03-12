@@ -82,7 +82,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
     }
 
     input[type="range"]:focus-visible {
-      outline: 3px solid var(--bzm-cyan-500);
+      outline: 3px solid var(--bzm-color-focus);
       outline-offset: 4px;
       border-radius: var(--bzm-radius-full);
     }

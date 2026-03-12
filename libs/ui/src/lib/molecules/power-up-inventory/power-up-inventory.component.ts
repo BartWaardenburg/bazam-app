@@ -71,7 +71,7 @@ export interface PowerUpSlot {
       padding: var(--bzm-space-3) var(--bzm-space-4);
       background: rgba(255, 255, 255, 0.85);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-sm);
       backdrop-filter: blur(4px);
@@ -95,7 +95,7 @@ export interface PowerUpSlot {
     }
 
     .bzm-power-up-inventory__slot--filled:focus-visible {
-      outline: 3px solid var(--bzm-cyan-300);
+      outline: 3px solid var(--bzm-color-focus);
       outline-offset: 2px;
       border-radius: var(--bzm-radius-full);
     }

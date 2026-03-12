@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, computed, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, signal, OnDestroy } from '@angular/core';
 
 /** Visual style variant for buttons. */
 export type ButtonVariant = 'primary' | 'secondary' | 'accent' | 'ghost';
@@ -18,6 +18,7 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
       (click)="onWrapClick()"
     >
       <button
+        type="button"
         [class]="buttonClasses()"
         [disabled]="disabled()"
         [style.width]="fullWidth() ? '100%' : 'auto'"
@@ -62,7 +63,7 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
       justify-content: center;
       gap: var(--bzm-space-2);
       border: 4px solid var(--bzm-black);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       font-family: var(--bzm-font-family);
       font-weight: var(--bzm-font-weight-extrabold);
@@ -130,7 +131,7 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
       align-items: center;
       justify-content: center;
       border: 3px solid var(--bzm-black);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       box-shadow: var(--bzm-shadow-sm);
       pointer-events: none;
       font-size: 18px;
@@ -216,7 +217,7 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
  * <bzm-button variant="accent" [fullWidth]="true">Meedoen</bzm-button>
  * ```
  */
-export class BzmButtonComponent {
+export class BzmButtonComponent implements OnDestroy {
   /**
    * Visual style variant controlling background color, text color, and box-shadow.
    * @default 'primary'
@@ -244,14 +245,26 @@ export class BzmButtonComponent {
 
   protected readonly shaking = signal(false);
 
+  private shakeTimer: ReturnType<typeof setTimeout> | null = null;
+
   protected readonly buttonClasses = computed(
     () => `variant-${this.variant()} size-${this.size()}`
   );
+
+  ngOnDestroy(): void {
+    if (this.shakeTimer !== null) {
+      clearTimeout(this.shakeTimer);
+      this.shakeTimer = null;
+    }
+  }
 
   /** Triggers the shake animation when the wrapper is clicked while the button is disabled. */
   protected onWrapClick(): void {
     if (!this.disabled() || this.shaking()) return;
     this.shaking.set(true);
-    setTimeout(() => this.shaking.set(false), 400);
+    this.shakeTimer = setTimeout(() => {
+      this.shaking.set(false);
+      this.shakeTimer = null;
+    }, 400);
   }
 }

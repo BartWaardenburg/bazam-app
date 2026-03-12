@@ -35,7 +35,7 @@ export type ReactionBubbleSize = 'sm' | 'md' | 'lg';
       justify-content: center;
       background: var(--bzm-white, #fff);
       border: 4px solid var(--bzm-color-border, var(--bzm-black));
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: 50%;
       box-shadow: var(--bzm-shadow-md);
       animation: bzm-reaction-float 3s ease-out forwards;
@@ -200,14 +200,15 @@ export class BzmReactionBubbleComponent {
   /** Size preset affecting bubble dimensions. @default 'md' */
   readonly size = input<ReactionBubbleSize>('md');
 
+  /** Rotation angle in degrees applied to the float animation. @default 0 */
+  readonly rotation = input<number>(0);
+
   protected readonly bubbleClasses = computed(
     () => `bzm-reaction-bubble bzm-reaction-bubble--${this.size()}`
   );
 
-  private readonly rotation = Math.floor(Math.random() * 10) - 5;
-
   protected readonly bubbleStyle = computed(
-    () => `--bzm-reaction-rotation: ${this.rotation}deg;`
+    () => `--bzm-reaction-rotation: ${this.rotation()}deg;`
   );
 
   protected readonly ariaLabel = computed(() => {

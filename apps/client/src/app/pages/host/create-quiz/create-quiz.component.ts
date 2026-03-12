@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import type { AnswerIndex, QuestionInput } from '@bazam/shared-types';
+import { DEFAULT_TIME_LIMIT_SECONDS } from '@bazam/shared-types';
+import type { QuestionInput } from '@bazam/shared-types';
 import {
   BzmButtonComponent,
   BzmPageTitleComponent,
@@ -12,12 +13,18 @@ import {
 import { GameStateService } from '../../../services/game-state.service';
 import { WebSocketService } from '../../../services/websocket.service';
 
+/** Default host display name used when creating a room. */
+const DEFAULT_HOST_NAME = 'Host';
+
+/** User-facing error message shown when the WebSocket connection fails. */
+const CONNECTION_ERROR_MESSAGE = 'Kan geen verbinding maken met de server. Probeer het opnieuw.';
+
 /** Blank question template cloned when the host adds a new question to the list. */
 const EMPTY_QUESTION: QuestionInput = {
   text: '',
   answers: ['', '', '', ''],
   correctIndex: 0,
-  timeLimitSeconds: 20,
+  timeLimitSeconds: DEFAULT_TIME_LIMIT_SECONDS,
 };
 
 /** Pre-built sample questions for quick-start demos. */
@@ -26,7 +33,7 @@ const SAMPLE_QUESTIONS: QuestionInput[] = [
     text: 'Welke taal wordt het meest gebruikt voor web development?',
     answers: ['Python', 'JavaScript', 'C++', 'Java'],
     correctIndex: 1,
-    timeLimitSeconds: 20,
+    timeLimitSeconds: DEFAULT_TIME_LIMIT_SECONDS,
   },
   {
     text: 'Wat doet CSS?',
@@ -38,7 +45,7 @@ const SAMPLE_QUESTIONS: QuestionInput[] = [
     text: 'Wat is TypeScript?',
     answers: ['Een database', 'Een CSS framework', 'Een typed superset van JavaScript', 'Een browser'],
     correctIndex: 2,
-    timeLimitSeconds: 20,
+    timeLimitSeconds: DEFAULT_TIME_LIMIT_SECONDS,
   },
   {
     text: 'Waar staat HTML voor?',
@@ -50,7 +57,7 @@ const SAMPLE_QUESTIONS: QuestionInput[] = [
     text: 'Wat is Shadow DOM?',
     answers: ['Een game engine', 'Encapsulated DOM tree', 'Een JavaScript library', 'Een CSS selector'],
     correctIndex: 1,
-    timeLimitSeconds: 20,
+    timeLimitSeconds: DEFAULT_TIME_LIMIT_SECONDS,
   },
 ];
 
@@ -98,10 +105,10 @@ const SAMPLE_QUESTIONS: QuestionInput[] = [
         <bzm-button
           variant="primary"
           [fullWidth]="true"
-          [disabled]="!isValid() || isConnecting()"
+          [disabled]="!isValid() || wsService.isConnecting()"
           (click)="createRoom()"
         >
-          {{ isConnecting() ? 'Verbinden...' : 'Start Quiz' }}
+          {{ wsService.isConnecting() ? 'Verbinden...' : 'Start Quiz' }}
         </bzm-button>
       </bzm-action-bar>
     </div>
@@ -145,13 +152,7 @@ export class CreateQuizComponent {
   /** Injected game state service for reading/writing session state. */
   readonly gameState = inject(GameStateService);
 
-  private readonly wsService = inject(WebSocketService);
-
-  /**
-   * Derived signal that is `true` while the WebSocket handshake is in progress.
-   * Used to disable the submit button and show a "Verbinden..." label.
-   */
-  readonly isConnecting = computed(() => this.wsService.connectionStatus() === 'connecting');
+  readonly wsService = inject(WebSocketService);
 
   /**
    * Mutable list of questions being authored by the host.
@@ -159,19 +160,29 @@ export class CreateQuizComponent {
    */
   readonly questions = signal<QuestionInput[]>([structuredClone(EMPTY_QUESTION)]);
 
+  /**
+   * Validates the current question list.
+   * `true` if every question has non-empty text and all four answer options are filled in.
+   */
+  readonly isValid = computed(() =>
+    this.questions().every(
+      (q) => q.text.trim() && q.answers.every((a) => a.trim())
+    )
+  );
+
   /** Appends a blank question template to the end of the question list. */
-  addQuestion(): void {
+  readonly addQuestion = (): void => {
     this.questions.update((qs) => [...qs, structuredClone(EMPTY_QUESTION)]);
-  }
+  };
 
   /**
    * Removes the question at the given index from the list.
    *
    * @param index - Zero-based position of the question to remove.
    */
-  removeQuestion(index: number): void {
+  readonly removeQuestion = (index: number): void => {
     this.questions.update((qs) => qs.filter((_, i) => i !== index));
-  }
+  };
 
   /**
    * Handles a change event from a question editor and updates the
@@ -180,35 +191,25 @@ export class CreateQuizComponent {
    * @param index - Zero-based position of the question that changed.
    * @param data - The updated question data emitted by the editor.
    */
-  onQuestionChange(index: number, data: QuestionEditorData): void {
+  readonly onQuestionChange = (index: number, data: QuestionEditorData): void => {
+    this.gameState.errorMessage.set(null);
     this.questions.update((qs) => {
       const updated = structuredClone(qs);
       updated[index] = {
         text: data.text,
         answers: [...data.answers] as [string, string, string, string],
-        correctIndex: data.correctIndex as AnswerIndex,
+        correctIndex: data.correctIndex,
         timeLimitSeconds: data.timeLimitSeconds,
       };
       return updated;
     });
-  }
+  };
 
   /** Replaces the current questions with pre-built sample questions. */
-  loadSampleQuestions(): void {
+  readonly loadSampleQuestions = (): void => {
+    this.gameState.errorMessage.set(null);
     this.questions.set(structuredClone(SAMPLE_QUESTIONS));
-  }
-
-  /**
-   * Validates the current question list.
-   *
-   * @returns `true` if every question has non-empty text and all four
-   *          answer options are filled in; `false` otherwise.
-   */
-  isValid(): boolean {
-    return this.questions().every(
-      (q) => q.text.trim() && q.answers.every((a) => a.trim())
-    );
-  }
+  };
 
   /**
    * Connects to the WebSocket server and creates a new game room.
@@ -217,21 +218,19 @@ export class CreateQuizComponent {
    * game state, and sends a `CREATE_ROOM` message. On failure, rolls
    * back the role and questions and sets a user-visible error message.
    */
-  async createRoom(): Promise<void> {
+  readonly createRoom = async (): Promise<void> => {
     this.gameState.errorMessage.set(null);
 
     try {
       await this.wsService.connect();
       this.gameState.role.set('host');
-      this.gameState.questions.set(this.questions());
       this.wsService.send({
         type: 'CREATE_ROOM',
-        payload: { hostName: 'Host', questions: this.questions() },
+        payload: { hostName: DEFAULT_HOST_NAME, questions: this.questions() },
       });
     } catch {
       this.gameState.role.set(null);
-      this.gameState.questions.set([]);
-      this.gameState.errorMessage.set('Kan geen verbinding maken met de server. Probeer het opnieuw.');
+      this.gameState.errorMessage.set(CONNECTION_ERROR_MESSAGE);
     }
-  }
+  };
 }

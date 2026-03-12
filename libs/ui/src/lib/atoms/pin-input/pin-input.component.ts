@@ -60,7 +60,7 @@ import {
       color: var(--bzm-color-text);
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-sm);
       outline: none;
@@ -76,7 +76,7 @@ import {
     }
 
     .bzm-pin-input__digit:focus {
-      border-color: var(--bzm-color-answer-a);
+      border-color: var(--bzm-color-focus);
       box-shadow: var(--bzm-shadow-md);
       transform: translateY(-2px);
     }
@@ -165,10 +165,10 @@ export class BzmPinInputComponent {
   readonly completed = output<string>();
 
   /** Internal signal holding the current value of each digit field. */
-  readonly digits = signal<string[]>(Array(6).fill(''));
+  protected readonly digits = signal<string[]>(Array(6).fill(''));
 
   /** Query list of native digit input elements for focus management. */
-  readonly digitInputs = viewChildren<ElementRef<HTMLInputElement>>('digitInput');
+  protected readonly digitInputs = viewChildren<ElementRef<HTMLInputElement>>('digitInput');
 
   constructor() {
     effect(() => {
@@ -190,7 +190,7 @@ export class BzmPinInputComponent {
   }
 
   /** Handles single-digit input and auto-advances to the next field. */
-  onDigitInput(index: number, event: Event): void {
+  protected onDigitInput(index: number, event: Event): void {
     const target = event.target as HTMLInputElement;
     const value = target.value.replace(/\D/g, '');
 
@@ -209,7 +209,7 @@ export class BzmPinInputComponent {
   }
 
   /** Handles backspace and arrow key navigation between digit fields. */
-  onKeyDown(index: number, event: KeyboardEvent): void {
+  protected onKeyDown(index: number, event: KeyboardEvent): void {
     const inputs = this.digitInputs();
 
     if (event.key === 'Backspace') {
@@ -231,7 +231,7 @@ export class BzmPinInputComponent {
   }
 
   /** Distributes pasted numeric content across all digit fields. */
-  onPaste(event: ClipboardEvent): void {
+  protected onPaste(event: ClipboardEvent): void {
     event.preventDefault();
     const pasted = (event.clipboardData?.getData('text') ?? '').replace(/\D/g, '');
     const chars = pasted.slice(0, this.length()).split('');
@@ -250,7 +250,7 @@ export class BzmPinInputComponent {
   }
 
   /** Selects the digit field content on focus for easy overwrite. */
-  onFocus(index: number): void {
+  protected onFocus(index: number): void {
     const inputs = this.digitInputs();
     inputs[index].nativeElement.select();
   }
@@ -271,7 +271,7 @@ export class BzmPinInputComponent {
   }
 
   /** Clears all digits and focuses the first field. */
-  reset(): void {
+  protected reset(): void {
     this.digits.set(Array(this.length()).fill(''));
     const inputs = this.digitInputs();
     if (inputs.length > 0) {

@@ -33,7 +33,7 @@ export type CheerVariant = 'default' | 'excited' | 'encouraging';
       display: inline-block;
       padding: var(--bzm-space-4, 16px) var(--bzm-space-6, 24px);
       border: 4px solid var(--bzm-color-border, var(--bzm-black));
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-lg, 16px);
       box-shadow: var(--bzm-shadow-card, 4px 4px 0 var(--bzm-black));
       max-width: 320px;

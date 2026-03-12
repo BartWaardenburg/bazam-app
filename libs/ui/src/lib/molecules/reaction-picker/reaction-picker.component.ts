@@ -80,7 +80,7 @@ const DEFAULT_REACTIONS: readonly ReactionOption[] = [
       width: 48px;
       height: 48px;
       border: 4px solid var(--bzm-color-border, var(--bzm-black));
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: 50%;
       background: var(--bzm-white, #fff);
       cursor: pointer;
@@ -125,7 +125,7 @@ const DEFAULT_REACTIONS: readonly ReactionOption[] = [
       z-index: 1;
       background: var(--bzm-color-surface, #fff);
       border: 4px solid var(--bzm-color-border, var(--bzm-black));
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md, 8px);
       padding: var(--bzm-space-2, 8px) var(--bzm-space-4, 16px);
       box-shadow: var(--bzm-shadow-md);

@@ -1,6 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { GameStateService } from '../../../services/game-state.service';
 import { WebSocketService } from '../../../services/websocket.service';
+import { toAnswerGridItems } from '../../../utils/answer-grid.util';
 import {
   BzmButtonComponent,
   BzmProgressBarComponent,
@@ -10,7 +11,6 @@ import {
   BzmCardComponent,
   BzmLeaderboardComponent,
   BzmPageTitleComponent,
-  type AnswerGridItem,
 } from '@bazam/ui';
 
 @Component({
@@ -45,7 +45,7 @@ import {
                 [timerRunning]="true"
               />
               <bzm-answer-grid
-                [answers]="toAnswerGridItems(q.answers)"
+                [answers]="answerGridItems()"
                 [disabled]="true"
               />
               <bzm-card borderColor="var(--bzm-color-accent)">
@@ -63,6 +63,10 @@ import {
               {{ gameState.isLastQuestion() ? 'Resultaten' : 'Volgende vraag' }}
             </bzm-button>
           </div>
+        }
+
+        @default {
+          <p class="loading-text">Laden...</p>
         }
       }
     </div>
@@ -118,23 +122,18 @@ export class HostGameComponent {
 
   private readonly wsService = inject(WebSocketService);
 
-  /**
-   * Maps raw answer strings to {@link AnswerGridItem} objects expected
-   * by the `BzmAnswerGridComponent`.
-   *
-   * @param answers - Array of answer text strings from the current question.
-   * @returns An array of grid items with `text` populated and no selection state.
-   */
-  toAnswerGridItems(answers: string[]): AnswerGridItem[] {
-    return answers.map((text) => ({ text }));
-  }
+  /** Memoized answer grid items derived from the current question. */
+  readonly answerGridItems = computed(() => {
+    const q = this.gameState.currentQuestion();
+    return q ? toAnswerGridItems(q.answers) : [];
+  });
 
   /**
    * Sends a `NEXT_QUESTION` message to the server, advancing the quiz to
    * the next question or triggering the game-over sequence if this was
    * the last question.
    */
-  nextQuestion(): void {
+  readonly nextQuestion = (): void => {
     this.wsService.send({ type: 'NEXT_QUESTION' });
-  }
+  };
 }

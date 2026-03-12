@@ -1,9 +1,23 @@
 import { Elysia } from 'elysia';
 import { eq, desc } from 'drizzle-orm';
+import type { Quiz, QuestionInput } from '@bazam/shared-types';
 import { db } from '../db/client';
 import { quizzes } from '../db/schema';
-import { validateQuestions, validateTitle } from '../game/validation';
+import { validateQuestions, validateTitle, INVALID_QUESTIONS_MESSAGE } from '../game/validation';
 import { logger } from '../utils/logger';
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** Default page size for quiz listing. */
+const DEFAULT_LIMIT = 50;
+
+/** Maps a Drizzle quiz row to the public API shape. */
+const mapQuiz = (q: typeof quizzes.$inferSelect): Quiz => ({
+  id: q.id,
+  title: q.title,
+  questions: q.questions,
+  createdAt: q.createdAt.toISOString(),
+});
 
 /**
  * REST endpoints for quiz CRUD operations.
@@ -12,19 +26,16 @@ import { logger } from '../utils/logger';
 export const quizRoutes = new Elysia({ prefix: '/api/quizzes' })
   /**
    * GET /api/quizzes
-   * Lists all quizzes ordered by creation date (newest first).
+   * Lists quizzes ordered by creation date (newest first) with pagination.
    *
    * @returns Array of quiz objects with id, title, questions, and createdAt.
    */
-  .get('/', async ({ set }) => {
+  .get('/', async ({ query, set }) => {
     try {
-      const rows = await db.select().from(quizzes).orderBy(desc(quizzes.createdAt));
-      return rows.map((q) => ({
-        id: q.id,
-        title: q.title,
-        questions: q.questions,
-        createdAt: q.createdAt.toISOString(),
-      }));
+      const limit = Math.min(Math.max(Number(query['limit']) || DEFAULT_LIMIT, 1), 100);
+      const offset = Math.max(Number(query['offset']) || 0, 0);
+      const rows = await db.select().from(quizzes).orderBy(desc(quizzes.createdAt)).limit(limit).offset(offset);
+      return rows.map(mapQuiz);
     } catch (error) {
       logger.error('Failed to list quizzes', { error: String(error) });
       set.status = 500;
@@ -38,19 +49,17 @@ export const quizRoutes = new Elysia({ prefix: '/api/quizzes' })
    * @returns The quiz object, or a 404 error if not found.
    */
   .get('/:id', async ({ params, set }) => {
+    if (!UUID_RE.test(params.id)) {
+      set.status = 400;
+      return { error: 'Invalid ID format' };
+    }
     try {
       const rows = await db.select().from(quizzes).where(eq(quizzes.id, params.id));
       if (rows.length === 0) {
         set.status = 404;
         return { error: 'Quiz not found' };
       }
-      const q = rows[0];
-      return {
-        id: q.id,
-        title: q.title,
-        questions: q.questions,
-        createdAt: q.createdAt.toISOString(),
-      };
+      return mapQuiz(rows[0]);
     } catch (error) {
       logger.error('Failed to get quiz', { error: String(error) });
       set.status = 500;
@@ -73,7 +82,7 @@ export const quizRoutes = new Elysia({ prefix: '/api/quizzes' })
     }
     if (!validateQuestions(questions)) {
       set.status = 400;
-      return { error: 'Invalid questions: each must have text, 4 answers, a valid correctIndex (0-3), and timeLimitSeconds > 0' };
+      return { error: INVALID_QUESTIONS_MESSAGE };
     }
 
     try {
@@ -81,12 +90,7 @@ export const quizRoutes = new Elysia({ prefix: '/api/quizzes' })
         .insert(quizzes)
         .values({ title: (title as string).trim(), questions })
         .returning();
-      return {
-        id: quiz.id,
-        title: quiz.title,
-        questions: quiz.questions,
-        createdAt: quiz.createdAt.toISOString(),
-      };
+      return mapQuiz(quiz);
     } catch (error) {
       logger.error('Failed to create quiz', { error: String(error) });
       set.status = 500;
@@ -101,22 +105,27 @@ export const quizRoutes = new Elysia({ prefix: '/api/quizzes' })
    * @returns The updated quiz object, or a 404 error if the quiz does not exist.
    */
   .put('/:id', async ({ params, body, set }) => {
+    if (!UUID_RE.test(params.id)) {
+      set.status = 400;
+      return { error: 'Invalid ID format' };
+    }
+
     const { title, questions } = body as { title?: unknown; questions?: unknown };
-    const updates: Record<string, unknown> = {};
+    const updates: Partial<typeof quizzes.$inferInsert> = {};
 
     if (title !== undefined) {
       if (!validateTitle(title)) {
         set.status = 400;
         return { error: 'Title must be between 1 and 200 characters' };
       }
-      updates['title'] = (title as string).trim();
+      updates.title = (title as string).trim();
     }
     if (questions !== undefined) {
       if (!validateQuestions(questions)) {
         set.status = 400;
-        return { error: 'Invalid questions' };
+        return { error: INVALID_QUESTIONS_MESSAGE };
       }
-      updates['questions'] = questions;
+      updates.questions = questions as QuestionInput[];
     }
 
     if (Object.keys(updates).length === 0) {
@@ -134,13 +143,7 @@ export const quizRoutes = new Elysia({ prefix: '/api/quizzes' })
         set.status = 404;
         return { error: 'Quiz not found' };
       }
-      const q = rows[0];
-      return {
-        id: q.id,
-        title: q.title,
-        questions: q.questions,
-        createdAt: q.createdAt.toISOString(),
-      };
+      return mapQuiz(rows[0]);
     } catch (error) {
       logger.error('Failed to update quiz', { error: String(error) });
       set.status = 500;
@@ -154,6 +157,10 @@ export const quizRoutes = new Elysia({ prefix: '/api/quizzes' })
    * @returns `{ ok: true }` on success, or a 404 error if the quiz does not exist.
    */
   .delete('/:id', async ({ params, set }) => {
+    if (!UUID_RE.test(params.id)) {
+      set.status = 400;
+      return { error: 'Invalid ID format' };
+    }
     try {
       const rows = await db
         .delete(quizzes)

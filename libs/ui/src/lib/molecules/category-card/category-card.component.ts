@@ -72,7 +72,7 @@ const DEFAULT_META: CategoryMeta = { icon: 'question', color: '#999999' };
       padding: var(--bzm-space-3) var(--bzm-space-2) var(--bzm-space-2);
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-md);
       cursor: pointer;
@@ -91,7 +91,7 @@ const DEFAULT_META: CategoryMeta = { icon: 'question', color: '#999999' };
     }
 
     .bzm-category-card:focus-visible {
-      box-shadow: 0 0 0 3px var(--bzm-cyan-300);
+      box-shadow: 0 0 0 3px var(--bzm-color-focus);
     }
 
     .bzm-category-card--selected {

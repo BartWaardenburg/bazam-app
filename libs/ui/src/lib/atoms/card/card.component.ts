@@ -8,7 +8,7 @@ export type CardVariant = 'default' | 'outlined' | 'elevated';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div [class]="cardClasses()" [style]="cardStyle()" role="region" [attr.aria-label]="ariaLabel()">
+    <div [class]="cardClasses()" [style]="cardStyle()" [attr.role]="ariaLabel() ? 'region' : null" [attr.aria-label]="ariaLabel()">
       <ng-content />
     </div>
   `,
@@ -21,7 +21,7 @@ export type CardVariant = 'default' | 'outlined' | 'elevated';
     .bzm-card {
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       padding: var(--bzm-space-8);
       box-shadow: var(--bzm-shadow-card);

@@ -81,7 +81,7 @@ const MODE_GRADIENTS: Record<GameModeType, string> = {
       padding: var(--bzm-space-6) var(--bzm-space-4) var(--bzm-space-4);
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-md);
       cursor: pointer;
@@ -100,7 +100,7 @@ const MODE_GRADIENTS: Record<GameModeType, string> = {
     }
 
     .bzm-game-mode-card:focus-visible {
-      box-shadow: 0 0 0 3px var(--bzm-cyan-300);
+      box-shadow: 0 0 0 3px var(--bzm-color-focus);
     }
 
     .bzm-game-mode-card--selected {
@@ -134,7 +134,7 @@ const MODE_GRADIENTS: Record<GameModeType, string> = {
       height: 28px;
       background: var(--bzm-color-surface);
       border: 3px solid var(--bzm-color-border);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       border-radius: var(--bzm-radius-md);
       z-index: 2;
       color: var(--bzm-color-text-muted);
@@ -188,7 +188,7 @@ const MODE_GRADIENTS: Record<GameModeType, string> = {
       padding: var(--bzm-space-1) var(--bzm-space-2);
       border-radius: var(--bzm-radius-md);
       border: 3px solid var(--bzm-black);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       transform: rotate(3deg);
       z-index: 3;
       text-transform: uppercase;

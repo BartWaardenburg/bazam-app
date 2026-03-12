@@ -152,7 +152,7 @@ const SIZE_MAP: Record<BossSize, number> = {
     .bzm-boss-character {
       border-radius: 50%;
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       box-shadow: var(--bzm-shadow-lg);
       overflow: hidden;
     }
@@ -221,27 +221,9 @@ const SIZE_MAP: Record<BossSize, number> = {
     }
   `,
 })
-/**
- * Renders an animated boss character display for Boss Battle mode with
- * expression-dependent SVG faces: idle (confident smirk), angry (red + shaking),
- * hurt (surprised + impact stars), and defeated (X eyes + dizzy circles).
- *
- * The boss is drawn as a stylized comic character inside a circular container
- * with a dark gradient background and lightning bolt decorations.
- *
- * @selector bzm-boss-character
- *
- * @example
- * ```html
- * <bzm-boss-character
- *   name="Professor Puzzel"
- *   expression="angry"
- *   size="lg"
- * />
- * ```
- */
 export class BzmBossCharacterComponent {
-  protected readonly gradientId = `bzm-boss-bg-${Math.random().toString(36).slice(2, 9)}`;
+  private static nextId = 0;
+  protected readonly gradientId = `bzm-boss-bg-${BzmBossCharacterComponent.nextId++}`;
 
   /** Boss display name. */
   readonly name = input.required<string>();

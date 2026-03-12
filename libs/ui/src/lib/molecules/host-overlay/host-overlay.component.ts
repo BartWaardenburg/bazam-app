@@ -79,7 +79,7 @@ const STAT_ICONS: Record<OverlayStat['type'], string> = {
       background: rgba(0, 0, 0, 0.75);
       backdrop-filter: blur(8px);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: 9999px;
       box-shadow: var(--bzm-shadow-md);
       pointer-events: auto;

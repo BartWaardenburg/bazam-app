@@ -1,6 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { BzmButtonComponent, BzmHeroComponent, BzmActionBarComponent } from '@bazam/ui';
+import { GameStateService } from '../../services/game-state.service';
+import { WebSocketService } from '../../services/websocket.service';
 
 @Component({
   selector: 'app-home',
@@ -37,13 +39,19 @@ import { BzmButtonComponent, BzmHeroComponent, BzmActionBarComponent } from '@ba
  */
 export class HomeComponent {
   private readonly router = inject(Router);
+  private readonly wsService = inject(WebSocketService);
+  private readonly gameState = inject(GameStateService);
 
   /**
-   * Navigates to the given route path using the Angular Router.
+   * Resets stale state and navigates to the given route path.
    *
    * @param path - Absolute route path (e.g. `'/host/create'` or `'/play/join'`).
    */
-  navigateTo(path: string): void {
-    void this.router.navigate([path]);
-  }
+  readonly navigateTo = (path: string): void => {
+    if (this.gameState.roomCode() !== null) {
+      this.wsService.endSession(path);
+    } else {
+      void this.router.navigate([path]);
+    }
+  };
 }

@@ -70,7 +70,7 @@ export interface TeamOption {
       padding: var(--bzm-space-4) var(--bzm-space-5);
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-md);
       cursor: pointer;
@@ -88,7 +88,7 @@ export interface TeamOption {
     }
 
     .bzm-team-picker__team:focus-visible {
-      box-shadow: 0 0 0 3px var(--bzm-cyan-300);
+      box-shadow: 0 0 0 3px var(--bzm-color-focus);
     }
 
     .bzm-team-picker__team--selected {

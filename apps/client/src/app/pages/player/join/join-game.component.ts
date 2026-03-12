@@ -1,4 +1,5 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
+import { MAX_NICKNAME_LENGTH } from '@bazam/shared-types';
 import {
   BzmButtonComponent,
   BzmPageTitleComponent,
@@ -9,6 +10,9 @@ import {
 } from '@bazam/ui';
 import { GameStateService } from '../../../services/game-state.service';
 import { WebSocketService } from '../../../services/websocket.service';
+
+/** User-facing error message shown when the WebSocket connection fails. */
+const CONNECTION_ERROR_MESSAGE = 'Kan geen verbinding maken met de server. Probeer het opnieuw.';
 
 @Component({
   selector: 'app-join-game',
@@ -22,16 +26,16 @@ import { WebSocketService } from '../../../services/websocket.service';
           <bzm-pin-input
             [autoFocus]="true"
             ariaLabel="Game PIN"
-            (valueChange)="roomCode = $event"
+            (valueChange)="onRoomCodeChange($event)"
           />
 
           <bzm-input
             label="Nickname"
             placeholder="Jouw naam..."
-            [maxLength]="20"
+            [maxLength]="maxNicknameLength"
             inputId="nickname"
-            [value]="nickname"
-            (valueChange)="nickname = $event"
+            [value]="nickname()"
+            (valueChange)="onNicknameChange($event)"
             (enterPressed)="joinGame()"
           />
 
@@ -42,11 +46,11 @@ import { WebSocketService } from '../../../services/websocket.service';
           <bzm-button
             variant="primary"
             size="lg"
-            [disabled]="!isValid() || isConnecting()"
+            [disabled]="!isValid() || wsService.isConnecting()"
             [fullWidth]="true"
             (click)="joinGame()"
           >
-            {{ isConnecting() ? 'Verbinden...' : 'Join!' }}
+            {{ wsService.isConnecting() ? 'Verbinden...' : 'Join!' }}
           </bzm-button>
         </div>
       </bzm-card>
@@ -82,29 +86,36 @@ export class JoinGameComponent {
   /** Injected game state for reading/writing error messages and player info. */
   readonly gameState = inject(GameStateService);
 
-  private readonly wsService = inject(WebSocketService);
+  readonly wsService = inject(WebSocketService);
 
-  /**
-   * Derived signal that is `true` while the WebSocket handshake is in progress.
-   * Used to disable the join button and show a connecting label.
-   */
-  readonly isConnecting = computed(() => this.wsService.connectionStatus() === 'connecting');
+  /** Maximum nickname length from shared constants. */
+  readonly maxNicknameLength = MAX_NICKNAME_LENGTH;
 
   /** The 6-digit room code entered by the player. */
-  roomCode = '';
+  readonly roomCode = signal('');
 
-  /** The display nickname chosen by the player (max 20 characters). */
-  nickname = '';
+  /** The display nickname chosen by the player. */
+  readonly nickname = signal('');
 
   /**
    * Validates the join form fields.
-   *
-   * @returns `true` if the room code is exactly 6 characters and the
-   *          nickname is non-empty; `false` otherwise.
+   * `true` if the room code is exactly 6 characters and the nickname is non-empty.
    */
-  isValid(): boolean {
-    return this.roomCode.trim().length === 6 && this.nickname.trim().length > 0;
-  }
+  readonly isValid = computed(() =>
+    this.roomCode().trim().length === 6 && this.nickname().trim().length > 0
+  );
+
+  /** Updates room code and clears any stale error. */
+  readonly onRoomCodeChange = (value: string): void => {
+    this.roomCode.set(value);
+    this.gameState.errorMessage.set(null);
+  };
+
+  /** Updates nickname and clears any stale error. */
+  readonly onNicknameChange = (value: string): void => {
+    this.nickname.set(value);
+    this.gameState.errorMessage.set(null);
+  };
 
   /**
    * Connects to the WebSocket server and joins the specified room.
@@ -113,24 +124,24 @@ export class JoinGameComponent {
    * game state, and sends a `JOIN_ROOM` message. On failure, rolls back
    * the role and nickname and sets a user-visible error message.
    */
-  async joinGame(): Promise<void> {
+  readonly joinGame = async (): Promise<void> => {
     this.gameState.errorMessage.set(null);
 
     try {
       await this.wsService.connect();
       this.gameState.role.set('player');
-      this.gameState.playerNickname.set(this.nickname.trim());
+      this.gameState.playerNickname.set(this.nickname().trim());
       this.wsService.send({
         type: 'JOIN_ROOM',
         payload: {
-          roomCode: this.roomCode.trim(),
-          nickname: this.nickname.trim(),
+          roomCode: this.roomCode().trim(),
+          nickname: this.nickname().trim(),
         },
       });
     } catch {
       this.gameState.role.set(null);
       this.gameState.playerNickname.set('');
-      this.gameState.errorMessage.set('Kan geen verbinding maken met de server. Probeer het opnieuw.');
+      this.gameState.errorMessage.set(CONNECTION_ERROR_MESSAGE);
     }
-  }
+  };
 }

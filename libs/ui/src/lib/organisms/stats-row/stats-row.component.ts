@@ -64,7 +64,7 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
       height: 40px;
       border-radius: 3px;
       border: 3px solid var(--bzm-black);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
     }
 
     .stat-icon--accent {

@@ -28,7 +28,7 @@ export type PowerUpNotificationType = 'activated' | 'earned' | 'effect';
       gap: var(--bzm-space-3);
       padding: var(--bzm-space-3) var(--bzm-space-5);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-full);
       box-shadow: var(--bzm-shadow-md);
       animation: bzm-notification-slide-in 0.35s var(--bzm-transition-playful) forwards;

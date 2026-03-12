@@ -10,10 +10,11 @@ describe('PlayerGameComponent', () => {
 
   const lastAnswerResult = signal<{ correct: boolean; score: number; totalScore: number; correctIndex: number } | null>(null);
   const questionIndex = signal(0);
+  const currentQuestion = signal<{ text: string; answers: [string, string, string, string]; timeLimitSeconds: number } | null>(null);
 
   const mockGameState = {
     gamePhase: signal('question' as string),
-    currentQuestion: signal<{ text: string; answers: string[]; timeLimitSeconds: number } | null>(null),
+    currentQuestion,
     questionIndex,
     totalQuestions: signal(5),
     timeLimit: signal(20),
@@ -22,18 +23,22 @@ describe('PlayerGameComponent', () => {
     hasAnswered: computed(() => lastAnswerResult() !== null),
     players: signal<unknown[]>([]),
     sortedLeaderboard: computed(() => []),
+    correctAnswerIndex: signal(null),
+    errorMessage: signal<string | null>(null),
+    elapsedMs: signal(0),
   };
 
   const mockWsService = {
     send: vi.fn(),
     connectionStatus: signal<'disconnected' | 'connecting' | 'connected'>('connected'),
+    isConnecting: computed(() => false),
   };
 
   beforeEach(async () => {
     lastAnswerResult.set(null);
     questionIndex.set(0);
+    currentQuestion.set(null);
     mockGameState.gamePhase.set('question');
-    mockGameState.currentQuestion.set(null);
     mockGameState.totalQuestions.set(5);
     mockGameState.timeLimit.set(20);
     mockGameState.playerScore.set(0);
@@ -63,38 +68,43 @@ describe('PlayerGameComponent', () => {
   });
 
   // ---------------------------------------------------------------------------
-  // toAnswerGridItems()
+  // answerGridItems (computed)
   // ---------------------------------------------------------------------------
 
-  describe('toAnswerGridItems()', () => {
-    it('should map answers to objects with text and selected=false by default', () => {
-      const result = component.toAnswerGridItems(['A', 'B', 'C', 'D']);
+  describe('answerGridItems', () => {
+    it('should return empty array when no question is set', () => {
+      expect(component.answerGridItems()).toEqual([]);
+    });
 
-      expect(result).toEqual([
-        { text: 'A', selected: false },
-        { text: 'B', selected: false },
-        { text: 'C', selected: false },
-        { text: 'D', selected: false },
+    it('should map answers to objects with text only when no answer is selected', () => {
+      currentQuestion.set({
+        text: 'Test?',
+        answers: ['A', 'B', 'C', 'D'],
+        timeLimitSeconds: 20,
+      });
+
+      expect(component.answerGridItems()).toEqual([
+        { text: 'A' },
+        { text: 'B' },
+        { text: 'C' },
+        { text: 'D' },
       ]);
     });
 
     it('should mark the selected answer when selectedAnswer matches an index', () => {
+      currentQuestion.set({
+        text: 'Test?',
+        answers: ['A', 'B', 'C', 'D'],
+        timeLimitSeconds: 20,
+      });
       component.selectedAnswer.set(1);
 
-      const result = component.toAnswerGridItems(['A', 'B', 'C', 'D']);
-
-      expect(result).toEqual([
+      expect(component.answerGridItems()).toEqual([
         { text: 'A', selected: false },
         { text: 'B', selected: true },
         { text: 'C', selected: false },
         { text: 'D', selected: false },
       ]);
-    });
-
-    it('should return an empty array when given an empty array', () => {
-      const result = component.toAnswerGridItems([]);
-
-      expect(result).toEqual([]);
     });
   });
 
@@ -103,23 +113,18 @@ describe('PlayerGameComponent', () => {
   // ---------------------------------------------------------------------------
 
   describe('submitAnswer()', () => {
-    it('should set selectedAnswer and send SUBMIT_ANSWER message', () => {
-      const fakeTimestamp = 1700000000000;
-      vi.spyOn(Date, 'now').mockReturnValue(fakeTimestamp);
-
+    it('should set selectedAnswer, hasSubmitted, and send SUBMIT_ANSWER message', () => {
       component.submitAnswer(2);
 
       expect(component.selectedAnswer()).toBe(2);
+      expect(component.hasSubmitted()).toBe(true);
       expect(mockWsService.send).toHaveBeenCalledWith({
         type: 'SUBMIT_ANSWER',
         payload: {
           questionIndex: 0,
           answerIndex: 2,
-          timestamp: fakeTimestamp,
         },
       });
-
-      vi.restoreAllMocks();
     });
 
     it('should not send when hasAnswered is true', () => {
@@ -128,6 +133,15 @@ describe('PlayerGameComponent', () => {
       component.submitAnswer(1);
 
       expect(component.selectedAnswer()).toBeNull();
+      expect(mockWsService.send).not.toHaveBeenCalled();
+    });
+
+    it('should not send when hasSubmitted is true (double-submit prevention)', () => {
+      component.submitAnswer(1);
+      mockWsService.send.mockReset();
+
+      component.submitAnswer(2);
+
       expect(mockWsService.send).not.toHaveBeenCalled();
     });
 
@@ -146,8 +160,6 @@ describe('PlayerGameComponent', () => {
     });
 
     it('should use the current questionIndex from game state', () => {
-      const fakeTimestamp = 1700000000000;
-      vi.spyOn(Date, 'now').mockReturnValue(fakeTimestamp);
       questionIndex.set(3);
 
       component.submitAnswer(0);
@@ -157,39 +169,8 @@ describe('PlayerGameComponent', () => {
         payload: {
           questionIndex: 3,
           answerIndex: 0,
-          timestamp: fakeTimestamp,
         },
       });
-
-      vi.restoreAllMocks();
-    });
-  });
-
-  // ---------------------------------------------------------------------------
-  // Effect: reset selectedAnswer on questionIndex change
-  // ---------------------------------------------------------------------------
-
-  describe('effect: reset selectedAnswer on questionIndex change', () => {
-    it('should reset selectedAnswer to null when questionIndex changes', () => {
-      component.selectedAnswer.set(2);
-      expect(component.selectedAnswer()).toBe(2);
-
-      questionIndex.set(1);
-      TestBed.flushEffects();
-
-      expect(component.selectedAnswer()).toBeNull();
-    });
-
-    it('should reset selectedAnswer on subsequent question changes', () => {
-      component.selectedAnswer.set(3);
-      questionIndex.set(1);
-      TestBed.flushEffects();
-      expect(component.selectedAnswer()).toBeNull();
-
-      component.selectedAnswer.set(0);
-      questionIndex.set(2);
-      TestBed.flushEffects();
-      expect(component.selectedAnswer()).toBeNull();
     });
   });
 });

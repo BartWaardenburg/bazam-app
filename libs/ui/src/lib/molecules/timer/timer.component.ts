@@ -5,7 +5,6 @@ import {
   input,
   output,
   signal,
-  OnInit,
   OnDestroy,
   effect,
 } from '@angular/core';
@@ -27,6 +26,7 @@ export type TimerSize = 'sm' | 'md' | 'lg';
           class="bzm-timer__fill"
           [style.width.%]="fillPercent()"
           role="progressbar"
+          aria-label="Resterende tijd"
           [attr.aria-valuenow]="remainingSeconds()"
           [attr.aria-valuemax]="duration()"
           aria-valuemin="0"
@@ -47,9 +47,9 @@ export type TimerSize = 'sm' | 'md' | 'lg';
       justify-content: center;
       gap: var(--bzm-space-2);
       background: var(--bzm-color-surface);
-      border-radius: 3px;
+      border-radius: var(--bzm-radius-sm);
       border: 4px solid var(--bzm-black);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       box-shadow: var(--bzm-shadow-md);
       padding: var(--bzm-space-3);
     }
@@ -109,6 +109,15 @@ export type TimerSize = 'sm' | 'md' | 'lg';
     .bzm-timer--danger .bzm-timer__fill {
       background: var(--bzm-color-error);
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bzm-timer--danger {
+        animation: none;
+      }
+      .bzm-timer__fill {
+        transition: none;
+      }
+    }
   `,
 })
 /**
@@ -129,7 +138,7 @@ export type TimerSize = 'sm' | 'md' | 'lg';
  * <bzm-timer [duration]="30" [running]="true" size="md" (timerComplete)="onTimeUp()" />
  * ```
  */
-export class BzmTimerComponent implements OnInit, OnDestroy {
+export class BzmTimerComponent implements OnDestroy {
   /** Total duration in seconds for the countdown. Also used to calculate the fill percentage. */
   readonly duration = input.required<number>();
 
@@ -150,8 +159,20 @@ export class BzmTimerComponent implements OnInit, OnDestroy {
 
   private intervalId: ReturnType<typeof setInterval> | null = null;
 
-  private readonly runningEffect = effect(() => {
+  private initialized = false;
+
+  private readonly timerEffect = effect(() => {
+    const dur = this.duration();
     const isRunning = this.running();
+    const initial = this.initialRemaining();
+
+    if (!this.initialized) {
+      this.remainingSeconds.set(initial ?? dur);
+      this.initialized = true;
+    } else {
+      this.remainingSeconds.set(dur);
+    }
+
     if (isRunning) {
       this.startTimer();
     } else {
@@ -159,37 +180,20 @@ export class BzmTimerComponent implements OnInit, OnDestroy {
     }
   });
 
-  private initialized = false;
-
-  private readonly durationEffect = effect(() => {
-    const dur = this.duration();
-    const initial = this.initialRemaining();
-    if (!this.initialized) {
-      this.remainingSeconds.set(initial ?? dur);
-      this.initialized = true;
-    } else {
-      this.remainingSeconds.set(dur);
-    }
-    if (this.running()) {
-      this.stopTimer();
-      this.startTimer();
-    }
-  });
-
   /** Maps each size preset to pixel dimensions for the timer container. */
-  readonly sizeMap: Record<TimerSize, { width: number; height: number }> = {
+  protected readonly sizeMap: Record<TimerSize, { width: number; height: number }> = {
     sm: { width: 56, height: 56 },
     md: { width: 80, height: 80 },
     lg: { width: 104, height: 104 },
   };
 
-  readonly fillPercent = computed(() => {
+  protected readonly fillPercent = computed(() => {
     const dur = this.duration();
     if (dur <= 0) return 0;
     return (this.remainingSeconds() / dur) * 100;
   });
 
-  readonly containerClass = computed(() => {
+  protected readonly containerClass = computed(() => {
     const remaining = this.remainingSeconds();
     const dur = this.duration();
     const classes = ['bzm-timer'];
@@ -201,12 +205,12 @@ export class BzmTimerComponent implements OnInit, OnDestroy {
     return classes.join(' ');
   });
 
-  readonly containerSizeStyle = computed(() => {
+  protected readonly containerSizeStyle = computed(() => {
     const s = this.sizeMap[this.size()];
     return `width: ${s.width}px; height: ${s.height}px`;
   });
 
-  readonly valueFontStyle = computed(() => {
+  protected readonly valueFontStyle = computed(() => {
     const s = this.size();
     const fontSize =
       s === 'sm'
@@ -216,11 +220,6 @@ export class BzmTimerComponent implements OnInit, OnDestroy {
           : 'var(--bzm-font-size-3xl)';
     return `font-size: ${fontSize}`;
   });
-
-  /** Initializes the component. Timer setup is handled by the `durationEffect`. */
-  ngOnInit(): void {
-    // initialization handled by durationEffect
-  }
 
   /** Stops the countdown interval to prevent memory leaks on component teardown. */
   ngOnDestroy(): void {

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, computed, signal, effect, OnDestroy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, signal, effect } from '@angular/core';
 
 /** Data shape for a player in the intermission standings. */
 export interface IntermissionPlayer {
@@ -133,7 +133,7 @@ export interface IntermissionPlayer {
       padding: var(--bzm-space-3) var(--bzm-space-4);
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-sm);
       animation: bzm-player-slide 0.4s var(--bzm-transition-playful) backwards;
@@ -300,7 +300,7 @@ export interface IntermissionPlayer {
  * />
  * ```
  */
-export class BzmRoundIntermissionComponent implements OnDestroy {
+export class BzmRoundIntermissionComponent {
   /** The round number that was just completed. */
   readonly roundNumber = input.required<number>();
 
@@ -330,34 +330,23 @@ export class BzmRoundIntermissionComponent implements OnDestroy {
 
   protected readonly remaining = signal(0);
 
-  private intervalId: ReturnType<typeof setInterval> | null = null;
-
   constructor() {
-    effect(() => {
+    effect((onCleanup) => {
       const seconds = this.countdownSeconds();
       this.remaining.set(seconds);
 
-      if (this.intervalId !== null) {
-        clearInterval(this.intervalId);
-      }
-
-      this.intervalId = setInterval(() => {
+      const id = setInterval(() => {
         this.remaining.update(v => {
           if (v <= 1) {
-            clearInterval(this.intervalId!);
-            this.intervalId = null;
+            clearInterval(id);
             return 0;
           }
           return v - 1;
         });
       }, 1000);
-    });
-  }
 
-  ngOnDestroy(): void {
-    if (this.intervalId !== null) {
-      clearInterval(this.intervalId);
-    }
+      onCleanup(() => clearInterval(id));
+    });
   }
 
   /** The standings limited to the configured maximum. */

@@ -206,13 +206,30 @@ describe('WebSocketService', () => {
 
       const message: ClientMessage = {
         type: 'SUBMIT_ANSWER',
-        payload: { questionIndex: 0, answerIndex: 2, timestamp: 1234 },
+        payload: { questionIndex: 0, answerIndex: 2 },
       };
       service.send(message);
 
       const sentData = mockWsInstance.send.mock.calls[0][0] as string;
       const parsed = JSON.parse(sentData) as ClientMessage;
       expect(parsed).toEqual(message);
+    });
+
+    it('should return false and set errorMessage when disconnected', () => {
+      const message: ClientMessage = { type: 'START_GAME' };
+      const result = service.send(message);
+
+      expect(result).toBe(false);
+      expect(gameState.errorMessage()).toBe('Geen verbinding met de server.');
+    });
+
+    it('should return true when connected', async () => {
+      const connectPromise = service.connect();
+      simulateOpen();
+      await connectPromise;
+
+      const result = service.send({ type: 'START_GAME' });
+      expect(result).toBe(true);
     });
   });
 
@@ -507,6 +524,84 @@ describe('WebSocketService', () => {
       });
     });
 
+    // -- RECONNECTED --------------------------------------------------------
+
+    describe('RECONNECTED', () => {
+      const reconnectPayload = {
+        roomCode: 'ABC123',
+        phase: 'question' as const,
+        players: [{ id: 'p1', nickname: 'Alice', score: 100, hasAnswered: true }],
+        question: { text: 'Q?', answers: ['A', 'B', 'C', 'D'] as [string, string, string, string], timeLimitSeconds: 20 },
+        questionIndex: 2,
+        totalQuestions: 5,
+        timeLimit: 20,
+        elapsedMs: 5000,
+        score: 100,
+        leaderboard: [{ id: 'p1', nickname: 'Alice', score: 100, rank: 1, previousRank: null, streak: 1 }],
+        hasAnswered: true,
+      };
+
+      it('should restore all game state signals from the reconnect payload', async () => {
+        await connectAndSend({ type: 'RECONNECTED', payload: reconnectPayload });
+
+        expect(gameState.roomCode()).toBe('ABC123');
+        expect(gameState.gamePhase()).toBe('question');
+        expect(gameState.players()).toEqual(reconnectPayload.players);
+        expect(gameState.currentQuestion()).toEqual(reconnectPayload.question);
+        expect(gameState.questionIndex()).toBe(2);
+        expect(gameState.totalQuestions()).toBe(5);
+        expect(gameState.timeLimit()).toBe(20);
+        expect(gameState.elapsedMs()).toBe(5000);
+        expect(gameState.playerScore()).toBe(100);
+        expect(gameState.leaderboard()).toEqual(reconnectPayload.leaderboard);
+      });
+
+      it('should set a placeholder lastAnswerResult when hasAnswered is true', async () => {
+        await connectAndSend({ type: 'RECONNECTED', payload: reconnectPayload });
+
+        expect(gameState.lastAnswerResult()).toEqual({ correct: false, score: 0, totalScore: 100, correctIndex: 0 });
+      });
+
+      it('should not overwrite existing lastAnswerResult on reconnect', async () => {
+        const existingResult = { correct: true, score: 50, totalScore: 150, correctIndex: 1 as const };
+        gameState.lastAnswerResult.set(existingResult);
+
+        await connectAndSend({ type: 'RECONNECTED', payload: reconnectPayload });
+
+        expect(gameState.lastAnswerResult()).toEqual(existingResult);
+      });
+
+      it('should not set lastAnswerResult when hasAnswered is false', async () => {
+        await connectAndSend({
+          type: 'RECONNECTED',
+          payload: { ...reconnectPayload, hasAnswered: false },
+        });
+
+        expect(gameState.lastAnswerResult()).toBeNull();
+      });
+
+      it('should navigate to the correct route based on phase and role', async () => {
+        gameState.role.set('host');
+        await connectAndSend({ type: 'RECONNECTED', payload: { ...reconnectPayload, phase: 'lobby' } });
+
+        expect(router.navigate).toHaveBeenCalledWith(['/host/lobby']);
+      });
+
+      it('should navigate to /play/game for player in question phase', async () => {
+        gameState.role.set('player');
+        await connectAndSend({ type: 'RECONNECTED', payload: reconnectPayload });
+
+        expect(router.navigate).toHaveBeenCalledWith(['/play/game']);
+      });
+
+      it('should navigate to /host/results for host in finished phase', async () => {
+        gameState.role.set('host');
+        await connectAndSend({ type: 'RECONNECTED', payload: { ...reconnectPayload, phase: 'finished' } });
+
+        expect(router.navigate).toHaveBeenCalledWith(['/host/results']);
+      });
+    });
+
     // -- Invalid message ----------------------------------------------------
 
     describe('invalid message', () => {
@@ -520,6 +615,50 @@ describe('WebSocketService', () => {
 
         expect(gameState.errorMessage()).toBe('Ongeldig bericht ontvangen van de server');
       });
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // endSession()
+  // ---------------------------------------------------------------------------
+
+  describe('endSession()', () => {
+    it('should disconnect, reset game state, and navigate to the given path', async () => {
+      const connectPromise = service.connect();
+      simulateOpen();
+      await connectPromise;
+
+      gameState.roomCode.set('ABC123');
+      gameState.role.set('host');
+
+      service.endSession('/');
+
+      expect(service.connectionStatus()).toBe('disconnected');
+      expect(gameState.roomCode()).toBeNull();
+      expect(gameState.role()).toBeNull();
+      expect(router.navigate).toHaveBeenCalledWith(['/']);
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // isConnecting
+  // ---------------------------------------------------------------------------
+
+  describe('isConnecting', () => {
+    it('should be false when disconnected', () => {
+      expect(service.isConnecting()).toBe(false);
+    });
+
+    it('should be true while connecting', () => {
+      service.connect();
+      expect(service.isConnecting()).toBe(true);
+    });
+
+    it('should be false after connected', async () => {
+      const connectPromise = service.connect();
+      simulateOpen();
+      await connectPromise;
+      expect(service.isConnecting()).toBe(false);
     });
   });
 });

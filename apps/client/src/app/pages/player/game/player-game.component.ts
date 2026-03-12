@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import type { AnswerIndex } from '@bazam/shared-types';
 import {
   BzmCountdownViewComponent,
@@ -10,10 +10,12 @@ import {
   BzmWaitingStateComponent,
   BzmCardComponent,
   BzmPageTitleComponent,
-  type AnswerGridItem,
 } from '@bazam/ui';
 import { GameStateService } from '../../../services/game-state.service';
 import { WebSocketService } from '../../../services/websocket.service';
+import { toAnswerGridItems } from '../../../utils/answer-grid.util';
+
+const isAnswerIndex = (n: number): n is AnswerIndex => n >= 0 && n <= 3;
 
 @Component({
   selector: 'app-player-game',
@@ -48,9 +50,9 @@ import { WebSocketService } from '../../../services/websocket.service';
                 [timerRunning]="true"
               />
 
-              @if (!gameState.hasAnswered()) {
+              @if (!hasSubmitted() && !gameState.hasAnswered()) {
                 <bzm-answer-grid
-                  [answers]="toAnswerGridItems(q.answers)"
+                  [answers]="answerGridItems()"
                   (answerSelected)="submitAnswer($event)"
                 />
               } @else {
@@ -59,6 +61,8 @@ import { WebSocketService } from '../../../services/websocket.service';
                     [correct]="result.correct"
                     [score]="result.score"
                   />
+                } @else {
+                  <bzm-waiting-state message="Wachten op resultaat..." spinnerSize="sm" />
                 }
               }
             </div>
@@ -77,6 +81,10 @@ import { WebSocketService } from '../../../services/websocket.service';
               <bzm-waiting-state message="Wachten op de host..." spinnerSize="sm" />
             </div>
           </bzm-card>
+        }
+
+        @default {
+          <bzm-waiting-state message="Laden..." spinnerSize="sm" />
         }
       }
     </div>
@@ -125,52 +133,48 @@ export class PlayerGameComponent {
 
   /**
    * Tracks which answer the player has tapped in the current question.
-   * Reset to `null` each time the question index changes (via effect).
+   * Reset to `null` when the question index changes.
    */
   readonly selectedAnswer = signal<number | null>(null);
 
+  /** Whether an answer has been submitted for the current question (set immediately on tap). */
+  readonly hasSubmitted = signal(false);
+
   constructor() {
-    /** Resets the selected answer whenever a new question begins. */
     effect(() => {
       this.gameState.questionIndex();
       this.selectedAnswer.set(null);
+      this.hasSubmitted.set(false);
     });
   }
 
-  /**
-   * Maps raw answer strings to {@link AnswerGridItem} objects, enriching
-   * each item with the current selection state.
-   *
-   * @param answers - Array of answer text strings from the current question.
-   * @returns Grid items with `text` and `selected` properties.
-   */
-  toAnswerGridItems(answers: string[]): AnswerGridItem[] {
-    return answers.map((text, index) => ({
-      text,
-      selected: this.selectedAnswer() === index,
-    }));
-  }
+  /** Memoized answer grid items with selection state, recalculated only when inputs change. */
+  readonly answerGridItems = computed(() => {
+    const q = this.gameState.currentQuestion();
+    if (!q) return [];
+    return toAnswerGridItems(q.answers, this.selectedAnswer());
+  });
 
   /**
    * Submits the player's selected answer to the server.
    *
    * Guards against duplicate submissions and out-of-range indices.
-   * Sends a `SUBMIT_ANSWER` message containing the question index,
-   * the chosen answer, and a timestamp for speed-based scoring.
+   * Sends a `SUBMIT_ANSWER` message containing the question index
+   * and the chosen answer.
    *
    * @param answerIndex - Zero-based index (0-3) of the selected answer.
    */
-  submitAnswer(answerIndex: number): void {
-    if (this.gameState.hasAnswered()) return;
-    if (answerIndex < 0 || answerIndex > 3) return;
+  readonly submitAnswer = (answerIndex: number): void => {
+    if (this.hasSubmitted() || this.gameState.hasAnswered()) return;
+    if (!isAnswerIndex(answerIndex)) return;
+    this.hasSubmitted.set(true);
     this.selectedAnswer.set(answerIndex);
     this.wsService.send({
       type: 'SUBMIT_ANSWER',
       payload: {
         questionIndex: this.gameState.questionIndex(),
-        answerIndex: answerIndex as AnswerIndex,
-        timestamp: Date.now(),
+        answerIndex,
       },
     });
-  }
+  };
 }

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, output, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
 import { BzmChipComponent } from '../../atoms/chip/chip.component';
 
 @Component({
@@ -8,8 +8,8 @@ import { BzmChipComponent } from '../../atoms/chip/chip.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="category-filter">
-      <span class="category-heading">Category</span>
-      <div class="category-scroll" role="listbox" aria-label="Category filter">
+      <span class="category-heading">{{ heading() }}</span>
+      <div class="category-scroll" role="group" aria-label="Categorie filter">
         @for (category of categories(); track category) {
           <bzm-chip
             [label]="category"
@@ -80,12 +80,18 @@ export class BzmCategoryFilterComponent {
   /** Currently active category, used to highlight the matching chip. */
   readonly activeCategory = input.required<string>();
 
+  /** Configurable heading text. @default 'Categorie' */
+  readonly heading = input<string>('Categorie');
+
+  /** Label used for the "all" category comparison. @default 'Alles' */
+  readonly allLabel = input<string>('Alles');
+
   /** Emits the category name when the user selects a different chip. */
   readonly categoryChange = output<string>();
 
   protected readonly chipColor = (category: string): string | undefined => {
     if (category === this.activeCategory()) {
-      if (category === 'All') return 'var(--bzm-color-accent)';
+      if (category === this.allLabel()) return 'var(--bzm-color-accent)';
       return 'var(--bzm-color-primary)';
     }
     return undefined;

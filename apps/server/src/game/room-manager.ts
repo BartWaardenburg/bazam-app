@@ -1,8 +1,8 @@
-import type { AnswerIndex, GamePhase, LeaderboardEntry, PlayerInfo, QuestionInput, ReconnectState } from '@bazam/shared-types';
+import type { AnswerIndex, ErrorCode, GamePhase, LeaderboardEntry, PlayerInfo, QuestionInput, QuestionPublic, ReconnectState } from '@bazam/shared-types';
 import type { ConnectionRegistry } from './connection-registry';
 import { generateRoomCode } from '../utils/room-code';
 import { calculateScore } from './scoring';
-import { isValidAnswerIndex, validateQuestions, MAX_NICKNAME_LENGTH } from './validation';
+import { isValidAnswerIndex, validateQuestions, MAX_NICKNAME_LENGTH, MAX_PLAYERS_PER_ROOM, MAX_HOST_NAME_LENGTH, MAX_ROOMS, INVALID_QUESTIONS_MESSAGE } from './validation';
 import { db } from '../db/client';
 import { quizzes, gameSessions, gameResults } from '../db/schema';
 import { logger } from '../utils/logger';
@@ -60,6 +60,8 @@ interface Room {
   players: Map<string, Player>;
   /** Validated list of quiz questions for this game session. */
   questions: QuestionInput[];
+  /** Optional ID of the source quiz (from REST API), or null for ad-hoc games. */
+  quizId: string | null;
   /** Zero-based index of the current question, or -1 before the first question. */
   currentQuestionIndex: number;
   /** Current lifecycle phase of the game. */
@@ -68,10 +70,16 @@ interface Room {
   questionStartTime: number | null;
   /** Active timeout handle for the current question's time limit, or null if no timer is running. */
   timer: ReturnType<typeof setTimeout> | null;
+  /** Countdown timer handle, stored so it can be cleared if room is destroyed during countdown. */
+  countdownTimer: ReturnType<typeof setTimeout> | null;
+  /** Timer handle for the all-answered delay, stored so it can be cancelled on room cleanup. */
+  allAnsweredTimer: ReturnType<typeof setTimeout> | null;
   /** Snapshot of player ranks from the previous question, used to show rank changes on the leaderboard. */
   previousRanks: Map<string, number>;
   /** Timestamp (ms since epoch) when the room was created, used for stale-room cleanup. */
   createdAt: number;
+  /** Timestamp (ms since epoch) when the game was started (host pressed start). */
+  gameStartedAt: number | null;
 }
 
 /**
@@ -117,6 +125,15 @@ const buildPlayerList = (room: Room): PlayerInfo[] =>
   }));
 
 /**
+ * Strips the correct answer from a question for safe broadcast to players.
+ */
+const toPublicQuestion = (q: QuestionInput): QuestionPublic => ({
+  text: q.text,
+  answers: q.answers,
+  timeLimitSeconds: q.timeLimitSeconds,
+});
+
+/**
  * Manages all active game rooms, player connections, and the quiz game lifecycle.
  * Uses connection IDs (strings) instead of WebSocket objects to stay transport-agnostic.
  * Persists game data to the database on game completion (fire-and-forget).
@@ -130,9 +147,14 @@ export class RoomManager {
     this.cleanupTimer = setInterval(() => this.cleanupStaleRooms(), CLEANUP_INTERVAL_MS);
   }
 
-  /** Stops the periodic cleanup timer (for graceful shutdown). */
+  /** Stops the periodic cleanup timer and all active room timers (for graceful shutdown). */
   dispose(): void {
     clearInterval(this.cleanupTimer);
+    for (const room of this.rooms.values()) {
+      this.clearTimer(room);
+      this.clearCountdownTimer(room);
+      this.clearAllAnsweredTimer(room);
+    }
   }
 
   /**
@@ -152,6 +174,13 @@ export class RoomManager {
    */
   private sendTo(connectionId: string, message: unknown): void {
     this.connections.send(connectionId, message);
+  }
+
+  /**
+   * Sends a typed error message to a single connection.
+   */
+  private sendError(connectionId: string, message: string, code: ErrorCode): void {
+    this.connections.send(connectionId, { type: 'ERROR', payload: { message, code } });
   }
 
   /**
@@ -186,17 +215,51 @@ export class RoomManager {
   }
 
   /**
+   * Clears any active countdown timer for the given room.
+   * Safe to call even when no countdown is active.
+   *
+   * @param room - The room whose countdown timer should be cleared.
+   */
+  private clearCountdownTimer(room: Room): void {
+    if (room.countdownTimer) {
+      clearTimeout(room.countdownTimer);
+      room.countdownTimer = null;
+    }
+  }
+
+  /**
+   * Clears any active all-answered delay timer for the given room.
+   * Safe to call even when no timer is active.
+   */
+  private clearAllAnsweredTimer(room: Room): void {
+    if (room.allAnsweredTimer) {
+      clearTimeout(room.allAnsweredTimer);
+      room.allAnsweredTimer = null;
+    }
+  }
+
+  /**
    * Removes a room and all associated connection-to-room mappings.
    * Should be called after the room is finished or when the host disconnects.
    *
    * @param roomCode - The code of the room to remove.
    */
   private cleanupRoom(roomCode: string): void {
+    const room = this.rooms.get(roomCode);
+    if (room) {
+      this.clearTimer(room);
+      this.clearCountdownTimer(room);
+      this.clearAllAnsweredTimer(room);
+    }
     this.rooms.delete(roomCode);
+    const keysToDelete: string[] = [];
     for (const [connId, mapping] of this.connectionToRoom) {
       if (mapping.roomCode === roomCode) {
-        this.connectionToRoom.delete(connId);
+        keysToDelete.push(connId);
       }
+    }
+    for (const key of keysToDelete) {
+      this.connectionToRoom.delete(key);
     }
   }
 
@@ -206,7 +269,6 @@ export class RoomManager {
     for (const [code, room] of this.rooms) {
       if (now - room.createdAt > STALE_ROOM_TTL_MS) {
         logger.info('Cleaning up stale room', { roomCode: code, ageMinutes: Math.round((now - room.createdAt) / 60_000) });
-        this.clearTimer(room);
         this.broadcast(room, { type: 'ERROR', payload: { message: 'Room timed out', code: 'ROOM_TIMEOUT' } });
         this.cleanupRoom(code);
       }
@@ -230,28 +292,42 @@ export class RoomManager {
    * @param connectionId - The host's connection ID.
    * @param hostName - Display name for the host.
    * @param questions - Raw question data to validate and store.
+   * @param quizId - Optional ID of the source quiz from the REST API.
    * @returns The generated room code on success.
    */
-  createRoom(connectionId: string, hostName: string, questions: unknown): Result<string> {
+  createRoom(connectionId: string, hostName: string, questions: unknown, quizId?: string): Result<string> {
+    if (this.rooms.size >= MAX_ROOMS) {
+      return { ok: false, error: 'Too many active rooms — please try again later' };
+    }
+
     if (!validateQuestions(questions)) {
-      return { ok: false, error: 'Invalid questions: each must have text, 4 answers, a valid correctIndex (0-3), and timeLimitSeconds > 0' };
+      return { ok: false, error: INVALID_QUESTIONS_MESSAGE };
     }
 
     const existingCodes = new Set(this.rooms.keys());
     const code = generateRoomCode(existingCodes);
+    if (!code) {
+      return { ok: false, error: 'Unable to generate room code — too many active rooms' };
+    }
+
+    const trimmedHost = typeof hostName === 'string' ? hostName.trim().slice(0, MAX_HOST_NAME_LENGTH) || 'Host' : 'Host';
 
     const room: Room = {
       code,
       hostConnectionId: connectionId,
-      hostName: typeof hostName === 'string' ? hostName.trim() || 'Host' : 'Host',
+      hostName: trimmedHost,
       players: new Map(),
       questions,
+      quizId: quizId ?? null,
       currentQuestionIndex: -1,
       phase: 'lobby',
       questionStartTime: null,
       timer: null,
+      countdownTimer: null,
+      allAnsweredTimer: null,
       previousRanks: new Map(),
       createdAt: Date.now(),
+      gameStartedAt: null,
     };
 
     this.rooms.set(code, room);
@@ -270,6 +346,9 @@ export class RoomManager {
    * @returns The updated player list on success.
    */
   joinRoom(connectionId: string, roomCode: string, nickname: string): Result<PlayerInfo[]> {
+    if (typeof nickname !== 'string') {
+      return { ok: false, error: 'Nickname must be a string' };
+    }
     const trimmed = nickname.trim();
     if (trimmed.length === 0 || trimmed.length > MAX_NICKNAME_LENGTH) {
       return { ok: false, error: `Nickname must be between 1 and ${MAX_NICKNAME_LENGTH} characters` };
@@ -279,6 +358,7 @@ export class RoomManager {
     if (!room) return { ok: false, error: 'Room not found' };
     if (room.phase !== 'lobby') return { ok: false, error: 'Game already in progress' };
     if (connectionId === room.hostConnectionId) return { ok: false, error: 'Host cannot join as player' };
+    if (room.players.size >= MAX_PLAYERS_PER_ROOM) return { ok: false, error: 'Room is full' };
 
     const existingNicknames = [...room.players.values()].map((p) => p.nickname.toLowerCase());
     if (existingNicknames.includes(trimmed.toLowerCase())) {
@@ -323,12 +403,17 @@ export class RoomManager {
     if (room.players.size === 0) return { ok: false, error: 'No players in the room' };
 
     room.phase = 'countdown';
+    room.gameStartedAt = Date.now();
+    this.broadcast(room, { type: 'PHASE_CHANGE', payload: { phase: 'countdown' } });
     this.broadcast(room, {
       type: 'GAME_STARTING',
       payload: { totalQuestions: room.questions.length },
     });
 
-    setTimeout(() => this.sendNextQuestion(room), COUNTDOWN_MS);
+    room.countdownTimer = setTimeout(() => {
+      room.countdownTimer = null;
+      this.sendNextQuestion(room);
+    }, COUNTDOWN_MS);
     return { ok: true, data: undefined };
   }
 
@@ -340,7 +425,10 @@ export class RoomManager {
    * @param room - The room to advance.
    */
   private sendNextQuestion(room: Room): void {
+    if (!this.rooms.has(room.code)) return;
+
     this.clearTimer(room);
+    this.clearAllAnsweredTimer(room);
 
     room.currentQuestionIndex++;
     if (room.currentQuestionIndex >= room.questions.length) {
@@ -360,7 +448,7 @@ export class RoomManager {
     this.broadcast(room, {
       type: 'QUESTION',
       payload: {
-        question: { text: q.text, answers: q.answers, timeLimitSeconds: q.timeLimitSeconds },
+        question: toPublicQuestion(q),
         index: room.currentQuestionIndex,
         total: room.questions.length,
         timeLimit: q.timeLimitSeconds,
@@ -381,7 +469,7 @@ export class RoomManager {
    * @param questionIndex - Must match the current question index.
    * @param answerIndex - The selected answer (0–3).
    */
-  submitAnswer(connectionId: string, questionIndex: number, answerIndex: number): Result<void> {
+  submitAnswer(connectionId: string, questionIndex: number, answerIndex: AnswerIndex): Result<void> {
     if (!Number.isInteger(answerIndex) || !isValidAnswerIndex(answerIndex)) {
       return { ok: false, error: 'Invalid answer index' };
     }
@@ -430,7 +518,11 @@ export class RoomManager {
     const allAnswered = active.length > 0 && active.every((p) => p.hasAnswered);
     if (allAnswered) {
       this.clearTimer(room);
-      setTimeout(() => this.closeQuestion(room), ALL_ANSWERED_DELAY_MS);
+      this.clearAllAnsweredTimer(room);
+      room.allAnsweredTimer = setTimeout(() => {
+        room.allAnsweredTimer = null;
+        this.closeQuestion(room);
+      }, ALL_ANSWERED_DELAY_MS);
     }
 
     return { ok: true, data: undefined };
@@ -439,19 +531,22 @@ export class RoomManager {
   /**
    * Closes the current question, transitions to the leaderboard phase, and broadcasts results.
    * Calculates the ranked leaderboard and stores a snapshot of player ranks for the next round.
-   * No-ops if the room is not in the 'question' phase (guards against duplicate timer fires).
+   * No-ops if the room has been cleaned up or is not in the 'question' phase.
    *
    * @param room - The room whose current question should be closed.
    */
   private closeQuestion(room: Room): void {
+    if (!this.rooms.has(room.code)) return;
     if (room.phase !== 'question') return;
 
     room.phase = 'leaderboard';
     this.clearTimer(room);
+    this.clearAllAnsweredTimer(room);
 
     const q = room.questions[room.currentQuestionIndex];
     const leaderboard = buildLeaderboard(room);
 
+    this.broadcast(room, { type: 'PHASE_CHANGE', payload: { phase: 'leaderboard' } });
     this.broadcast(room, {
       type: 'QUESTION_CLOSED',
       payload: { correctIndex: q.correctIndex, leaderboard },
@@ -490,53 +585,92 @@ export class RoomManager {
    */
   private endGame(room: Room): void {
     this.clearTimer(room);
+    this.clearCountdownTimer(room);
+    this.clearAllAnsweredTimer(room);
     room.phase = 'finished';
     const leaderboard = buildLeaderboard(room);
+    this.broadcast(room, { type: 'PHASE_CHANGE', payload: { phase: 'finished' } });
     this.broadcast(room, { type: 'GAME_OVER', payload: { leaderboard } });
     logger.info('Game ended', { roomCode: room.code, playerCount: room.players.size });
 
-    void this.persistGameData(room, leaderboard);
+    // Extract data for persistence before cleanup destroys the room reference
+    const persistData = {
+      roomCode: room.code,
+      quizId: room.quizId,
+      questions: room.questions,
+      playerCount: room.players.size,
+      gameStartedAt: room.gameStartedAt,
+      players: [...room.players.values()].map((p) => ({
+        nickname: p.nickname,
+        score: p.score,
+        correctAnswers: p.correctAnswers,
+        totalAnswers: p.totalAnswers,
+        id: p.id,
+      })),
+    };
+
+    void this.persistGameData(persistData, leaderboard);
     this.cleanupRoom(room.code);
   }
 
   /**
    * Persists quiz, session, and player results to the database.
+   * If a quizId was provided (from the REST API), it is linked directly.
+   * For ad-hoc games (no quizId), a quiz record is created for the questions.
    * Fire-and-forget — failures are logged but never block the game.
    */
-  private async persistGameData(room: Room, leaderboard: LeaderboardEntry[]): Promise<void> {
+  private async persistGameData(
+    data: {
+      roomCode: string;
+      quizId: string | null;
+      questions: QuestionInput[];
+      playerCount: number;
+      gameStartedAt: number | null;
+      players: Array<{ nickname: string; score: number; correctAnswers: number; totalAnswers: number; id: string }>;
+    },
+    leaderboard: LeaderboardEntry[],
+  ): Promise<void> {
     try {
-      const [quiz] = await db
-        .insert(quizzes)
-        .values({ title: `Quiz ${room.code}`, questions: room.questions })
-        .returning({ id: quizzes.id });
+      let quizId = data.quizId;
+
+      if (!quizId) {
+        const [quiz] = await db
+          .insert(quizzes)
+          .values({ title: `Quiz ${data.roomCode}`, questions: data.questions })
+          .returning({ id: quizzes.id });
+        if (!quiz) throw new Error('Quiz insert returned no row');
+        quizId = quiz.id;
+      }
 
       const [session] = await db
         .insert(gameSessions)
         .values({
-          quizId: quiz.id,
-          roomCode: room.code,
-          playerCount: room.players.size,
+          quizId,
+          roomCode: data.roomCode,
+          playerCount: data.playerCount,
+          startedAt: data.gameStartedAt ? new Date(data.gameStartedAt) : new Date(),
           endedAt: new Date(),
         })
         .returning({ id: gameSessions.id });
 
-      const allPlayers = [...room.players.values()];
-      if (allPlayers.length > 0) {
+      if (!session) throw new Error('Session insert returned no row');
+
+      if (data.players.length > 0) {
         await db.insert(gameResults).values(
-          allPlayers.map((p) => ({
+          data.players.map((p) => ({
             sessionId: session.id,
             nickname: p.nickname,
             score: p.score,
-            rank: leaderboard.find((e) => e.id === p.id)?.rank ?? allPlayers.length,
+            rank: leaderboard.find((e) => e.id === p.id)?.rank ?? data.players.length,
             correctAnswers: p.correctAnswers,
             totalAnswers: p.totalAnswers,
           })),
         );
       }
 
-      logger.info('Game data persisted', { sessionId: session.id, roomCode: room.code });
+      logger.info('Game data persisted', { sessionId: session.id, roomCode: data.roomCode });
     } catch (error) {
-      logger.warn('Failed to persist game data', { error: String(error), roomCode: room.code });
+      logger.warn('Failed to persist game data', { error: String(error), roomCode: data.roomCode });
     }
   }
 
@@ -559,7 +693,6 @@ export class RoomManager {
     }
 
     if (room.hostConnectionId === connectionId) {
-      this.clearTimer(room);
       this.broadcast(room, { type: 'ERROR', payload: { message: 'Host disconnected', code: 'HOST_DISCONNECTED' } });
       this.cleanupRoom(mapping.roomCode);
       logger.info('Room closed (host disconnected)', { roomCode: mapping.roomCode });
@@ -595,7 +728,11 @@ export class RoomManager {
         const active = this.connectedPlayers(room);
         if (active.length > 0 && active.every((p) => p.hasAnswered)) {
           this.clearTimer(room);
-          setTimeout(() => this.closeQuestion(room), ALL_ANSWERED_DELAY_MS);
+          this.clearAllAnsweredTimer(room);
+          room.allAnsweredTimer = setTimeout(() => {
+            room.allAnsweredTimer = null;
+            this.closeQuestion(room);
+          }, ALL_ANSWERED_DELAY_MS);
         }
       }
     }
@@ -629,9 +766,8 @@ export class RoomManager {
 
     // Build state snapshot for the reconnecting player
     const currentQ = room.currentQuestionIndex >= 0 ? room.questions[room.currentQuestionIndex] : null;
-    const question = currentQ
-      ? { text: currentQ.text, answers: currentQ.answers, timeLimitSeconds: currentQ.timeLimitSeconds }
-      : null;
+    const question: QuestionPublic | null = currentQ ? toPublicQuestion(currentQ) : null;
+    const elapsedMs = room.questionStartTime ? Date.now() - room.questionStartTime : 0;
 
     return {
       ok: true,
@@ -643,6 +779,7 @@ export class RoomManager {
         questionIndex: room.currentQuestionIndex,
         totalQuestions: room.questions.length,
         timeLimit: currentQ?.timeLimitSeconds ?? 0,
+        elapsedMs,
         score: player.score,
         leaderboard: buildLeaderboard(room),
         hasAnswered: player.hasAnswered,
@@ -652,7 +789,7 @@ export class RoomManager {
 
   /**
    * Forcefully ends the game (host only).
-   * Can be called from any phase to immediately finish and clean up.
+   * Can be called from any active phase to immediately finish and clean up.
    *
    * @param connectionId - Must be the host's connection ID.
    */
@@ -663,8 +800,8 @@ export class RoomManager {
     const room = this.rooms.get(mapping.roomCode);
     if (!room) return { ok: false, error: 'Room not found' };
     if (room.hostConnectionId !== connectionId) return { ok: false, error: 'Only the host can end the game' };
+    if (room.phase === 'finished') return { ok: false, error: 'Game already finished' };
 
-    this.clearTimer(room);
     this.endGame(room);
     return { ok: true, data: undefined };
   }

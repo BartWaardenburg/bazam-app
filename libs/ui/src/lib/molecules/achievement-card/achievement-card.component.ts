@@ -25,38 +25,38 @@ const CATEGORY_LABELS: Record<AchievementCategory, string> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
-      class="card"
-      [class.card--unlocked]="unlocked()"
-      [class.card--locked]="!unlocked()"
+      class="bzm-achievement-card"
+      [class.bzm-achievement-card--unlocked]="unlocked()"
+      [class.bzm-achievement-card--locked]="!unlocked()"
       [attr.aria-label]="name() + (unlocked() ? ' - Ontgrendeld' : ' - Vergrendeld')"
       role="article"
     >
       @if (!unlocked()) {
-        <div class="card__lock-overlay">
-          <i class="ph-duotone ph-lock-simple card__lock-icon"></i>
+        <div class="bzm-achievement-card__lock-overlay">
+          <i class="ph-duotone ph-lock-simple bzm-achievement-card__lock-icon"></i>
         </div>
       }
       @if (unlocked()) {
-        <div class="card__check">
+        <div class="bzm-achievement-card__check">
           <i class="ph-duotone ph-check-circle"></i>
         </div>
       }
-      <div class="card__icon-wrapper">
-        <i [class]="iconClass()" class="card__icon"></i>
+      <div class="bzm-achievement-card__icon-wrapper">
+        <i [class]="iconClass()" class="bzm-achievement-card__icon"></i>
       </div>
-      <h3 class="card__name">{{ name() }}</h3>
-      <p class="card__description">{{ description() }}</p>
-      <span class="card__category" [style.background-color]="categoryColor()">
+      <h3 class="bzm-achievement-card__name">{{ name() }}</h3>
+      <p class="bzm-achievement-card__description">{{ description() }}</p>
+      <span class="bzm-achievement-card__category" [style.background-color]="categoryColor()">
         {{ categoryLabel() }}
       </span>
       @if (unlocked() && unlockedAt()) {
-        <span class="card__date">{{ formattedDate() }}</span>
+        <span class="bzm-achievement-card__date">{{ formattedDate() }}</span>
       }
       @if (!unlocked() && progress() > 0) {
-        <div class="card__progress-wrapper">
-          <div class="card__progress-track">
+        <div class="bzm-achievement-card__progress-wrapper">
+          <div class="bzm-achievement-card__progress-track">
             <div
-              class="card__progress-fill"
+              class="bzm-achievement-card__progress-fill"
               [style.width.%]="clampedProgress()"
               role="progressbar"
               [attr.aria-valuenow]="progress()"
@@ -64,7 +64,7 @@ const CATEGORY_LABELS: Record<AchievementCategory, string> = {
               aria-valuemax="100"
             ></div>
           </div>
-          <span class="card__progress-text">{{ clampedProgress() }}%</span>
+          <span class="bzm-achievement-card__progress-text">{{ clampedProgress() }}%</span>
         </div>
       }
     </div>
@@ -75,7 +75,7 @@ const CATEGORY_LABELS: Record<AchievementCategory, string> = {
       font-family: var(--bzm-font-family);
     }
 
-    .card {
+    .bzm-achievement-card {
       position: relative;
       display: flex;
       flex-direction: column;
@@ -84,7 +84,7 @@ const CATEGORY_LABELS: Record<AchievementCategory, string> = {
       padding: var(--bzm-space-6) var(--bzm-space-4) var(--bzm-space-4);
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-card);
       transition:
@@ -93,26 +93,26 @@ const CATEGORY_LABELS: Record<AchievementCategory, string> = {
       min-width: 180px;
     }
 
-    .card:hover {
+    .bzm-achievement-card:hover {
       transform: translateY(-3px) rotate(-0.5deg);
       box-shadow: var(--bzm-shadow-lg);
     }
 
-    .card--unlocked {
-      border-color: #DAA520;
+    .bzm-achievement-card--unlocked {
+      border-color: var(--bzm-color-gold);
     }
 
-    .card--locked {
+    .bzm-achievement-card--locked {
       filter: grayscale(0.7);
       opacity: 0.8;
     }
 
-    .card--locked:hover {
+    .bzm-achievement-card--locked:hover {
       filter: grayscale(0.5);
       opacity: 0.9;
     }
 
-    .card__lock-overlay {
+    .bzm-achievement-card__lock-overlay {
       position: absolute;
       top: var(--bzm-space-2);
       right: var(--bzm-space-2);
@@ -120,7 +120,7 @@ const CATEGORY_LABELS: Record<AchievementCategory, string> = {
       font-size: var(--bzm-font-size-lg);
     }
 
-    .card__check {
+    .bzm-achievement-card__check {
       position: absolute;
       top: var(--bzm-space-2);
       right: var(--bzm-space-2);
@@ -128,7 +128,7 @@ const CATEGORY_LABELS: Record<AchievementCategory, string> = {
       font-size: var(--bzm-font-size-xl);
     }
 
-    .card__icon-wrapper {
+    .bzm-achievement-card__icon-wrapper {
       width: 56px;
       height: 56px;
       display: flex;
@@ -138,30 +138,30 @@ const CATEGORY_LABELS: Record<AchievementCategory, string> = {
       border-radius: var(--bzm-radius-md);
       background: var(--bzm-color-primary);
       border: 3px solid var(--bzm-color-border);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       box-shadow: var(--bzm-shadow-sm);
     }
 
-    .card__icon {
+    .bzm-achievement-card__icon {
       font-size: 28px;
       color: var(--bzm-white);
     }
 
-    .card__name {
+    .bzm-achievement-card__name {
       margin: 0 0 var(--bzm-space-1);
       font-size: var(--bzm-font-size-base);
       font-weight: var(--bzm-font-weight-extrabold);
       color: var(--bzm-color-text);
     }
 
-    .card__description {
+    .bzm-achievement-card__description {
       margin: 0 0 var(--bzm-space-3);
       font-size: var(--bzm-font-size-sm);
       color: var(--bzm-color-text-secondary);
       line-height: 1.4;
     }
 
-    .card__category {
+    .bzm-achievement-card__category {
       display: inline-block;
       padding: var(--bzm-space-1) var(--bzm-space-3);
       border-radius: var(--bzm-radius-sm);
@@ -174,14 +174,14 @@ const CATEGORY_LABELS: Record<AchievementCategory, string> = {
       border-width: 1px 2px 2px 1px;
     }
 
-    .card__date {
+    .bzm-achievement-card__date {
       margin-top: var(--bzm-space-2);
       font-size: 11px;
       color: var(--bzm-color-text-muted);
       font-weight: var(--bzm-font-weight-semibold);
     }
 
-    .card__progress-wrapper {
+    .bzm-achievement-card__progress-wrapper {
       width: 100%;
       margin-top: var(--bzm-space-3);
       display: flex;
@@ -189,7 +189,7 @@ const CATEGORY_LABELS: Record<AchievementCategory, string> = {
       gap: var(--bzm-space-2);
     }
 
-    .card__progress-track {
+    .bzm-achievement-card__progress-track {
       flex: 1;
       height: 10px;
       background: var(--bzm-color-surface);
@@ -199,14 +199,14 @@ const CATEGORY_LABELS: Record<AchievementCategory, string> = {
       overflow: hidden;
     }
 
-    .card__progress-fill {
+    .bzm-achievement-card__progress-fill {
       height: 100%;
       background: var(--bzm-color-primary);
       border-radius: 1px;
       transition: width var(--bzm-transition-base);
     }
 
-    .card__progress-text {
+    .bzm-achievement-card__progress-text {
       font-size: 11px;
       font-weight: var(--bzm-font-weight-extrabold);
       color: var(--bzm-color-text-muted);
@@ -214,11 +214,11 @@ const CATEGORY_LABELS: Record<AchievementCategory, string> = {
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .card {
+      .bzm-achievement-card {
         transition: none;
       }
 
-      .card:hover {
+      .bzm-achievement-card:hover {
         transform: none;
       }
     }

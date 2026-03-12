@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, output, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, computed, inject, ElementRef } from '@angular/core';
 
 @Component({
   selector: 'bzm-tab-bar',
@@ -13,7 +13,9 @@ import { Component, ChangeDetectionStrategy, input, output, computed } from '@an
           [attr.role]="'tab'"
           [attr.aria-selected]="i === activeIndex()"
           [attr.aria-label]="tab"
+          [attr.tabindex]="i === activeIndex() ? 0 : -1"
           (click)="tabChange.emit(i)"
+          (keydown)="onTabKeydown($event, i)"
         >
           {{ tab }}
         </button>
@@ -102,4 +104,26 @@ export class BzmTabBarComponent {
 
   /** Emits the zero-based index of the tab the user clicked. */
   readonly tabChange = output<number>();
+
+  private readonly el = inject(ElementRef);
+
+  /** Handles ArrowLeft/ArrowRight keyboard navigation between tabs. */
+  protected onTabKeydown(event: KeyboardEvent, index: number): void {
+    const tabs = this.tabs();
+    let newIndex = index;
+
+    if (event.key === 'ArrowRight') {
+      newIndex = (index + 1) % tabs.length;
+      event.preventDefault();
+    } else if (event.key === 'ArrowLeft') {
+      newIndex = (index - 1 + tabs.length) % tabs.length;
+      event.preventDefault();
+    }
+
+    if (newIndex !== index) {
+      this.tabChange.emit(newIndex);
+      const buttons = (this.el.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('.tab');
+      buttons[newIndex]?.focus();
+    }
+  }
 }

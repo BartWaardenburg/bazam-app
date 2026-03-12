@@ -51,7 +51,7 @@ export type AnswerLetter = 'A' | 'B' | 'C' | 'D';
       padding: var(--bzm-space-4) var(--bzm-space-5);
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-md);
       cursor: pointer;
@@ -70,7 +70,7 @@ export type AnswerLetter = 'A' | 'B' | 'C' | 'D';
     }
 
     .bzm-answer-option:focus-visible {
-      box-shadow: 0 0 0 3px var(--bzm-cyan-300);
+      box-shadow: 0 0 0 3px var(--bzm-color-focus);
     }
 
     .bzm-answer-option--selected {
@@ -107,7 +107,7 @@ export type AnswerLetter = 'A' | 'B' | 'C' | 'D';
       background-color: var(--bzm-white);
       color: var(--bzm-black);
       border: 3px solid var(--bzm-black);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       border-radius: 4px;
       box-shadow: var(--bzm-shadow-sm);
       z-index: 2;
@@ -200,7 +200,7 @@ export class BzmAnswerOptionComponent {
   readonly selectedEvent = output<void>({ alias: 'selected' });
 
   /** Maps each letter to its text color CSS variable. */
-  readonly letterColorMap: Record<AnswerLetter, string> = {
+  protected readonly letterColorMap: Record<AnswerLetter, string> = {
     A: 'var(--bzm-cyan-700)',
     B: 'var(--bzm-yellow-700)',
     C: 'var(--bzm-red-700)',
@@ -208,14 +208,14 @@ export class BzmAnswerOptionComponent {
   };
 
   /** Maps each letter to its background color CSS variable. */
-  readonly letterBgMap: Record<AnswerLetter, string> = {
+  protected readonly letterBgMap: Record<AnswerLetter, string> = {
     A: 'var(--bzm-cyan-100)',
     B: 'var(--bzm-yellow-100)',
     C: 'var(--bzm-red-100)',
     D: 'var(--bzm-green-100)',
   };
 
-  readonly containerClass = computed(() => {
+  protected readonly containerClass = computed(() => {
     const classes = ['bzm-answer-option'];
     if (this.selected()) classes.push('bzm-answer-option--selected');
     if (this.correct() === true) classes.push('bzm-answer-option--correct');
@@ -224,14 +224,14 @@ export class BzmAnswerOptionComponent {
   });
 
   /** Maps each letter to its border color CSS variable for the selected state. */
-  readonly borderColorMap: Record<AnswerLetter, string> = {
+  protected readonly borderColorMap: Record<AnswerLetter, string> = {
     A: 'var(--bzm-color-answer-a)',
     B: 'var(--bzm-color-answer-b)',
     C: 'var(--bzm-color-answer-c)',
     D: 'var(--bzm-color-answer-d)',
   };
 
-  readonly containerStyle = computed(() => {
+  protected readonly containerStyle = computed(() => {
     const l = this.letter();
     if (this.selected() && this.correct() === null) {
       return `border-color: ${this.borderColorMap[l]}`;
@@ -239,13 +239,13 @@ export class BzmAnswerOptionComponent {
     return '';
   });
 
-  readonly letterStyle = computed(() => {
+  protected readonly letterStyle = computed(() => {
     const l = this.letter();
     return `color: ${this.letterColorMap[l]}; background: ${this.letterBgMap[l]}`;
   });
 
   /** Handles button click, emitting the `selected` output only when the option is not disabled. */
-  handleClick(): void {
+  protected handleClick(): void {
     if (!this.disabled()) {
       this.selectedEvent.emit();
     }

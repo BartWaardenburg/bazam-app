@@ -22,9 +22,11 @@ import { WebSocketService } from '../../../services/websocket.service';
       </bzm-card>
 
       <bzm-card>
-        <div class="player-section" aria-live="polite">
+        <div class="player-section">
           <bzm-page-title size="md" color="var(--bzm-color-answer-a)">Spelers ({{ gameState.players().length }})</bzm-page-title>
-          <bzm-player-list [players]="gameState.players()" />
+          <div aria-live="polite">
+            <bzm-player-list [players]="gameState.players()" />
+          </div>
         </div>
       </bzm-card>
 
@@ -79,7 +81,7 @@ export class HostLobbyComponent {
    * Sends a `START_GAME` message to the server, transitioning all
    * connected clients from the lobby into the countdown phase.
    */
-  startGame(): void {
+  readonly startGame = (): void => {
     this.wsService.send({ type: 'START_GAME' });
-  }
+  };
 }

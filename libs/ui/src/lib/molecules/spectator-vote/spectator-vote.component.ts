@@ -19,7 +19,7 @@ export interface VoteOption {
         role="progressbar"
         aria-label="Resterende tijd"
         [attr.aria-valuenow]="timeRemaining()"
-        [attr.aria-valuemax]="10"
+        [attr.aria-valuemax]="totalTime()"
         aria-valuemin="0"
       >
         <div class="bzm-vote__timer-fill" [style.width.%]="timerPercent()"></div>
@@ -27,7 +27,7 @@ export interface VoteOption {
 
       <h3 class="bzm-vote__question">{{ question() }}</h3>
 
-      <div class="bzm-vote__options" role="radiogroup" [attr.aria-label]="question()">
+      <div class="bzm-vote__options" role="group" [attr.aria-label]="question()">
         @for (option of optionsWithPercent(); track option.id) {
           <button
             [class]="option.classes"
@@ -59,7 +59,7 @@ export interface VoteOption {
     .bzm-vote {
       background: var(--bzm-color-surface, #fff);
       border: 4px solid var(--bzm-color-border, var(--bzm-black));
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-lg, 16px);
       box-shadow: var(--bzm-shadow-card, 4px 4px 0 var(--bzm-black));
       padding: var(--bzm-space-6, 24px);
@@ -102,7 +102,7 @@ export interface VoteOption {
       width: 100%;
       padding: var(--bzm-space-4, 16px);
       border: 4px solid var(--bzm-color-border, var(--bzm-black));
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md, 8px);
       background: var(--bzm-white, #fff);
       cursor: pointer;
@@ -133,12 +133,12 @@ export interface VoteOption {
 
     .bzm-vote__option--selected {
       border-color: var(--bzm-color-primary, #6366f1);
-      background: var(--bzm-blue-50, #eff6ff);
+      background: var(--bzm-blue-50);
     }
 
     .bzm-vote__option--winner {
       border-color: var(--bzm-color-accent, #fbbf24);
-      background: var(--bzm-yellow-50, #fefce8);
+      background: var(--bzm-yellow-50);
       box-shadow: 0 0 0 3px var(--bzm-color-accent, #fbbf24);
     }
 
@@ -168,7 +168,7 @@ export interface VoteOption {
       top: 0;
       left: 0;
       height: 100%;
-      background: var(--bzm-color-primary-light, rgba(99, 102, 241, 0.1));
+      background: var(--bzm-color-primary-light);
       transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
@@ -226,6 +226,9 @@ export class BzmSpectatorVoteComponent {
   /** Seconds remaining to vote. @default 10 */
   readonly timeRemaining = input<number>(10);
 
+  /** Total time in seconds for the vote timer. @default 10 */
+  readonly totalTime = input<number>(10);
+
   /** Whether to reveal vote results with percentage bars. @default false */
   readonly showResults = input<boolean>(false);
 
@@ -235,7 +238,7 @@ export class BzmSpectatorVoteComponent {
   protected readonly selectedOptionId = signal<string | null>(null);
 
   protected readonly timerPercent = computed(
-    () => Math.min((this.timeRemaining() / 10) * 100, 100)
+    () => Math.min((this.timeRemaining() / this.totalTime()) * 100, 100)
   );
 
   protected readonly totalVotes = computed(

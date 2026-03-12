@@ -16,7 +16,7 @@ export type StreakIndicatorSize = 'sm' | 'md' | 'lg';
         [attr.aria-label]="ariaLabel()"
       >
         <div class="bzm-streak-indicator__icon-wrap">
-          <i [class]="iconClasses" [style]="iconStyle()"></i>
+          <i class="ph-duotone ph-fire" [style]="iconStyle()"></i>
         </div>
         <span class="bzm-streak-indicator__count">{{ streak() }}</span>
         @if (showLabel() && labelText()) {
@@ -60,12 +60,12 @@ export type StreakIndicatorSize = 'sm' | 'md' | 'lg';
     .bzm-streak-indicator--on-fire {
       background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
       border: 4px solid #FFB74D;
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       box-shadow: var(--bzm-shadow-md);
     }
 
     .bzm-streak-indicator--on-fire .bzm-streak-indicator__icon-wrap i {
-      color: #FF6D00;
+      color: var(--bzm-color-fire);
       filter: drop-shadow(0 0 8px rgba(255, 109, 0, 0.6));
       animation: bzm-streak-pulse 0.8s ease-in-out infinite;
     }
@@ -79,7 +79,7 @@ export type StreakIndicatorSize = 'sm' | 'md' | 'lg';
     }
 
     .bzm-streak-indicator--on-fire .bzm-streak-indicator__label {
-      color: #E65100;
+      color: var(--bzm-color-fire-dark);
       font-weight: var(--bzm-font-weight-bold);
       font-size: var(--bzm-font-size-sm);
       text-transform: uppercase;
@@ -90,12 +90,12 @@ export type StreakIndicatorSize = 'sm' | 'md' | 'lg';
     .bzm-streak-indicator--unstoppable {
       background: linear-gradient(135deg, #FFF8E1, #FFD54F);
       border: 4px solid #FFC107;
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       box-shadow: 0 0 16px rgba(255, 193, 7, 0.4), var(--bzm-shadow-lg);
     }
 
     .bzm-streak-indicator--unstoppable .bzm-streak-indicator__icon-wrap i {
-      color: #FF6D00;
+      color: var(--bzm-color-fire);
       filter: drop-shadow(0 0 12px rgba(255, 109, 0, 0.9));
       animation: bzm-streak-pulse-intense 0.6s ease-in-out infinite;
     }
@@ -110,7 +110,7 @@ export type StreakIndicatorSize = 'sm' | 'md' | 'lg';
     }
 
     .bzm-streak-indicator--unstoppable .bzm-streak-indicator__label {
-      color: #BF360C;
+      color: var(--bzm-color-fire-deep);
       font-weight: var(--bzm-font-weight-extrabold);
       font-size: var(--bzm-font-size-sm);
       text-transform: uppercase;
@@ -255,8 +255,6 @@ export class BzmStreakIndicatorComponent {
     if (this.isOnFire()) return `Streak: ${count}, op dreef!`;
     return `Streak: ${count}`;
   });
-
-  protected readonly iconClasses = 'ph-duotone ph-fire' as const;
 
   protected readonly iconStyle = computed((): string => {
     if (this.isUnstoppable()) return 'font-size: 32px;';

@@ -1,5 +1,7 @@
+export { DEFAULT_TIME_LIMIT_SECONDS, MAX_NICKNAME_LENGTH } from './game';
 export type {
   AnswerIndex,
+  ErrorCode,
   GamePhase,
   QuestionInput,
   QuestionPublic,

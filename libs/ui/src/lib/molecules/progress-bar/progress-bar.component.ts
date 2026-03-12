@@ -5,7 +5,14 @@ import { Component, ChangeDetectionStrategy, computed, input } from '@angular/co
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="bzm-progress-bar">
+    <div
+      class="bzm-progress-bar"
+      role="progressbar"
+      aria-label="Vraag voortgang"
+      [attr.aria-valuenow]="current() + 1"
+      [attr.aria-valuemax]="total()"
+      aria-valuemin="1"
+    >
       @for (segment of segments(); track $index) {
         <div
           class="bzm-progress-bar__segment"
@@ -31,12 +38,12 @@ import { Component, ChangeDetectionStrategy, computed, input } from '@angular/co
     .bzm-progress-bar__segment {
       flex: 1;
       height: 10px;
-      border-radius: 2px;
+      border-radius: var(--bzm-radius-sm);
       background: var(--bzm-gray-200);
       transition: background 0.4s ease,
                   transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
       border: 3px solid var(--bzm-black);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
 
     }
 
@@ -58,9 +65,9 @@ import { Component, ChangeDetectionStrategy, computed, input } from '@angular/co
       white-space: nowrap;
       background: var(--bzm-white);
       padding: var(--bzm-space-1) var(--bzm-space-3);
-      border-radius: 2px;
+      border-radius: var(--bzm-radius-sm);
       border: 3px solid var(--bzm-black);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       box-shadow: var(--bzm-shadow-sm);
       letter-spacing: 0.05em;
 
@@ -69,6 +76,12 @@ import { Component, ChangeDetectionStrategy, computed, input } from '@angular/co
     @keyframes bzm-pulse-segment {
       0%, 100% { opacity: 1; transform: scaleY(1); }
       50% { opacity: 0.7; transform: scaleY(1.3); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bzm-progress-bar__segment--active {
+        animation: none;
+      }
     }
   `,
 })
@@ -93,7 +106,7 @@ export class BzmProgressBarComponent {
   /** Total number of questions in the quiz. Determines the number of rendered segments. */
   readonly total = input.required<number>();
 
-  readonly segments = computed(() => {
+  protected readonly segments = computed(() => {
     const c = this.current();
     const t = this.total();
     const result: ('pending' | 'completed' | 'active')[] = [];

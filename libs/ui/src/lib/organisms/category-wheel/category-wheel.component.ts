@@ -131,7 +131,7 @@ export interface CategoryWheelOption {
       padding: var(--bzm-space-4);
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-card);
       position: relative;
@@ -218,7 +218,7 @@ export interface CategoryWheelOption {
       padding: var(--bzm-space-3) var(--bzm-space-5);
       background: linear-gradient(135deg, #FFF8E1, #FFD54F);
       border: 4px solid #FFC107;
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       animation: bzm-result-pop 0.4s var(--bzm-transition-playful) backwards;
     }
@@ -239,7 +239,7 @@ export interface CategoryWheelOption {
       background: var(--bzm-color-accent);
       color: var(--bzm-white);
       border: 4px solid var(--bzm-color-accent-dark);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       font-family: var(--bzm-font-heading);
       font-size: var(--bzm-font-size-xl);
@@ -305,7 +305,7 @@ export interface CategoryWheelOption {
       padding: var(--bzm-space-4) var(--bzm-space-3);
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-card);
       cursor: pointer;

@@ -24,6 +24,7 @@ const STREAK_BONUSES: ReadonlyArray<{ readonly minStreak: number; readonly bonus
  */
 export const calculateScore = (isCorrect: boolean, responseTimeMs: number, timeLimitMs: number, streak = 0): number => {
   if (!isCorrect) return 0;
+  if (timeLimitMs <= 0) return MIN_SCORE;
   const timeFraction = Math.max(0, 1 - responseTimeMs / timeLimitMs);
   const baseScore = MIN_SCORE + (MAX_SCORE - MIN_SCORE) * timeFraction;
   const streakBonus = STREAK_BONUSES.find((b) => streak >= b.minStreak)?.bonus ?? 0;

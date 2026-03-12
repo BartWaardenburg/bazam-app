@@ -82,7 +82,7 @@ import { Component, ChangeDetectionStrategy, input, output, computed, signal, ef
     .bzm-bluff-input {
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-card);
       padding: 0;
@@ -135,9 +135,9 @@ import { Component, ChangeDetectionStrategy, input, output, computed, signal, ef
     .bzm-bluff-input__bubble {
       position: relative;
       margin: var(--bzm-space-2) var(--bzm-space-5) var(--bzm-space-3);
-      background: var(--bzm-color-bg, #fff);
+      background: var(--bzm-color-surface);
       border: 3px solid var(--bzm-color-border);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       border-radius: var(--bzm-radius-md);
       box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.06);
     }
@@ -162,7 +162,7 @@ import { Component, ChangeDetectionStrategy, input, output, computed, signal, ef
       height: 0;
       border-left: 6px solid transparent;
       border-right: 6px solid transparent;
-      border-top: 8px solid var(--bzm-color-bg, #fff);
+      border-top: 8px solid var(--bzm-color-surface);
     }
 
     .bzm-bluff-input__textarea {
@@ -184,6 +184,10 @@ import { Component, ChangeDetectionStrategy, input, output, computed, signal, ef
     .bzm-bluff-input__textarea::placeholder {
       color: var(--bzm-color-text-muted);
       font-weight: var(--bzm-font-weight-bold);
+    }
+
+    .bzm-bluff-input__textarea:focus-visible {
+      box-shadow: 0 0 0 3px var(--bzm-color-focus);
     }
 
     .bzm-bluff-input__textarea:disabled {
@@ -212,7 +216,7 @@ import { Component, ChangeDetectionStrategy, input, output, computed, signal, ef
       background: var(--bzm-color-accent);
       color: var(--bzm-color-text-on-accent);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       font-family: var(--bzm-font-family);
       font-size: var(--bzm-font-size-base);

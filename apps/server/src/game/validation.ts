@@ -1,7 +1,7 @@
+import { MAX_NICKNAME_LENGTH } from '@bazam/shared-types';
 import type { AnswerIndex, QuestionInput } from '@bazam/shared-types';
 
-/** Maximum allowed length for a player nickname. */
-export const MAX_NICKNAME_LENGTH = 32;
+export { MAX_NICKNAME_LENGTH };
 
 /** Maximum allowed length for a question's text body. */
 export const MAX_QUESTION_TEXT_LENGTH = 500;
@@ -14,6 +14,18 @@ export const MAX_QUESTIONS = 50;
 
 /** Maximum allowed length for a quiz title. */
 export const MAX_TITLE_LENGTH = 200;
+
+/** Maximum number of players allowed per room. */
+export const MAX_PLAYERS_PER_ROOM = 50;
+
+/** Maximum allowed length for a host display name. */
+export const MAX_HOST_NAME_LENGTH = 100;
+
+/** Maximum number of concurrent active rooms. */
+export const MAX_ROOMS = 1000;
+
+/** Error message for invalid questions, shared between WebSocket and REST handlers. */
+export const INVALID_QUESTIONS_MESSAGE = 'Invalid questions: each must have text, 4 answers, a valid correctIndex (0-3), and timeLimitSeconds > 0';
 
 /** Set of valid answer indices (0 through 3) for constant-time lookups. */
 const VALID_ANSWER_INDICES: ReadonlySet<number> = new Set([0, 1, 2, 3]);

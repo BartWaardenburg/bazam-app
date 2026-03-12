@@ -47,7 +47,7 @@ export type StreakCounterSize = 'sm' | 'md' | 'lg';
 
     /* ─── Active state ─── */
     .streak-container--active .streak-icon {
-      color: #FF6D00;
+      color: var(--bzm-color-fire);
       filter: drop-shadow(0 0 6px rgba(255, 109, 0, 0.6));
     }
 

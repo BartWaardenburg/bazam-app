@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, computed, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, signal, output } from '@angular/core';
 import { BzmTabBarComponent } from '../tab-bar/tab-bar.component';
 import { BzmLeaderboardItemComponent } from '../../molecules/leaderboard-item/leaderboard-item.component';
 import { BzmAvatarComponent } from '../../atoms/avatar/avatar.component';
@@ -29,7 +29,7 @@ export interface RankingEntry {
       <bzm-tab-bar
         [tabs]="['World', 'Weekly', 'Friends']"
         [activeIndex]="activeTab()"
-        (tabChange)="activeTab.set($event)"
+        (tabChange)="onTabChange($event)"
       />
 
       @if (topPlayer(); as top) {
@@ -86,7 +86,7 @@ export interface RankingEntry {
       line-height: 1;
       display: flex;
       justify-content: center;
-      animation: float 2s ease-in-out infinite;
+      animation: bzm-float 2s ease-in-out infinite;
     }
 
     .top-player-name {
@@ -124,7 +124,7 @@ export interface RankingEntry {
       border-radius: var(--bzm-radius-full);
     }
 
-    @keyframes float {
+    @keyframes bzm-float {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-4px); }
     }
@@ -160,6 +160,14 @@ export class BzmRankingListComponent {
 
   /** Index of the currently active tab (World=0, Weekly=1, Friends=2). */
   readonly activeTab = signal(0);
+
+  /** Emits the new tab index when a tab is selected. */
+  readonly tabChanged = output<number>();
+
+  protected onTabChange(index: number): void {
+    this.activeTab.set(index);
+    this.tabChanged.emit(index);
+  }
 
   protected readonly topPlayer = computed(() => {
     const list = this.entries();

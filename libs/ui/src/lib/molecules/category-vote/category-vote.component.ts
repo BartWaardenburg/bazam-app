@@ -14,13 +14,13 @@ export interface CategoryVoteOption {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="category-vote" role="group" aria-label="Categorie stemming">
-      <h3 class="category-vote__title">Kies de volgende categorie!</h3>
+    <div class="bzm-category-vote" role="group" aria-label="Categorie stemming">
+      <h3 class="bzm-category-vote__title">Kies de volgende categorie!</h3>
 
-      <div class="category-vote__timer-bar">
+      <div class="bzm-category-vote__timer-bar">
         <div
-          class="category-vote__timer-fill"
-          [class.category-vote__timer-fill--urgent]="isUrgent()"
+          class="bzm-category-vote__timer-fill"
+          [class.bzm-category-vote__timer-fill--urgent]="isUrgent()"
           [style.width.%]="timerPercent()"
           role="progressbar"
           [attr.aria-valuenow]="timeRemaining()"
@@ -31,13 +31,13 @@ export interface CategoryVoteOption {
       </div>
 
       @if (hasExtraWeight()) {
-        <div class="category-vote__extra-weight" aria-label="Je stem telt dubbel">
+        <div class="bzm-category-vote__extra-weight" aria-label="Je stem telt dubbel">
           <i class="ph-duotone ph-star" style="font-size: 16px;"></i>
           <span>Je stem telt dubbel!</span>
         </div>
       }
 
-      <div class="category-vote__grid">
+      <div class="bzm-category-vote__grid">
         @for (option of options(); track option.id) {
           <button
             type="button"
@@ -49,37 +49,37 @@ export interface CategoryVoteOption {
             (click)="handleVote(option.id)"
           >
             @if (selectedId() === option.id) {
-              <div class="category-vote__check" aria-hidden="true">
+              <div class="bzm-category-vote__check" aria-hidden="true">
                 <i class="ph-duotone ph-check-circle" style="font-size: 24px;"></i>
               </div>
             }
 
             @if (showResults() && isWinner(option)) {
-              <div class="category-vote__crown" aria-hidden="true">
+              <div class="bzm-category-vote__crown" aria-hidden="true">
                 <i class="ph-duotone ph-crown" style="font-size: 20px; color: #FFD700;"></i>
               </div>
             }
 
-            <div class="category-vote__icon" [style.background]="option.color">
+            <div class="bzm-category-vote__icon" [style.background]="option.color">
               <i [class]="'ph-duotone ph-' + option.icon" style="font-size: 28px;"></i>
             </div>
 
-            <span class="category-vote__name">{{ option.name }}</span>
+            <span class="bzm-category-vote__name">{{ option.name }}</span>
 
             @if (hasExtraWeight() && selectedId() === option.id) {
-              <span class="category-vote__badge">2x</span>
+              <span class="bzm-category-vote__badge">2x</span>
             }
 
             @if (showResults()) {
-              <div class="category-vote__result">
-                <div class="category-vote__bar-track">
+              <div class="bzm-category-vote__result">
+                <div class="bzm-category-vote__bar-track">
                   <div
-                    class="category-vote__bar-fill"
+                    class="bzm-category-vote__bar-fill"
                     [style.width.%]="votePercent(option)"
                     [style.background]="option.color"
                   ></div>
                 </div>
-                <span class="category-vote__vote-count">
+                <span class="bzm-category-vote__vote-count">
                   {{ option.votes }} {{ option.votes === 1 ? 'stem' : 'stemmen' }}
                 </span>
               </div>
@@ -95,12 +95,12 @@ export interface CategoryVoteOption {
       font-family: var(--bzm-font-family);
     }
 
-    .category-vote {
+    .bzm-category-vote {
       width: 100%;
       max-width: 520px;
     }
 
-    .category-vote__title {
+    .bzm-category-vote__title {
       font-family: var(--bzm-font-heading);
       font-size: var(--bzm-font-size-xl);
       font-weight: var(--bzm-font-weight-extrabold);
@@ -109,7 +109,7 @@ export interface CategoryVoteOption {
       margin: 0 0 var(--bzm-space-4);
     }
 
-    .category-vote__timer-bar {
+    .bzm-category-vote__timer-bar {
       width: 100%;
       height: 6px;
       background: var(--bzm-color-surface);
@@ -118,19 +118,19 @@ export interface CategoryVoteOption {
       overflow: hidden;
     }
 
-    .category-vote__timer-fill {
+    .bzm-category-vote__timer-fill {
       height: 100%;
       background: var(--bzm-color-primary);
       border-radius: 3px;
       transition: width 1s linear;
     }
 
-    .category-vote__timer-fill--urgent {
+    .bzm-category-vote__timer-fill--urgent {
       background: var(--bzm-color-error);
       animation: bzm-timer-blink 0.5s ease-in-out infinite;
     }
 
-    .category-vote__extra-weight {
+    .bzm-category-vote__extra-weight {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -139,20 +139,20 @@ export interface CategoryVoteOption {
       margin-bottom: var(--bzm-space-3);
       background: linear-gradient(135deg, #FFF8E1, #FFD54F);
       border: 4px solid #FFC107;
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       font-size: var(--bzm-font-size-sm);
       font-weight: var(--bzm-font-weight-bold);
       color: #E65100;
     }
 
-    .category-vote__grid {
+    .bzm-category-vote__grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: var(--bzm-space-3);
     }
 
-    .category-vote__card {
+    .bzm-category-vote__card {
       position: relative;
       display: flex;
       flex-direction: column;
@@ -161,7 +161,7 @@ export interface CategoryVoteOption {
       padding: var(--bzm-space-4) var(--bzm-space-3);
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-card);
       cursor: pointer;
@@ -174,49 +174,49 @@ export interface CategoryVoteOption {
       overflow: hidden;
     }
 
-    .category-vote__card:hover:not(:disabled) {
+    .bzm-category-vote__card:hover:not(:disabled) {
       transform: translateY(-3px) rotate(-0.5deg);
       box-shadow: var(--bzm-shadow-lg);
     }
 
-    .category-vote__card:focus-visible {
+    .bzm-category-vote__card:focus-visible {
       box-shadow: 0 0 0 3px var(--bzm-color-primary);
     }
 
-    .category-vote__card:disabled {
+    .bzm-category-vote__card:disabled {
       cursor: not-allowed;
       opacity: 0.5;
       filter: grayscale(0.4);
     }
 
-    .category-vote__card:disabled:hover {
+    .bzm-category-vote__card:disabled:hover {
       transform: none;
       box-shadow: var(--bzm-shadow-card);
     }
 
-    .category-vote__card--selected {
+    .bzm-category-vote__card--selected {
       border-width: 4px 5px 6px 4px;
       transform: translateY(-2px);
     }
 
-    .category-vote__card--winner {
+    .bzm-category-vote__card--winner {
       animation: bzm-winner-pulse 1s ease-in-out infinite;
     }
 
-    .category-vote__check {
+    .bzm-category-vote__check {
       position: absolute;
       top: var(--bzm-space-2);
       right: var(--bzm-space-2);
       color: var(--bzm-color-success);
     }
 
-    .category-vote__crown {
+    .bzm-category-vote__crown {
       position: absolute;
       top: var(--bzm-space-1);
       left: var(--bzm-space-2);
     }
 
-    .category-vote__icon {
+    .bzm-category-vote__icon {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -226,14 +226,14 @@ export interface CategoryVoteOption {
       color: var(--bzm-white);
     }
 
-    .category-vote__name {
+    .bzm-category-vote__name {
       font-size: var(--bzm-font-size-sm);
       font-weight: var(--bzm-font-weight-bold);
       color: var(--bzm-color-text);
       line-height: 1.2;
     }
 
-    .category-vote__badge {
+    .bzm-category-vote__badge {
       position: absolute;
       top: var(--bzm-space-1);
       left: var(--bzm-space-1);
@@ -246,14 +246,14 @@ export interface CategoryVoteOption {
       border: 2px solid var(--bzm-black);
     }
 
-    .category-vote__result {
+    .bzm-category-vote__result {
       width: 100%;
       display: flex;
       flex-direction: column;
       gap: 4px;
     }
 
-    .category-vote__bar-track {
+    .bzm-category-vote__bar-track {
       width: 100%;
       height: 8px;
       background: rgba(0, 0, 0, 0.08);
@@ -261,13 +261,13 @@ export interface CategoryVoteOption {
       overflow: hidden;
     }
 
-    .category-vote__bar-fill {
+    .bzm-category-vote__bar-fill {
       height: 100%;
       border-radius: 4px;
       transition: width 0.6s var(--bzm-transition-playful);
     }
 
-    .category-vote__vote-count {
+    .bzm-category-vote__vote-count {
       font-size: 11px;
       font-weight: var(--bzm-font-weight-semibold);
       color: var(--bzm-color-text-muted);
@@ -284,30 +284,30 @@ export interface CategoryVoteOption {
     }
 
     @media (max-width: 400px) {
-      .category-vote__grid {
+      .bzm-category-vote__grid {
         grid-template-columns: 1fr;
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .category-vote__card {
+      .bzm-category-vote__card {
         transition: none;
       }
 
-      .category-vote__card:hover:not(:disabled) {
+      .bzm-category-vote__card:hover:not(:disabled) {
         transform: none;
       }
 
-      .category-vote__card--winner {
+      .bzm-category-vote__card--winner {
         animation: none;
         box-shadow: 0 0 16px rgba(255, 215, 0, 0.5), var(--bzm-shadow-lg);
       }
 
-      .category-vote__timer-fill--urgent {
+      .bzm-category-vote__timer-fill--urgent {
         animation: none;
       }
 
-      .category-vote__bar-fill {
+      .bzm-category-vote__bar-fill {
         transition: none;
       }
     }
@@ -403,12 +403,12 @@ export class BzmCategoryVoteComponent {
   }
 
   protected cardClasses(option: CategoryVoteOption): string {
-    const classes = ['category-vote__card'];
+    const classes = ['bzm-category-vote__card'];
     if (this.selectedId() === option.id) {
-      classes.push('category-vote__card--selected');
+      classes.push('bzm-category-vote__card--selected');
     }
     if (this.showResults() && this.isWinner(option)) {
-      classes.push('category-vote__card--winner');
+      classes.push('bzm-category-vote__card--winner');
     }
     return classes.join(' ');
   }

@@ -17,7 +17,7 @@ const WAGER_LABELS = ['Veilig', 'Durf', 'Alles of niets'] as const;
         role="progressbar"
         aria-label="Resterende tijd"
         [attr.aria-valuenow]="timeRemaining()"
-        [attr.aria-valuemax]="5"
+        [attr.aria-valuemax]="totalTime()"
         aria-valuemin="0"
       >
         <div class="bzm-wager__timer-fill" [style.width.%]="timerPercent()"></div>
@@ -30,7 +30,7 @@ const WAGER_LABELS = ['Veilig', 'Durf', 'Alles of niets'] as const;
           <button
             [class]="tier.buttonClass"
             [disabled]="disabled() || tier.locked"
-            [attr.aria-label]="tier.amount + ' punten inzetten'"
+            [attr.aria-label]="tier.label + ': ' + tier.amount + ' punten inzetten'"
             (click)="onWager(tier.amount)"
           >
             @if (tier.locked) {
@@ -43,6 +43,7 @@ const WAGER_LABELS = ['Veilig', 'Durf', 'Alles of niets'] as const;
       </div>
 
       <button
+        type="button"
         class="bzm-wager__skip"
         [disabled]="disabled()"
         (click)="wagerSkipped.emit()"
@@ -60,7 +61,7 @@ const WAGER_LABELS = ['Veilig', 'Durf', 'Alles of niets'] as const;
     .bzm-wager {
       background: var(--bzm-color-surface, #fff);
       border: 4px solid var(--bzm-color-border, var(--bzm-black));
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-lg, 16px);
       box-shadow: var(--bzm-shadow-card, 4px 4px 0 var(--bzm-black));
       padding: var(--bzm-space-6, 24px);
@@ -112,7 +113,7 @@ const WAGER_LABELS = ['Veilig', 'Durf', 'Alles of niets'] as const;
       align-items: center;
       justify-content: center;
       border: 4px solid var(--bzm-color-border, var(--bzm-black));
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: 50%;
       background: var(--bzm-color-primary, #6366f1);
       cursor: pointer;
@@ -252,6 +253,9 @@ export class BzmConfidenceWagerComponent {
   /** Seconds left to decide. @default 5 */
   readonly timeRemaining = input<number>(5);
 
+  /** Total time in seconds for the wager timer. @default 5 */
+  readonly totalTime = input<number>(5);
+
   /** Whether the entire wager UI is disabled. @default false */
   readonly disabled = input<boolean>(false);
 
@@ -268,7 +272,7 @@ export class BzmConfidenceWagerComponent {
   );
 
   protected readonly timerPercent = computed(
-    () => Math.min((this.timeRemaining() / 5) * 100, 100)
+    () => Math.min((this.timeRemaining() / this.totalTime()) * 100, 100)
   );
 
   protected readonly tiers = computed(() => {

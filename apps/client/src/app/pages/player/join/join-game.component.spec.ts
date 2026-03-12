@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
+import { NO_ERRORS_SCHEMA, signal, computed } from '@angular/core';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { JoinGameComponent } from './join-game.component';
 import { GameStateService } from '../../../services/game-state.service';
@@ -14,11 +14,13 @@ describe('JoinGameComponent', () => {
     errorMessage: signal<string | null>(null),
   };
 
+  const connectionStatus = signal<'disconnected' | 'connecting' | 'connected'>('disconnected');
   const mockWsService = {
     connect: vi.fn().mockResolvedValue(undefined),
     send: vi.fn(),
     disconnect: vi.fn(),
-    connectionStatus: signal<'disconnected' | 'connecting' | 'connected'>('disconnected'),
+    connectionStatus,
+    isConnecting: computed(() => connectionStatus() === 'connecting'),
   };
 
   beforeEach(async () => {
@@ -54,48 +56,48 @@ describe('JoinGameComponent', () => {
   });
 
   // ---------------------------------------------------------------------------
-  // isValid()
+  // isValid (computed signal)
   // ---------------------------------------------------------------------------
 
-  describe('isValid()', () => {
+  describe('isValid', () => {
     it('should return false when roomCode is empty', () => {
-      component.roomCode = '';
-      component.nickname = 'Alice';
+      component.roomCode.set('');
+      component.nickname.set('Alice');
 
       expect(component.isValid()).toBe(false);
     });
 
     it('should return false when roomCode is 5 digits', () => {
-      component.roomCode = '12345';
-      component.nickname = 'Alice';
+      component.roomCode.set('12345');
+      component.nickname.set('Alice');
 
       expect(component.isValid()).toBe(false);
     });
 
     it('should return false when roomCode is 7 digits', () => {
-      component.roomCode = '1234567';
-      component.nickname = 'Alice';
+      component.roomCode.set('1234567');
+      component.nickname.set('Alice');
 
       expect(component.isValid()).toBe(false);
     });
 
     it('should return false when nickname is empty', () => {
-      component.roomCode = 'ABC123';
-      component.nickname = '';
+      component.roomCode.set('ABC123');
+      component.nickname.set('');
 
       expect(component.isValid()).toBe(false);
     });
 
     it('should return false when nickname is whitespace only', () => {
-      component.roomCode = 'ABC123';
-      component.nickname = '   ';
+      component.roomCode.set('ABC123');
+      component.nickname.set('   ');
 
       expect(component.isValid()).toBe(false);
     });
 
     it('should return true when roomCode is 6 chars and nickname is non-empty', () => {
-      component.roomCode = 'ABC123';
-      component.nickname = 'Alice';
+      component.roomCode.set('ABC123');
+      component.nickname.set('Alice');
 
       expect(component.isValid()).toBe(true);
     });
@@ -107,8 +109,8 @@ describe('JoinGameComponent', () => {
 
   describe('joinGame()', () => {
     it('should set role to player, set playerNickname, and send JOIN_ROOM on success', async () => {
-      component.roomCode = '  ABC123  ';
-      component.nickname = '  Alice  ';
+      component.roomCode.set('  ABC123  ');
+      component.nickname.set('  Alice  ');
 
       await component.joinGame();
 
@@ -127,20 +129,19 @@ describe('JoinGameComponent', () => {
     it('should clear errorMessage before attempting to connect', async () => {
       mockGameState.errorMessage.set('Previous error');
 
-      component.roomCode = 'ABC123';
-      component.nickname = 'Alice';
+      component.roomCode.set('ABC123');
+      component.nickname.set('Alice');
 
       await component.joinGame();
 
-      // The error was cleared at the start; success means it stays null
       expect(mockGameState.errorMessage()).toBeNull();
     });
 
     it('should reset role, clear nickname, and set error message on connection failure', async () => {
       mockWsService.connect.mockRejectedValue(new Error('Connection failed'));
 
-      component.roomCode = 'ABC123';
-      component.nickname = 'Alice';
+      component.roomCode.set('ABC123');
+      component.nickname.set('Alice');
 
       await component.joinGame();
 
@@ -156,23 +157,23 @@ describe('JoinGameComponent', () => {
   // isConnecting
   // ---------------------------------------------------------------------------
 
-  describe('isConnecting', () => {
+  describe('isConnecting (via wsService)', () => {
     it('should return true when connectionStatus is connecting', () => {
-      mockWsService.connectionStatus.set('connecting');
+      connectionStatus.set('connecting');
 
-      expect(component.isConnecting()).toBe(true);
+      expect(component.wsService.isConnecting()).toBe(true);
     });
 
     it('should return false when connectionStatus is disconnected', () => {
-      mockWsService.connectionStatus.set('disconnected');
+      connectionStatus.set('disconnected');
 
-      expect(component.isConnecting()).toBe(false);
+      expect(component.wsService.isConnecting()).toBe(false);
     });
 
     it('should return false when connectionStatus is connected', () => {
-      mockWsService.connectionStatus.set('connected');
+      connectionStatus.set('connected');
 
-      expect(component.isConnecting()).toBe(false);
+      expect(component.wsService.isConnecting()).toBe(false);
     });
   });
 });

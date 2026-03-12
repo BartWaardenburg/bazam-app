@@ -176,7 +176,7 @@ export interface RunStats {
       padding: var(--bzm-space-6) var(--bzm-space-4);
       border-radius: var(--bzm-radius-lg);
       border: 4px solid var(--bzm-black);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       margin-bottom: var(--bzm-space-6);
       animation: bzm-run-header-pop 0.6s var(--bzm-transition-playful) backwards;
     }
@@ -198,7 +198,7 @@ export interface RunStats {
     .run-summary__header--won .run-summary__mascot {
       color: var(--bzm-white);
       filter: drop-shadow(2px 2px 0 var(--bzm-black));
-      animation: bzm-mascot-bounce 1s ease-in-out infinite;
+      animation: bzm-run-mascot-bounce 1s ease-in-out infinite;
     }
 
     .run-summary__header--lost .run-summary__mascot {
@@ -265,7 +265,7 @@ export interface RunStats {
       gap: var(--bzm-space-1);
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       padding: var(--bzm-space-4) var(--bzm-space-3);
       box-shadow: var(--bzm-shadow-card);
@@ -404,7 +404,7 @@ export interface RunStats {
       padding: var(--bzm-space-4);
       background: linear-gradient(135deg, #fbbf2420, #f59e0b20);
       border: 4px solid var(--bzm-color-accent);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
     }
 
@@ -440,7 +440,7 @@ export interface RunStats {
       font-weight: var(--bzm-font-weight-extrabold);
       cursor: pointer;
       border: 4px solid var(--bzm-black);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       transition:
         transform var(--bzm-transition-playful),
         box-shadow var(--bzm-transition-base);
@@ -498,7 +498,7 @@ export interface RunStats {
       }
     }
 
-    @keyframes bzm-mascot-bounce {
+    @keyframes bzm-run-mascot-bounce {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-8px); }
     }

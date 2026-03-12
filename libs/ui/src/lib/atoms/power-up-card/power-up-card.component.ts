@@ -51,7 +51,7 @@ export type PowerUpRarity = Rarity;
       gap: var(--bzm-space-2);
       padding: var(--bzm-space-5) var(--bzm-space-4);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-card);
       text-align: center;
@@ -123,7 +123,7 @@ export type PowerUpRarity = Rarity;
       gap: var(--bzm-space-2);
       padding: var(--bzm-space-2) var(--bzm-space-3);
       border-radius: var(--bzm-radius-full);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       box-shadow: var(--bzm-shadow-sm);
     }
 

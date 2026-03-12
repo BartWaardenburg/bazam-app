@@ -28,7 +28,7 @@ export type NumericInputSize = 'md' | 'lg';
         [placeholder]="placeholder()"
         [disabled]="disabled()"
         [value]="displayValue()"
-        [attr.aria-label]="placeholder()"
+        [attr.aria-label]="ariaLabel() ?? placeholder()"
         (input)="onInput($event)"
         (keydown)="onKeydown($event)"
       />
@@ -69,7 +69,7 @@ export type NumericInputSize = 'md' | 'lg';
       width: 56px;
       height: 56px;
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       background: var(--bzm-color-surface);
       color: var(--bzm-color-text);
@@ -116,7 +116,7 @@ export type NumericInputSize = 'md' | 'lg';
       color: var(--bzm-color-text);
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1), var(--bzm-shadow-md);
       padding: var(--bzm-space-3) var(--bzm-space-4);
@@ -143,6 +143,18 @@ export type NumericInputSize = 'md' | 'lg';
       box-shadow:
         inset 0 2px 6px rgba(0, 0, 0, 0.1),
         0 0 0 3px color-mix(in srgb, var(--bzm-color-primary) 30%, transparent);
+    }
+
+    .bzm-numeric-input__field:focus-visible {
+      outline: 3px solid var(--bzm-color-focus);
+      outline-offset: 4px;
+      border-radius: var(--bzm-radius-md);
+    }
+
+    .bzm-numeric-input__stepper:focus-visible {
+      outline: 3px solid var(--bzm-color-focus);
+      outline-offset: 4px;
+      border-radius: var(--bzm-radius-md);
     }
 
     .bzm-numeric-input__field:disabled {
@@ -199,6 +211,9 @@ export class BzmNumericInputComponent {
   /** Size preset controlling input font size and padding. @default 'lg' */
   readonly size = input<NumericInputSize>('lg');
 
+  /** Custom ARIA label for the input field. Falls back to `placeholder` when not provided. @default undefined */
+  readonly ariaLabel = input<string | undefined>(undefined);
+
   /** Emits the updated numeric value when the user types or uses steppers. */
   readonly valueChange = output<number | null>();
 
@@ -226,7 +241,7 @@ export class BzmNumericInputComponent {
   });
 
   /** Handles raw text input, parsing to a number and clamping within bounds. */
-  onInput(event: Event): void {
+  protected onInput(event: Event): void {
     const target = event.target as HTMLInputElement;
     const raw = target.value.replace(/[^0-9\-]/g, '');
 
@@ -245,7 +260,7 @@ export class BzmNumericInputComponent {
   }
 
   /** Handles arrow key increments and decrements. */
-  onKeydown(event: KeyboardEvent): void {
+  protected onKeydown(event: KeyboardEvent): void {
     if (event.key === 'ArrowUp') {
       event.preventDefault();
       this.increment();
@@ -256,13 +271,13 @@ export class BzmNumericInputComponent {
   }
 
   /** Increments the value by 1, respecting the max bound. */
-  increment(): void {
+  protected increment(): void {
     const current = this.value() ?? 0;
     this.valueChange.emit(this.clamp(current + 1));
   }
 
   /** Decrements the value by 1, respecting the min bound. */
-  decrement(): void {
+  protected decrement(): void {
     const current = this.value() ?? 0;
     this.valueChange.emit(this.clamp(current - 1));
   }

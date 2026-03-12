@@ -55,7 +55,7 @@ import { BzmRarityBadgeComponent, type Rarity } from '../../atoms/rarity-badge/r
       padding: var(--bzm-space-4) var(--bzm-space-3) var(--bzm-space-3);
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: 4px 4px 0 var(--bzm-black);
       cursor: pointer;
@@ -74,7 +74,7 @@ import { BzmRarityBadgeComponent, type Rarity } from '../../atoms/rarity-badge/r
     }
 
     .bzm-brain-card:focus-visible {
-      box-shadow: 0 0 0 3px var(--bzm-cyan-300);
+      box-shadow: 0 0 0 3px var(--bzm-color-focus);
     }
 
     .bzm-brain-card--equipped {

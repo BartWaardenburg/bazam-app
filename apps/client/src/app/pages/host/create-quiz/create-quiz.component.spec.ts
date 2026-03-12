@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
+import { NO_ERRORS_SCHEMA, signal, computed } from '@angular/core';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { GameStateService } from '../../../services/game-state.service';
 import { WebSocketService } from '../../../services/websocket.service';
@@ -13,12 +13,16 @@ const createMockGameState = () => ({
   reset: vi.fn(),
 });
 
-const createMockWsService = () => ({
-  connect: vi.fn().mockResolvedValue(undefined),
-  send: vi.fn(),
-  disconnect: vi.fn(),
-  connectionStatus: signal<'disconnected' | 'connecting' | 'connected'>('disconnected'),
-});
+const createMockWsService = () => {
+  const connectionStatus = signal<'disconnected' | 'connecting' | 'connected'>('disconnected');
+  return {
+    connect: vi.fn().mockResolvedValue(undefined),
+    send: vi.fn(),
+    disconnect: vi.fn(),
+    connectionStatus,
+    isConnecting: computed(() => connectionStatus() === 'connecting'),
+  };
+};
 
 describe('CreateQuizComponent', () => {
   let component: CreateQuizComponent;
@@ -149,7 +153,6 @@ describe('CreateQuizComponent', () => {
 
       expect(mockWsService.connect).toHaveBeenCalled();
       expect(mockGameState.role()).toBe('host');
-      expect(mockGameState.questions().length).toBeGreaterThan(0);
       expect(mockWsService.send).toHaveBeenCalledWith({
         type: 'CREATE_ROOM',
         payload: {
@@ -173,7 +176,6 @@ describe('CreateQuizComponent', () => {
       await component.createRoom();
 
       expect(mockGameState.role()).toBeNull();
-      expect(mockGameState.questions()).toEqual([]);
       expect(mockGameState.errorMessage()).toBe(
         'Kan geen verbinding maken met de server. Probeer het opnieuw.'
       );

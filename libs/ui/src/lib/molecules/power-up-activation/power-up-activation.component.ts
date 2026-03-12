@@ -99,7 +99,7 @@ export interface PowerUpActivationData {
       padding: var(--bzm-space-8) var(--bzm-space-6);
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-lg);
       text-align: center;
@@ -188,7 +188,7 @@ export interface PowerUpActivationData {
       flex: 1;
       padding: var(--bzm-space-3) var(--bzm-space-4);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       font-family: var(--bzm-font-family);
       font-size: var(--bzm-font-size-base);
@@ -284,6 +284,7 @@ export class BzmPowerUpActivationComponent implements OnInit, OnDestroy {
 
   private timerHandle: ReturnType<typeof setInterval> | null = null;
   private maxTime = 0;
+  private destroyed = false;
 
   protected readonly _remainingTime = signal(0);
 
@@ -311,6 +312,7 @@ export class BzmPowerUpActivationComponent implements OnInit, OnDestroy {
     this._remainingTime.set(this.timeRemaining());
 
     this.timerHandle = setInterval(() => {
+      if (this.destroyed) return;
       this._remainingTime.update(t => t - 1);
       if (this._remainingTime() <= 0) {
         this.handleSkip();
@@ -319,6 +321,7 @@ export class BzmPowerUpActivationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroyed = true;
     this.clearTimer();
   }
 

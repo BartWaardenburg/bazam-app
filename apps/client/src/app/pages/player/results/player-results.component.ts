@@ -1,5 +1,4 @@
 import { Component, computed, inject } from '@angular/core';
-import { Router } from '@angular/router';
 import {
   BzmButtonComponent,
   BzmCardComponent,
@@ -79,16 +78,18 @@ export class PlayerResultsComponent {
   readonly gameState = inject(GameStateService);
 
   private readonly wsService = inject(WebSocketService);
-  private readonly router = inject(Router);
 
   /**
    * Computed rank of the current player within the final leaderboard.
-   * Looks up the player by nickname and returns their rank, or `'-'`
-   * if the player is not found in the leaderboard entries.
+   * Looks up the player by ID first, falls back to nickname, or returns `'-'`.
    */
   readonly playerRank = computed(() => {
+    const id = this.gameState.playerId();
     const nickname = this.gameState.playerNickname();
-    const entry = this.gameState.sortedLeaderboard().find((e) => e.nickname === nickname);
+    const leaderboard = this.gameState.sortedLeaderboard();
+    const entry = id
+      ? leaderboard.find((e) => e.id === id)
+      : leaderboard.find((e) => e.nickname === nickname);
     return entry?.rank ?? '-';
   });
 
@@ -96,9 +97,7 @@ export class PlayerResultsComponent {
    * Tears down the current session and navigates back to the landing page.
    * Disconnects the WebSocket and resets all game state signals.
    */
-  goHome(): void {
-    this.wsService.disconnect();
-    this.gameState.reset();
-    void this.router.navigate(['/']);
-  }
+  readonly goHome = (): void => {
+    this.wsService.endSession('/');
+  };
 }

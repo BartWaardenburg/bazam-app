@@ -73,7 +73,7 @@ const ROUND_CONFIG: Record<RoundType, { label: string; icon: string }> = {
       padding: var(--bzm-space-4);
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-md);
     }
@@ -130,7 +130,7 @@ const ROUND_CONFIG: Record<RoundType, { label: string; icon: string }> = {
       height: 32px;
       background: var(--bzm-gray-200);
       border: 3px solid var(--bzm-black);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       border-radius: var(--bzm-radius-sm);
       overflow: hidden;
     }

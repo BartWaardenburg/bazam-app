@@ -244,7 +244,7 @@ const ACCESSORY_SVG: Record<string, string> = {
     .builder {
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-card);
       padding: var(--bzm-space-6);
@@ -260,7 +260,7 @@ const ACCESSORY_SVG: Record<string, string> = {
       width: 120px;
       height: 120px;
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       background: var(--bzm-white);
       box-shadow: var(--bzm-shadow-md);
@@ -286,7 +286,7 @@ const ACCESSORY_SVG: Record<string, string> = {
       gap: 2px;
       padding: var(--bzm-space-2) var(--bzm-space-3);
       border: 2px solid var(--bzm-color-border);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       border-radius: var(--bzm-radius-sm);
       background: var(--bzm-color-surface);
       cursor: pointer;
@@ -334,7 +334,7 @@ const ACCESSORY_SVG: Record<string, string> = {
       gap: 2px;
       padding: var(--bzm-space-2) var(--bzm-space-3);
       border: 2px solid var(--bzm-color-border);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       border-radius: var(--bzm-radius-sm);
       background: var(--bzm-color-surface);
       cursor: pointer;
@@ -385,7 +385,7 @@ const ACCESSORY_SVG: Record<string, string> = {
       width: 40px;
       height: 40px;
       border: 3px solid var(--bzm-color-border);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       border-radius: var(--bzm-radius-sm);
       cursor: pointer;
       display: flex;

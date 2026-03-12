@@ -87,7 +87,7 @@ const hashString = (str: string): number => {
       object-fit: cover;
       background-color: var(--bzm-color-surface);
       border: 3px solid var(--bzm-black);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       box-shadow: var(--bzm-shadow-sm);
     }
 
@@ -100,7 +100,7 @@ const hashString = (str: string): number => {
       font-weight: var(--bzm-font-weight-extrabold);
       font-family: var(--bzm-font-family);
       border: 3px solid var(--bzm-black);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       box-shadow: var(--bzm-shadow-sm);
       text-transform: uppercase;
       line-height: 1;

@@ -25,11 +25,7 @@ const SIZE_PX: Record<HeartDisplaySize, number> = {
           [style.font-size.px]="iconSize()"
           [style.animation-delay]="(i * 0.1) + 's'"
         >
-          @if (heart === 'filled') {
-            <i class="ph-duotone ph-heart"></i>
-          } @else {
-            <i class="ph-duotone ph-heart"></i>
-          }
+          <i class="ph-duotone ph-heart"></i>
         </span>
       }
     </div>
@@ -48,7 +44,7 @@ const SIZE_PX: Record<HeartDisplaySize, number> = {
 
     .bzm-heart-display__heart {
       display: inline-flex;
-      transition: transform 0.3s ease, opacity 0.3s ease;
+      transition: transform var(--bzm-transition-smooth), opacity var(--bzm-transition-smooth);
     }
 
     .bzm-heart-display__heart--filled {

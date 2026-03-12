@@ -88,7 +88,7 @@ const TYPE_LABELS: Record<ShopItemType, string> = {
       padding: var(--bzm-space-5) var(--bzm-space-4) var(--bzm-space-4);
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-card);
       text-align: center;
@@ -222,7 +222,7 @@ const TYPE_LABELS: Record<ShopItemType, string> = {
       border: 3px solid var(--bzm-black);
       border-width: 2px 3px 4px 2px;
       border-radius: var(--bzm-radius-md);
-      box-shadow: 3px 3px 0 var(--bzm-black);
+      box-shadow: var(--bzm-shadow-sm);
       cursor: pointer;
       transition: transform var(--bzm-transition-playful),
                   box-shadow var(--bzm-transition-base);
@@ -242,8 +242,7 @@ const TYPE_LABELS: Record<ShopItemType, string> = {
     }
 
     .bzm-shop-item__buy-btn:focus-visible {
-      outline: 3px solid var(--bzm-cyan-300);
-      outline-offset: 2px;
+      box-shadow: 0 0 0 3px var(--bzm-color-focus);
     }
 
     .bzm-shop-item__buy-btn:disabled {

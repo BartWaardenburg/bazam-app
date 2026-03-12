@@ -1,5 +1,6 @@
 import { computed, Injectable, signal } from '@angular/core';
-import type { AnswerResult, GamePhase, LeaderboardEntry, PlayerInfo, QuestionInput, QuestionPublic } from '@bazam/shared-types';
+import { DEFAULT_TIME_LIMIT_SECONDS } from '@bazam/shared-types';
+import type { AnswerIndex, AnswerResult, GamePhase, LeaderboardEntry, PlayerInfo, QuestionInput, QuestionPublic } from '@bazam/shared-types';
 
 /**
  * Centralized reactive game state store built on Angular signals.
@@ -60,8 +61,11 @@ export class GameStateService {
   /** Total number of questions in the active quiz session. */
   readonly totalQuestions = signal<number>(0);
 
-  /** Time limit for the current question in seconds. Defaults to 20. */
-  readonly timeLimit = signal<number>(20);
+  /** Time limit for the current question in seconds. */
+  readonly timeLimit = signal<number>(DEFAULT_TIME_LIMIT_SECONDS);
+
+  /** Milliseconds elapsed since the current question was sent (used for accurate countdown on reconnect). */
+  readonly elapsedMs = signal<number>(0);
 
   /** Leaderboard entries received from the server after each question closes. */
   readonly leaderboard = signal<LeaderboardEntry[]>([]);
@@ -72,12 +76,21 @@ export class GameStateService {
   /** The current player's chosen display name (set during the join flow). */
   readonly playerNickname = signal<string>('');
 
+  /** Unique player ID assigned by the server on join. */
+  readonly playerId = signal<string | null>(null);
+
   /**
    * Result of the player's most recent answer submission.
    * Contains correctness, points earned, and updated total score.
    * Reset to `null` when a new question begins.
    */
   readonly lastAnswerResult = signal<AnswerResult | null>(null);
+
+  /**
+   * Index of the correct answer, revealed after a question closes.
+   * `null` during an active question or before any question starts.
+   */
+  readonly correctAnswerIndex = signal<AnswerIndex | null>(null);
 
   /** Questions authored by the host, stored locally until the room is created. */
   readonly questions = signal<QuestionInput[]>([]);
@@ -100,9 +113,6 @@ export class GameStateService {
     [...this.leaderboard()].sort((a, b) => b.score - a.score)
   );
 
-  /** Top three players extracted from the sorted leaderboard. */
-  readonly topThree = computed(() => this.sortedLeaderboard().slice(0, 3));
-
   /** Number of players who have submitted an answer for the current question. */
   readonly answeredCount = computed(() => this.players().filter((p) => p.hasAnswered).length);
 
@@ -110,7 +120,9 @@ export class GameStateService {
    * Whether the current question is the last one in the quiz.
    * Used to toggle "Next question" vs. "Results" button labels.
    */
-  readonly isLastQuestion = computed(() => this.questionIndex() >= this.totalQuestions() - 1);
+  readonly isLastQuestion = computed(() =>
+    this.totalQuestions() > 0 && this.questionIndex() >= this.totalQuestions() - 1
+  );
 
   /**
    * Resets every signal to its initial default value.
@@ -124,11 +136,14 @@ export class GameStateService {
     this.currentQuestion.set(null);
     this.questionIndex.set(0);
     this.totalQuestions.set(0);
-    this.timeLimit.set(20);
+    this.timeLimit.set(DEFAULT_TIME_LIMIT_SECONDS);
+    this.elapsedMs.set(0);
     this.leaderboard.set([]);
     this.playerScore.set(0);
     this.playerNickname.set('');
+    this.playerId.set(null);
     this.lastAnswerResult.set(null);
+    this.correctAnswerIndex.set(null);
     this.questions.set([]);
     this.errorMessage.set(null);
   }

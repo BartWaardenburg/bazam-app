@@ -1,11 +1,11 @@
-import { Component, ChangeDetectionStrategy, input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
 
 @Component({
   selector: 'bzm-streak-banner',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="streak-banner" role="status" aria-label="Streak count">
+    <div class="streak-banner" role="status" aria-label="Streak count" (click)="clicked.emit()">
       <div class="streak-content">
         <span class="streak-label">You did</span>
         <span class="streak-count">{{ streakCount() }}</span>
@@ -37,7 +37,7 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
       justify-content: space-between;
       background-color: var(--bzm-color-accent);
       border: 4px solid var(--bzm-black);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       padding: var(--bzm-space-5) var(--bzm-space-6);
       box-shadow: var(--bzm-shadow-lg);
@@ -104,13 +104,13 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 
     .fire {
       color: var(--bzm-color-text-on-accent);
-      animation: pulse 1.5s ease-in-out infinite;
+      animation: bzm-pulse 1.5s ease-in-out infinite;
       display: flex;
     }
 
     .star {
       color: var(--bzm-color-text-on-accent);
-      animation: pulse 1.5s ease-in-out infinite 0.3s;
+      animation: bzm-pulse 1.5s ease-in-out infinite 0.3s;
       display: flex;
     }
 
@@ -120,7 +120,7 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
       flex-shrink: 0;
     }
 
-    @keyframes pulse {
+    @keyframes bzm-pulse {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.15); }
     }
@@ -144,4 +144,7 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 export class BzmStreakBannerComponent {
   /** Number of consecutive streaks to display in the banner. */
   readonly streakCount = input.required<number>();
+
+  /** Emits when the banner is clicked. */
+  readonly clicked = output<void>();
 }

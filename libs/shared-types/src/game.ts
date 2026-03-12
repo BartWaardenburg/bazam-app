@@ -1,5 +1,26 @@
+/** Default time limit for a question in seconds. */
+export const DEFAULT_TIME_LIMIT_SECONDS = 20;
+
+/** Maximum allowed length for a player nickname. */
+export const MAX_NICKNAME_LENGTH = 32;
+
 /** Current phase of the game lifecycle. */
 export type GamePhase = 'idle' | 'lobby' | 'countdown' | 'question' | 'leaderboard' | 'finished';
+
+/** Machine-readable error codes sent in ERROR messages. */
+export type ErrorCode =
+  | 'INVALID_MESSAGE'
+  | 'CREATE_ROOM_FAILED'
+  | 'JOIN_ROOM_FAILED'
+  | 'START_GAME_FAILED'
+  | 'NEXT_QUESTION_FAILED'
+  | 'SUBMIT_ANSWER_FAILED'
+  | 'END_GAME_FAILED'
+  | 'RECONNECT_FAILED'
+  | 'HOST_DISCONNECTED'
+  | 'ROOM_TIMEOUT'
+  | 'INTERNAL_ERROR'
+  | 'UNKNOWN_TYPE';
 
 /** Index into a four-option answer array. */
 export type AnswerIndex = 0 | 1 | 2 | 3;
@@ -132,6 +153,8 @@ export interface ReconnectState {
   totalQuestions: number;
   /** Time limit for the current question in seconds. */
   timeLimit: number;
+  /** Milliseconds elapsed since the current question was sent (for accurate countdown on reconnect). */
+  elapsedMs: number;
   /** The reconnecting player's cumulative score. */
   score: number;
   /** Current leaderboard. */

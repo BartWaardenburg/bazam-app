@@ -23,13 +23,13 @@ export type ActionBarAlign = 'left' | 'center' | 'right' | 'space-between';
       gap: var(--bzm-space-3);
     }
 
-    .align-left { justify-content: flex-start; }
-    .align-center { justify-content: center; }
-    .align-right { justify-content: flex-end; }
-    .align-space-between { justify-content: space-between; }
+    .bzm-action-bar--align-left { justify-content: flex-start; }
+    .bzm-action-bar--align-center { justify-content: center; }
+    .bzm-action-bar--align-right { justify-content: flex-end; }
+    .bzm-action-bar--align-space-between { justify-content: space-between; }
 
-    .direction-row { flex-direction: row; }
-    .direction-column { flex-direction: column; }
+    .bzm-action-bar--direction-row { flex-direction: row; }
+    .bzm-action-bar--direction-column { flex-direction: column; }
   `,
 })
 /**
@@ -56,6 +56,6 @@ export class BzmActionBarComponent {
   readonly direction = input<'row' | 'column'>('row');
 
   protected readonly barClasses = computed(
-    () => `bzm-action-bar align-${this.align()} direction-${this.direction()}`
+    () => `bzm-action-bar bzm-action-bar--align-${this.align()} bzm-action-bar--direction-${this.direction()}`
   );
 }

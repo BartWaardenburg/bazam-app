@@ -105,7 +105,7 @@ const REWARD_TYPE_ICONS: Record<BossReward['type'], string> = {
       padding: var(--bzm-space-8) var(--bzm-space-6);
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-black);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-lg);
       box-shadow: 6px 6px 0 var(--bzm-black);
       max-width: 560px;
@@ -118,7 +118,7 @@ const REWARD_TYPE_ICONS: Record<BossReward['type'], string> = {
 
     .picker__trophy {
       font-size: 48px;
-      color: #FFD700;
+      color: var(--bzm-color-gold);
       filter: drop-shadow(2px 2px 0 var(--bzm-black));
       animation: bzm-trophy-bounce 0.6s var(--bzm-transition-playful);
     }
@@ -127,7 +127,7 @@ const REWARD_TYPE_ICONS: Record<BossReward['type'], string> = {
       margin: var(--bzm-space-2) 0 0;
       font-family: var(--bzm-font-heading);
       font-size: clamp(1.8rem, 5vw, 2.6rem);
-      color: #FFD700;
+      color: var(--bzm-color-gold);
       -webkit-text-stroke: 1.5px var(--bzm-black);
       paint-order: stroke fill;
       text-shadow: 3px 3px 0 var(--bzm-black);
@@ -185,17 +185,17 @@ const REWARD_TYPE_ICONS: Record<BossReward['type'], string> = {
 
     .picker__card--selected {
       transform: translateY(-8px);
-      border-color: #FFD700;
+      border-color: var(--bzm-color-gold);
       box-shadow:
         3px 3px 0 var(--bzm-black),
-        0 0 20px 4px rgba(255, 215, 0, 0.4);
+        0 0 20px 4px color-mix(in srgb, var(--bzm-color-gold) 40%, transparent);
     }
 
     .picker__card--selected:hover {
       transform: translateY(-10px);
       box-shadow:
         4px 5px 0 var(--bzm-black),
-        0 0 24px 6px rgba(255, 215, 0, 0.5);
+        0 0 24px 6px color-mix(in srgb, var(--bzm-color-gold) 50%, transparent);
     }
 
     .picker__card--dimmed {
@@ -211,7 +211,7 @@ const REWARD_TYPE_ICONS: Record<BossReward['type'], string> = {
     }
 
     .picker__card--selected .picker__card-icon {
-      color: #FFD700;
+      color: var(--bzm-color-gold);
     }
 
     .picker__card-name {

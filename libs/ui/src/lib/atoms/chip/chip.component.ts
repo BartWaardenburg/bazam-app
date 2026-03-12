@@ -6,6 +6,7 @@ import { Component, ChangeDetectionStrategy, input, output, computed } from '@an
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <button
+      type="button"
       [class]="chipClasses()"
       [style]="chipStyle()"
       (click)="toggled.emit()"

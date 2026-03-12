@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, output, computed, signal, effect } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, linkedSignal } from '@angular/core';
 
 /** Supported age band ranges for difficulty calibration. */
 export type AgeBand = '8-10' | '11-13' | '14-16' | '17-20';
@@ -153,7 +153,7 @@ const AGE_BAND_OPTIONS: readonly AgeBandOption[] = [
       padding: var(--bzm-space-5) var(--bzm-space-3);
       background: var(--card-tint-light);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-lg);
       box-shadow: var(--bzm-shadow-card);
       cursor: pointer;
@@ -227,7 +227,7 @@ const AGE_BAND_OPTIONS: readonly AgeBandOption[] = [
       background: var(--bzm-color-primary);
       color: var(--bzm-white);
       border: 4px solid var(--bzm-black);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       font-family: var(--bzm-font-family);
       font-size: var(--bzm-font-size-xl);
@@ -314,16 +314,7 @@ export class BzmAgeBandSelectorComponent {
   protected readonly options = AGE_BAND_OPTIONS;
 
   /** Internal selection state that syncs with the input and allows user interaction. */
-  protected readonly internalSelected = signal<AgeBand | null>(null);
-
-  constructor() {
-    effect(() => {
-      const band = this.selectedBand();
-      if (band !== null) {
-        this.internalSelected.set(band);
-      }
-    });
-  }
+  protected readonly internalSelected = linkedSignal(() => this.selectedBand());
 
   protected selectBand(band: AgeBand): void {
     this.internalSelected.set(band);

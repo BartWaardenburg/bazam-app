@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { NO_ERRORS_SCHEMA, signal, computed } from '@angular/core';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { GameStateService } from '../../../services/game-state.service';
 import { WebSocketService } from '../../../services/websocket.service';
@@ -12,22 +11,23 @@ const createMockGameState = () => ({
   reset: vi.fn(),
 });
 
-const createMockWsService = () => ({
-  disconnect: vi.fn(),
-  send: vi.fn(),
-  connectionStatus: signal<'disconnected' | 'connecting' | 'connected'>('connected'),
-});
+const createMockWsService = () => {
+  const connectionStatus = signal<'disconnected' | 'connecting' | 'connected'>('connected');
+  return {
+    endSession: vi.fn(),
+    send: vi.fn(),
+    connectionStatus,
+    isConnecting: computed(() => connectionStatus() === 'connecting'),
+  };
+};
 
 describe('HostResultsComponent', () => {
   let component: HostResultsComponent;
   let mockGameState: ReturnType<typeof createMockGameState>;
   let mockWsService: ReturnType<typeof createMockWsService>;
-  let mockRouter: { navigate: ReturnType<typeof vi.fn> };
-
   beforeEach(async () => {
     mockGameState = createMockGameState();
     mockWsService = createMockWsService();
-    mockRouter = { navigate: vi.fn().mockResolvedValue(true) };
 
     await TestBed.configureTestingModule({
       imports: [HostResultsComponent],
@@ -39,7 +39,6 @@ describe('HostResultsComponent', () => {
           providers: [
             { provide: GameStateService, useValue: mockGameState },
             { provide: WebSocketService, useValue: mockWsService },
-            { provide: Router, useValue: mockRouter },
           ],
         },
       })
@@ -54,22 +53,18 @@ describe('HostResultsComponent', () => {
   });
 
   describe('playAgain', () => {
-    it('should disconnect WebSocket, reset game state, and navigate to /host/create', () => {
+    it('should end the session and navigate to /host/create', () => {
       component.playAgain();
 
-      expect(mockWsService.disconnect).toHaveBeenCalled();
-      expect(mockGameState.reset).toHaveBeenCalled();
-      expect(mockRouter.navigate).toHaveBeenCalledWith(['/host/create']);
+      expect(mockWsService.endSession).toHaveBeenCalledWith('/host/create');
     });
   });
 
   describe('goHome', () => {
-    it('should disconnect WebSocket, reset game state, and navigate to /', () => {
+    it('should end the session and navigate to /', () => {
       component.goHome();
 
-      expect(mockWsService.disconnect).toHaveBeenCalled();
-      expect(mockGameState.reset).toHaveBeenCalled();
-      expect(mockRouter.navigate).toHaveBeenCalledWith(['/']);
+      expect(mockWsService.endSession).toHaveBeenCalledWith('/');
     });
   });
 });

@@ -1,7 +1,9 @@
 // Atoms
 export { BzmButtonComponent } from './lib/atoms/button/button.component';
+export type { ButtonVariant, ButtonSize } from './lib/atoms/button/button.component';
 export { BzmChipComponent } from './lib/atoms/chip/chip.component';
 export { BzmAvatarComponent } from './lib/atoms/avatar/avatar.component';
+export type { AvatarSize } from './lib/atoms/avatar/avatar.component';
 export { BzmBadgeIconComponent } from './lib/atoms/badge-icon/badge-icon.component';
 export { BzmNotificationBellComponent } from './lib/atoms/notification-bell/notification-bell.component';
 export { BzmSliderComponent } from './lib/atoms/slider/slider.component';
@@ -30,11 +32,15 @@ export type { StarCount, StarRatingSize } from './lib/atoms/star-rating/star-rat
 export { BzmDifficultyBadgeComponent } from './lib/atoms/difficulty-badge/difficulty-badge.component';
 export type { DifficultyTier, DifficultyBadgeSize } from './lib/atoms/difficulty-badge/difficulty-badge.component';
 export { BzmRarityBadgeComponent } from './lib/atoms/rarity-badge/rarity-badge.component';
-export type { Rarity, BrainRarity } from './lib/atoms/rarity-badge/rarity-badge.component';
+export type { Rarity } from './lib/atoms/rarity-badge/rarity-badge.component';
+/** @deprecated Use Rarity instead */
+export type { BrainRarity } from './lib/atoms/rarity-badge/rarity-badge.component';
 export { BzmStreakCounterComponent } from './lib/atoms/streak-counter/streak-counter.component';
 export type { StreakCounterSize } from './lib/atoms/streak-counter/streak-counter.component';
 export { BzmPowerUpCardComponent } from './lib/atoms/power-up-card/power-up-card.component';
-export type { PowerUpType, PowerUpRarity } from './lib/atoms/power-up-card/power-up-card.component';
+export type { PowerUpType } from './lib/atoms/power-up-card/power-up-card.component';
+/** @deprecated Use Rarity instead */
+export type { PowerUpRarity } from './lib/atoms/power-up-card/power-up-card.component';
 export { BzmPowerUpNotificationComponent } from './lib/atoms/power-up-notification/power-up-notification.component';
 export type { PowerUpNotificationType } from './lib/atoms/power-up-notification/power-up-notification.component';
 export { BzmReactionBubbleComponent } from './lib/atoms/reaction-bubble/reaction-bubble.component';
@@ -60,6 +66,7 @@ export { BzmLeaderboardItemComponent } from './lib/molecules/leaderboard-item/le
 export { BzmLevelProgressComponent } from './lib/molecules/level-progress/level-progress.component';
 export { BzmProgressBarComponent } from './lib/molecules/progress-bar/progress-bar.component';
 export { BzmTimerComponent } from './lib/molecules/timer/timer.component';
+export type { TimerSize } from './lib/molecules/timer/timer.component';
 export { BzmRoomCodeComponent } from './lib/molecules/room-code/room-code.component';
 export { BzmPlayerListComponent } from './lib/molecules/player-list/player-list.component';
 export type { PlayerListItem } from './lib/molecules/player-list/player-list.component';
@@ -118,6 +125,8 @@ export { BzmBossCharacterComponent } from './lib/molecules/boss-character/boss-c
 export type { BossExpression, BossSize } from './lib/molecules/boss-character/boss-character.component';
 export { BzmRescueBannerComponent } from './lib/molecules/rescue-banner/rescue-banner.component';
 export { BzmComebackBannerComponent } from './lib/molecules/comeback-banner/comeback-banner.component';
+export { BzmCategoryVoteComponent } from './lib/molecules/category-vote/category-vote.component';
+export type { CategoryVoteOption } from './lib/molecules/category-vote/category-vote.component';
 
 // Organisms
 export { BzmProfileHeaderComponent } from './lib/organisms/profile-header/profile-header.component';
@@ -167,5 +176,3 @@ export { BzmTeamScoreboardComponent } from './lib/organisms/team-scoreboard/team
 export type { TeamScore } from './lib/organisms/team-scoreboard/team-scoreboard.component';
 export { BzmCategoryWheelComponent } from './lib/organisms/category-wheel/category-wheel.component';
 export type { CategoryWheelOption } from './lib/organisms/category-wheel/category-wheel.component';
-export { BzmCategoryVoteComponent } from './lib/molecules/category-vote/category-vote.component';
-export type { CategoryVoteOption } from './lib/molecules/category-vote/category-vote.component';

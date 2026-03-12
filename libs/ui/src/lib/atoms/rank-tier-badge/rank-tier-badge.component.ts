@@ -105,7 +105,7 @@ const SIZE_MAP: Record<RankTierBadgeSize, { badge: number; icon: number; font: s
       justify-content: center;
       flex-direction: column;
       border: 4px solid;
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-card);
       color: var(--bzm-white);
@@ -147,10 +147,10 @@ const SIZE_MAP: Record<RankTierBadgeSize, { badge: number; icon: number; font: s
     }
 
     .badge--animate .badge-shine {
-      animation: shine 2s ease-in-out infinite;
+      animation: bzm-shine 2s ease-in-out infinite;
     }
 
-    @keyframes shine {
+    @keyframes bzm-shine {
       0% { left: -100%; }
       50% { left: 100%; }
       100% { left: 100%; }

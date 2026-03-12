@@ -103,7 +103,7 @@ export interface MatchHistoryEntry {
       gap: var(--bzm-space-2);
       padding: var(--bzm-space-3) var(--bzm-space-4);
       border: 3px solid var(--bzm-color-border);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       border-radius: var(--bzm-radius-md);
       background: var(--bzm-color-surface);
       font-family: var(--bzm-font-family);

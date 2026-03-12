@@ -53,7 +53,7 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
       border-radius: 3px;
       background: var(--bzm-red-50);
       border: 3px solid var(--bzm-black);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       display: flex;
       align-items: center;
       justify-content: center;

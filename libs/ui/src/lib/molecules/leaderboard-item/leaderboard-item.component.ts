@@ -25,7 +25,7 @@ import { Component, ChangeDetectionStrategy, computed, input } from '@angular/co
         }
       </div>
       <div class="bzm-leaderboard-item__points" [class.bzm-leaderboard-item__points--current]="isCurrentUser()">
-<i class="ph-duotone ph-star bzm-leaderboard-item__star" [style.color]="isCurrentUser() ? 'var(--bzm-color-primary)' : 'var(--bzm-color-accent)'" style="font-size: 16px;"></i>
+<i class="ph-duotone ph-star bzm-leaderboard-item__star" aria-hidden="true" [style.color]="isCurrentUser() ? 'var(--bzm-color-primary)' : 'var(--bzm-color-accent)'" style="font-size: 16px;"></i>
         <span>{{ points() }}</span>
       </div>
     </div>
@@ -43,7 +43,7 @@ import { Component, ChangeDetectionStrategy, computed, input } from '@angular/co
       padding: var(--bzm-space-3) var(--bzm-space-4);
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 4px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-sm);
       font-family: var(--bzm-font-family);
@@ -69,11 +69,11 @@ import { Component, ChangeDetectionStrategy, computed, input } from '@angular/co
     .bzm-leaderboard-item__avatar {
       width: 40px;
       height: 40px;
-      border-radius: 3px;
+      border-radius: var(--bzm-radius-sm);
       overflow: hidden;
       flex-shrink: 0;
       border: 3px solid var(--bzm-black);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       box-shadow: var(--bzm-shadow-sm);
     }
 
@@ -176,17 +176,17 @@ export class BzmLeaderboardItemComponent {
   /** Whether this row represents the current (local) player. Applies a highlighted visual style. @default false */
   readonly isCurrentUser = input<boolean>(false);
 
-  readonly containerClass = computed(() => {
+  protected readonly containerClass = computed(() => {
     const classes = ['bzm-leaderboard-item'];
     if (this.isCurrentUser()) classes.push('bzm-leaderboard-item--current');
     return classes.join(' ');
   });
 
-  readonly rankStyle = computed(() => {
+  protected readonly rankStyle = computed(() => {
     const r = this.rank();
-    if (r === 1) return 'color: #D4A017';
-    if (r === 2) return 'color: #A0A0A0';
-    if (r === 3) return 'color: #CD7F32';
+    if (r === 1) return 'color: var(--bzm-color-gold)';
+    if (r === 2) return 'color: var(--bzm-color-silver)';
+    if (r === 3) return 'color: var(--bzm-color-bronze)';
     return 'color: var(--bzm-color-text-secondary)';
   });
 }

@@ -166,7 +166,7 @@ const DEFAULT_COLORS = [
       transform: translateY(-50%);
       background: var(--bzm-color-surface);
       border: 3px solid var(--bzm-color-border);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       border-radius: 4px;
       box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
     }
@@ -229,7 +229,7 @@ const DEFAULT_COLORS = [
       background: var(--bzm-color-surface);
       padding: var(--bzm-space-1) var(--bzm-space-2);
       border: 3px solid var(--bzm-color-border);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       border-radius: 3px;
       box-shadow: var(--bzm-shadow-sm);
     }

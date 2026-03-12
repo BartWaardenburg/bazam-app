@@ -73,7 +73,7 @@ export type DifficultyBadgeSize = 'sm' | 'md';
 
     /* ─── Tier: bronze ─── */
     .difficulty-badge--bronze {
-      background: linear-gradient(135deg, #CD7F32 0%, #A0622B 100%);
+      background: linear-gradient(135deg, var(--bzm-color-bronze) 0%, #A0622B 100%);
       color: #fff;
       box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
     }
@@ -84,7 +84,7 @@ export type DifficultyBadgeSize = 'sm' | 'md';
 
     /* ─── Tier: silver ─── */
     .difficulty-badge--silver {
-      background: linear-gradient(135deg, #D4D4D4 0%, #A8A8A8 100%);
+      background: linear-gradient(135deg, var(--bzm-color-silver) 0%, #A8A8A8 100%);
       color: var(--bzm-gray-900);
       box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.25);
     }
@@ -95,7 +95,7 @@ export type DifficultyBadgeSize = 'sm' | 'md';
 
     /* ─── Tier: gold ─── */
     .difficulty-badge--gold {
-      background: linear-gradient(135deg, #FFD700 0%, #E6B800 100%);
+      background: linear-gradient(135deg, var(--bzm-color-gold) 0%, #E6B800 100%);
       color: var(--bzm-gray-900);
       box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.25);
     }

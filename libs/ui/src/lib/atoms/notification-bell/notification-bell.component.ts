@@ -1,11 +1,11 @@
-import { Component, ChangeDetectionStrategy, input, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, output } from '@angular/core';
 
 @Component({
   selector: 'bzm-notification-bell',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <button class="bell-button" [attr.aria-label]="ariaLabel()">
+    <button type="button" class="bell-button" [attr.aria-label]="ariaLabel()" (click)="handleClick()">
 <i class="ph-duotone ph-bell bell-icon" aria-hidden="true"></i>
 
       @if (hasNotification()) {
@@ -32,7 +32,7 @@ import { Component, ChangeDetectionStrategy, input, computed } from '@angular/co
       height: 40px;
       border-radius: 3px;
       border: 3px solid var(--bzm-black);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       background-color: var(--bzm-color-surface);
       color: var(--bzm-color-text);
       cursor: pointer;
@@ -139,4 +139,10 @@ export class BzmNotificationBellComponent {
     }
     return 'Notifications';
   });
+
+  readonly clicked = output<void>();
+
+  protected handleClick(): void {
+    this.clicked.emit();
+  }
 }

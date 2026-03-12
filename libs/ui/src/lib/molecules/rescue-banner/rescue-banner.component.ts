@@ -41,7 +41,7 @@ import { Component, ChangeDetectionStrategy, computed, input } from '@angular/co
 
     .bzm-rescue-banner {
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-md);
       overflow: hidden;

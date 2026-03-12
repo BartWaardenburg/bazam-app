@@ -1,12 +1,14 @@
 import { Component, ChangeDetectionStrategy, input, output, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import type { AnswerIndex } from '@bazam/shared-types';
 import { BzmSliderComponent } from '../../atoms/slider/slider.component';
+
 
 /** Data emitted by the question editor when any field changes. */
 export interface QuestionEditorData {
   readonly text: string;
   readonly answers: [string, string, string, string];
-  readonly correctIndex: number;
+  readonly correctIndex: AnswerIndex;
   readonly timeLimitSeconds: number;
 }
 
@@ -123,11 +125,11 @@ const ANSWER_COLORS: Record<number, { bg: string; border: string; badge: string;
       justify-content: center;
       background: var(--bzm-color-surface);
       border: 3px solid var(--bzm-black);
-      border-width: 2px 3px 3px 2px;
+      border-width: var(--bzm-border-width-comic-sm);
       border-radius: var(--bzm-radius-md);
       cursor: pointer;
       color: var(--bzm-color-answer-c);
-      font-size: 1.5rem;
+      font-size: var(--bzm-font-size-2xl);
       transition:
         transform var(--bzm-transition-playful),
         box-shadow var(--bzm-transition-base);
@@ -147,7 +149,7 @@ const ANSWER_COLORS: Record<number, { bg: string; border: string; badge: string;
     .bzm-qe__number {
       font-family: var(--bzm-font-heading);
       font-size: clamp(1.3rem, 3vw, 1.8rem);
-      font-weight: 400;
+      font-weight: var(--bzm-font-weight-regular);
       letter-spacing: 0.05em;
       text-transform: uppercase;
       color: var(--bzm-white);
@@ -155,7 +157,7 @@ const ANSWER_COLORS: Record<number, { bg: string; border: string; badge: string;
       padding: var(--bzm-space-2) var(--bzm-space-5);
       border-radius: var(--bzm-radius-md);
       border: 3px solid var(--bzm-black);
-      box-shadow: 3px 3px 0 var(--bzm-black);
+      box-shadow: var(--bzm-shadow-sm);
     }
 
     /* ── Question input ── */
@@ -171,7 +173,7 @@ const ANSWER_COLORS: Record<number, { bg: string; border: string; badge: string;
       font-weight: var(--bzm-font-weight-bold);
       padding: var(--bzm-space-5) var(--bzm-space-5);
       border: 4px solid var(--bzm-color-border);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       background: var(--bzm-color-surface);
       color: var(--bzm-color-text);
@@ -187,6 +189,10 @@ const ANSWER_COLORS: Record<number, { bg: string; border: string; badge: string;
     .bzm-qe__question-input:focus {
       border-color: var(--bzm-color-answer-a);
       box-shadow: var(--bzm-shadow-card);
+    }
+
+    .bzm-qe__question-input:focus-visible {
+      box-shadow: 0 0 0 3px var(--bzm-color-focus);
     }
 
     .bzm-qe__question-input::placeholder {
@@ -230,7 +236,7 @@ const ANSWER_COLORS: Record<number, { bg: string; border: string; badge: string;
       padding: var(--bzm-space-3);
       border-radius: var(--bzm-radius-md);
       border: 3px solid var(--answer-color);
-      border-width: 3px 4px 4px 3px;
+      border-width: var(--bzm-border-width-comic);
       background: var(--bzm-color-surface);
       cursor: pointer;
       position: relative;
@@ -261,7 +267,7 @@ const ANSWER_COLORS: Record<number, { bg: string; border: string; badge: string;
     }
 
     .bzm-qe__radio:focus-visible + .bzm-qe__badge {
-      outline: 3px solid var(--bzm-cyan-500);
+      outline: 3px solid var(--bzm-color-focus);
       outline-offset: 2px;
     }
 
@@ -273,7 +279,7 @@ const ANSWER_COLORS: Record<number, { bg: string; border: string; badge: string;
       align-items: center;
       justify-content: center;
       font-family: var(--bzm-font-heading);
-      font-weight: 400;
+      font-weight: var(--bzm-font-weight-regular);
       font-size: clamp(1rem, 2vw, 1.2rem);
       flex-shrink: 0;
       border: 3px solid var(--bzm-black);
@@ -297,6 +303,10 @@ const ANSWER_COLORS: Record<number, { bg: string; border: string; badge: string;
 
     .bzm-qe__answer-input:focus {
       border-color: var(--answer-color);
+    }
+
+    .bzm-qe__answer-input:focus-visible {
+      box-shadow: 0 0 0 3px var(--bzm-color-focus);
     }
 
     .bzm-qe__answer-input::placeholder {

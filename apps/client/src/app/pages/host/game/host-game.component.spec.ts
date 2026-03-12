@@ -1,19 +1,23 @@
 import { TestBed } from '@angular/core/testing';
-import { NO_ERRORS_SCHEMA, signal } from '@angular/core';
+import { NO_ERRORS_SCHEMA, signal, computed } from '@angular/core';
 import { HostGameComponent } from './host-game.component';
 import { GameStateService } from '../../../services/game-state.service';
 import { WebSocketService } from '../../../services/websocket.service';
 
-const createMockWsService = () => ({
-  connect: vi.fn().mockResolvedValue(undefined),
-  send: vi.fn(),
-  disconnect: vi.fn(),
-  connectionStatus: signal('disconnected' as const),
-});
+const createMockWsService = () => {
+  const connectionStatus = signal('disconnected' as const);
+  return {
+    connect: vi.fn().mockResolvedValue(undefined),
+    send: vi.fn(),
+    disconnect: vi.fn(),
+    connectionStatus,
+    isConnecting: computed(() => connectionStatus() === 'connecting'),
+  };
+};
 
 const createMockGameState = () => ({
   gamePhase: signal('idle' as const),
-  currentQuestion: signal(null),
+  currentQuestion: signal<{ text: string; answers: [string, string, string, string]; timeLimitSeconds: number } | null>(null),
   questionIndex: signal(0),
   totalQuestions: signal(0),
   timeLimit: signal(20),
@@ -25,6 +29,8 @@ const createMockGameState = () => ({
   hasAnswered: signal(false),
   lastAnswerResult: signal(null),
   playerScore: signal(0),
+  correctAnswerIndex: signal(null),
+  errorMessage: signal<string | null>(null),
 });
 
 describe('HostGameComponent', () => {
@@ -58,24 +64,25 @@ describe('HostGameComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('toAnswerGridItems', () => {
-    it('should map strings to objects with text property', () => {
-      const result = component.toAnswerGridItems(['Yes', 'No']);
-      expect(result).toEqual([{ text: 'Yes' }, { text: 'No' }]);
+  describe('answerGridItems', () => {
+    it('should return empty array when no question is set', () => {
+      expect(component.answerGridItems()).toEqual([]);
     });
 
-    it('should return an empty array for empty input', () => {
-      const result = component.toAnswerGridItems([]);
-      expect(result).toEqual([]);
-    });
+    it('should map question answers to grid items', () => {
+      mockGameState.currentQuestion.set({
+        text: 'Test?',
+        answers: ['A', 'B', 'C', 'D'],
+        timeLimitSeconds: 20,
+      });
 
-    it('should map 4 answers to 4 items without a selected property', () => {
-      const result = component.toAnswerGridItems(['A', 'B', 'C', 'D']);
-      expect(result).toHaveLength(4);
-      for (const item of result) {
-        expect(item).toHaveProperty('text');
-        expect(item).not.toHaveProperty('selected');
-      }
+      const result = component.answerGridItems();
+      expect(result).toEqual([
+        { text: 'A' },
+        { text: 'B' },
+        { text: 'C' },
+        { text: 'D' },
+      ]);
     });
   });
 

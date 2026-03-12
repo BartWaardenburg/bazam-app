@@ -50,7 +50,7 @@ import { Component, ChangeDetectionStrategy, computed, input, output } from '@an
       padding: var(--bzm-space-4);
       background: var(--bzm-color-surface);
       border: 4px solid var(--bzm-black);
-      border-width: 3px 4px 5px 3px;
+      border-width: var(--bzm-border-width-comic);
       border-radius: var(--bzm-radius-md);
       box-shadow: var(--bzm-shadow-card);
 
@@ -68,7 +68,7 @@ import { Component, ChangeDetectionStrategy, computed, input, output } from '@an
     }
 
     .bzm-quiz-card:focus-visible {
-      box-shadow: 0 0 0 3px var(--bzm-cyan-300), var(--bzm-shadow-card);
+      box-shadow: 0 0 0 3px var(--bzm-color-focus), var(--bzm-shadow-card);
     }
 
     .bzm-quiz-card__image {
@@ -199,14 +199,14 @@ export class BzmQuizCardComponent {
   /** Emits when the player clicks anywhere on the quiz card. */
   readonly cardClick = output<void>();
 
-  readonly hasProgress = computed(() => this.progress() !== undefined);
+  protected readonly hasProgress = computed(() => this.progress() !== undefined);
 
-  readonly imageAreaStyle = computed(() => {
+  protected readonly imageAreaStyle = computed(() => {
     const c = this.color() ?? 'var(--bzm-color-primary)';
     return `background: ${c}`;
   });
 
-  readonly playStyle = computed(() => {
+  protected readonly playStyle = computed(() => {
     const c = this.color() ?? 'var(--bzm-color-primary)';
     return `background: ${c}`;
   });

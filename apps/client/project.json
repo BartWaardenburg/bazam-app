@@ -45,6 +45,12 @@
       },
       "defaultConfiguration": "production"
     },
+    "test": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "configFile": "apps/client/vitest.config.ts"
+      }
+    },
     "dev": {
       "executor": "@angular/build:dev-server",
       "configurations": {
