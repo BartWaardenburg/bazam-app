@@ -15,6 +15,11 @@ export type AnswerLetter = 'A' | 'B' | 'C' | 'D';
       [disabled]="disabled()"
       (click)="handleClick()"
     >
+      @if (disabled() && correct() === null) {
+        <div class="bzm-answer-option__lock-badge" aria-hidden="true">
+          <i class="ph-duotone ph-lock" style="font-size: 14px;"></i>
+        </div>
+      }
       <span class="bzm-answer-option__letter" [style]="letterStyle()">
         {{ letter() }}
       </span>
@@ -38,6 +43,7 @@ export type AnswerLetter = 'A' | 'B' | 'C' | 'D';
     }
 
     .bzm-answer-option {
+      position: relative;
       display: flex;
       align-items: center;
       gap: var(--bzm-space-4);
@@ -55,7 +61,7 @@ export type AnswerLetter = 'A' | 'B' | 'C' | 'D';
       font-family: var(--bzm-font-family);
       outline: none;
       text-align: left;
-
+      overflow: visible;
     }
 
     .bzm-answer-option:hover:not(:disabled) {
@@ -86,6 +92,27 @@ export type AnswerLetter = 'A' | 'B' | 'C' | 'D';
     .bzm-answer-option:disabled {
       cursor: not-allowed;
       filter: grayscale(0.5);
+      opacity: 0.7;
+    }
+
+    .bzm-answer-option__lock-badge {
+      position: absolute;
+      top: -12px;
+      right: -12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      background-color: var(--bzm-white);
+      color: var(--bzm-black);
+      border: 3px solid var(--bzm-black);
+      border-width: 2px 3px 3px 2px;
+      border-radius: 4px;
+      box-shadow: var(--bzm-shadow-sm);
+      z-index: 2;
+      font-size: 18px;
+      pointer-events: none;
     }
 
     .bzm-answer-option__letter {
